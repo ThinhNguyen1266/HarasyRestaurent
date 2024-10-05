@@ -1,9 +1,10 @@
 package group5.swp.HarasyProject.entity.branch;
 
+import group5.swp.HarasyProject.enums.DayOfWeek;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.enums.DayOfWeek;
+
 
 import java.sql.Time;
 

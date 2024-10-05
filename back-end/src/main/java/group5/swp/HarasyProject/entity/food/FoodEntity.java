@@ -1,12 +1,13 @@
 package group5.swp.HarasyProject.entity.food;
 
 
+import group5.swp.HarasyProject.entity.Auditable;
+import group5.swp.HarasyProject.entity.menu.MenuEntity;
+import group5.swp.HarasyProject.entity.order.OrderItem;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.entity.Auditable;
-import thinh.Kaka.entity.menu.MenuEntity;
-import thinh.Kaka.entity.order.OrderItem;
+
 
 import java.util.Set;
 

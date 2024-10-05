@@ -1,11 +1,11 @@
 package group5.swp.HarasyProject.entity.account;
 
 
+import group5.swp.HarasyProject.entity.order.OrderEntity;
+import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.entity.order.OrderEntity;
-import thinh.Kaka.entity.reservation.ReservationEntity;
 
 import java.util.Set;
 

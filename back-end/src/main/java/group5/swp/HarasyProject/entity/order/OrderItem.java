@@ -1,11 +1,12 @@
 package group5.swp.HarasyProject.entity.order;
 
+import group5.swp.HarasyProject.entity.Auditable;
+import group5.swp.HarasyProject.entity.food.FoodEntity;
+import group5.swp.HarasyProject.enums.OrderItemStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.entity.Auditable;
-import thinh.Kaka.entity.food.FoodEntity;
-import thinh.Kaka.enums.OrderItemStatus;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Entity

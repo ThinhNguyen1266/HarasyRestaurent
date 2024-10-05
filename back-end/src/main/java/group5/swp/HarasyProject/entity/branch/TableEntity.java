@@ -1,13 +1,14 @@
 package group5.swp.HarasyProject.entity.branch;
 
 
+import group5.swp.HarasyProject.entity.Auditable;
+import group5.swp.HarasyProject.entity.order.OrderEntity;
+import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
+import group5.swp.HarasyProject.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.entity.Auditable;
-import thinh.Kaka.entity.order.OrderEntity;
-import thinh.Kaka.entity.reservation.ReservationEntity;
-import thinh.Kaka.enums.Status;
+
 
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class TableEntity extends Auditable {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    Status status=Status.ACTIVE;
+    Status status= Status.ACTIVE;
 
     @Column(nullable = false)
     int capacity;

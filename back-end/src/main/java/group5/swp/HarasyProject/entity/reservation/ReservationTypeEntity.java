@@ -1,9 +1,10 @@
 package group5.swp.HarasyProject.entity.reservation;
 
+import group5.swp.HarasyProject.enums.ReservationType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.enums.ReservationType;
+
 
 @Entity
 @Data

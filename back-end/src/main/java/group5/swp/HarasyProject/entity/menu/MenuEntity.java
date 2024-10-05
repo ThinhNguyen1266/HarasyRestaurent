@@ -1,11 +1,12 @@
 package group5.swp.HarasyProject.entity.menu;
 
+import group5.swp.HarasyProject.entity.branch.BranchEntity;
+import group5.swp.HarasyProject.entity.food.FoodEntity;
+import group5.swp.HarasyProject.enums.MenuType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.entity.branch.BranchEntity;
-import thinh.Kaka.entity.food.FoodEntity;
-import thinh.Kaka.enums.MenuType;
+
 
 import java.util.Set;
 

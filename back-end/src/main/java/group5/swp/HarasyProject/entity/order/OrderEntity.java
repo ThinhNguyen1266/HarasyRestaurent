@@ -1,14 +1,15 @@
 package group5.swp.HarasyProject.entity.order;
 
+import group5.swp.HarasyProject.entity.Auditable;
+import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
+import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
+import group5.swp.HarasyProject.entity.branch.TableEntity;
+import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
+import group5.swp.HarasyProject.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.entity.Auditable;
-import thinh.Kaka.entity.account.CustomerAccountEntity;
-import thinh.Kaka.entity.account.StaffAccountEntity;
-import thinh.Kaka.entity.branch.TableEntity;
-import thinh.Kaka.entity.reservation.ReservationEntity;
-import thinh.Kaka.enums.PaymentStatus;
+
 
 import java.util.Set;
 

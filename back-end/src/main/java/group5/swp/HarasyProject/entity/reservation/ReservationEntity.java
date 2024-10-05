@@ -1,14 +1,15 @@
 package group5.swp.HarasyProject.entity.reservation;
 
+import group5.swp.HarasyProject.entity.Auditable;
+import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
+import group5.swp.HarasyProject.entity.branch.BranchEntity;
+import group5.swp.HarasyProject.entity.branch.TableEntity;
+import group5.swp.HarasyProject.entity.order.OrderEntity;
+import group5.swp.HarasyProject.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import thinh.Kaka.entity.Auditable;
-import thinh.Kaka.entity.account.CustomerAccountEntity;
-import thinh.Kaka.entity.branch.BranchEntity;
-import thinh.Kaka.entity.branch.TableEntity;
-import thinh.Kaka.entity.order.OrderEntity;
-import thinh.Kaka.enums.ReservationStatus;
+
 
 import java.sql.Timestamp;
 import java.util.Set;
