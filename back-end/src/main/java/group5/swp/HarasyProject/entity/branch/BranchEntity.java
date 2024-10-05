@@ -1,5 +1,6 @@
 package group5.swp.HarasyProject.entity.branch;
 
+import group5.swp.HarasyProject.entity.Auditable;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
