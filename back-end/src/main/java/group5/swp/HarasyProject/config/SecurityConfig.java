@@ -27,7 +27,7 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
-            "/users","/regis/user","/auth/**","/branch","/uploadImage"
+            "/users","/regis/user","/auth/**","/branch","/uploadImage","/menus","/menu/{id}"
     };
 
 
@@ -39,6 +39,9 @@ public class SecurityConfig {
                 requests
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET,"/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/menu").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE,"/menu/{id}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.PUT,"/menu/{id}").hasRole("BRANCH_MANAGER")
                         .anyRequest().authenticated()
         );
         httpSecurity.oauth2ResourceServer(oauth2->
