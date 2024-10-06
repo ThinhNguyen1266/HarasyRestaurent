@@ -1,0 +1,96 @@
+.login {
+  padding: 8px 16px;
+  width: 100px;
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #fb8500;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.login:hover {
+  color: #ffffff;
+  background-color: #f89e38;
+}
+
+.login:active {
+  color: #ffffff;
+  background-color: #fbaf57;
+}
+
+.reservations {
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #fb8500;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.reservations:hover {
+  color: #ffffff;
+  background-color: #f89e38;
+}
+
+.reservations:active {
+  color: #ffffff;
+  background-color: #fbaf57;
+}
+
+.custom-navbar {
+  background-color: rgba(0, 0, 0, 0.9);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 20px 10px;
+  font-family: "Futura PT Web Heavy", sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-center {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.nav-link {
+  color: #ffffff;
+  transition: color 0.3s ease;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0 15px;
+}
+
+.nav-link:last-child {
+  margin-right: 0;
+}
+
+.nav-link:hover {
+  color: #fb8500;
+}
+
+.nav-link:active {
+  color: #fbaf57;
+}
+
+.navbar-brand {
+  padding-left: 50px;
+}
+
+.nav-button {
+  padding-right: 50px;
+}
+
+.navbar-nav {
+  --bs-nav-link-hover-color: #fb8500;
+}
