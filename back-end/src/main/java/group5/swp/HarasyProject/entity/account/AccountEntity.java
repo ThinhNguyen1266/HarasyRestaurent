@@ -3,7 +3,6 @@ package group5.swp.HarasyProject.entity.account;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import group5.swp.HarasyProject.entity.Auditable;
-import group5.swp.HarasyProject.entity.OtpTokenEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -57,10 +56,6 @@ public class AccountEntity extends Auditable {
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     StaffAccountEntity staff;
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    Set<OtpTokenEntity> otpToken;
-
 
 
 

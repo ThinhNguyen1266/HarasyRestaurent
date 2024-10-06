@@ -43,6 +43,7 @@ public class AccountServiceImpl implements AccountService {
 
     OtpService otpService;
 
+    RedisServiceImpl redisService;
 
     MailService mailService;
 
@@ -67,8 +68,8 @@ public class AccountServiceImpl implements AccountService {
         if (otpService.validateOtp(otpRequest)) {
             AccountEntity account = accountRepository.findByEmail(otpRequest.getEmail()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
             account.setStatus(AccountStatus.ACTIVE);
+            redisService.deleteOtp(otpRequest.getEmail());
             accountRepository.save(account);
-            otpService.deleteOtp(otpRequest.getToken());
             return ApiResponse.<OtpResponse>builder().data(OtpResponse.builder().message("Successfully verified OTP, you can sign in now!").username(account.getUsername()).build()).build();
         }
         return ApiResponse.<OtpResponse>builder().success(false).data(OtpResponse.builder().message("Invalid otp").build()).build();

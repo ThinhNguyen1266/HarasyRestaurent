@@ -10,5 +10,4 @@ public interface OtpService {
 
     String generateOtp(String email);
     boolean validateOtp(OtpRequest otpRequest);
-    void deleteOtp(String otp);
 }

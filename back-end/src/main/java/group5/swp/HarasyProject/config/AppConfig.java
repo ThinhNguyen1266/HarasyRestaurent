@@ -55,6 +55,7 @@ public class AppConfig {
                         .role(StaffRole.ADMIN)
                         .picture("admin picture")
                         .build());
+                log.info("Saving admin account {}", account);
                 accountRepository.save(account);
                 log.warn("admin user has been created with default password: admin, please change it");
             }
