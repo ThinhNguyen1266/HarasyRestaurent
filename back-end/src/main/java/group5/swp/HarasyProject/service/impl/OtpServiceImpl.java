@@ -8,6 +8,7 @@ import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.repository.AccountRepository;
 import group5.swp.HarasyProject.repository.OtpTokenRepository;
 import group5.swp.HarasyProject.service.OtpService;
+import group5.swp.HarasyProject.service.RedisService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,8 +26,7 @@ import java.util.Random;
 public class OtpServiceImpl implements OtpService {
 
     AccountRepository accountRepository;
-
-
+    RedisService redisService;
     OtpTokenRepository otpTokenRepository;
 
     @Override
