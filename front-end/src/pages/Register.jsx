@@ -1,159 +1,109 @@
-import React, { useState } from "react";
+import React from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "../assets/styles/Register.css";
 
 function Register() {
-  const [formData, setFormData] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    password: "",
-    dobMonth: "",
-    dobDay: "",
-    dobYear: "",
-    userName: "",
-    phoneNumber: "",
-    acceptTerms: false,
-    receiveUpdates: false,
-  });
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="row w-100">
-        <div className="col-md-4 offset-md-4">
-          <form className="register-container" onSubmit={handleSubmit}>
-            <h3 className="text-center">Create an account</h3>
-            <div className="form-group">
-              <label htmlFor="email">
-                EMAIL <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                name="email"
-                className="custom-input"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+    <div className="register-page">
+      <Container
+        fluid
+        className="h-100 d-flex justify-content-center align-items-center"
+      >
+        <Row>
+          <Col md={12} className="text-center">
+            <div className="register-box">
+              <Link to="/" className="brand-logo">
+                <img
+                  src={require("../assets/img/logo.png")}
+                  alt="Logo"
+                  className="d-inline-block align-top"
+                />
+              </Link>
 
-            <div className="form-group">
-              <label htmlFor="phoneNumber">
-                FULL NAME <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                name="fullName"
-                className="custom-input"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
+              <Form>
+                <Form.Group controlId="formEmail">
+                  <Form.Label>EMAIL</Form.Label>
+                  <Form.Control type="email" />
+                </Form.Group>
 
-            <div className="form-group">
-              <label htmlFor="phoneNumber">
-                PHONE NUMBER <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                name="phoneNumber"
-                className="custom-input"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
+                <Form.Group controlId="formPhoneNumber">
+                  <Form.Label>PHONE NUMBER</Form.Label>
+                  <Form.Control type="text" />
+                </Form.Group>
 
-            <div className="form-group">
-              <label htmlFor="phoneNumber">
-                USERNAME <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                name="userName"
-                className="custom-input"
-                value={formData.userName}
-                onChange={handleChange}
-                required
-              />
-            </div>
+                <Form.Group controlId="formFullName">
+                  <Form.Label>FULLNAME</Form.Label>
+                  <Form.Control type="text" />
+                </Form.Group>
 
-            <div className="form-group">
-              <label htmlFor="password">
-                PASSWORD <span className="required">*</span>
-              </label>
-              <input
-                type="password"
-                name="password"
-                className="custom-input"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
+                <Form.Group controlId="formUsername">
+                  <Form.Label>USERNAME</Form.Label>
+                  <Form.Control type="text" />
+                </Form.Group>
 
-            <div className="form-group">
-              <label>
-                DATE OF BIRTH <span className="required">*</span>
-              </label>
-              <div className="dob-container">
-                <select
-                  name="dobMonth"
-                  className="dob-select"
-                  value={formData.dobMonth}
-                  onChange={handleChange}
-                  required
+                <Form.Group controlId="formPassword">
+                  <Form.Label>PASSWORD</Form.Label>
+                  <Form.Control type="password" />
+                </Form.Group>
+
+                <Form.Group controlId="formDOB">
+                  <Form.Label>DATE OF BIRTH</Form.Label>
+                  <Row className="custom-dob">
+                    {" "}
+                    {/* Thêm lớp custom-dob */}
+                    <Col>
+                      <Form.Select>
+                        <option value="">Month</option>
+                        {[...Array(12)].map((_, index) => (
+                          <option key={index} value={index + 1}>
+                            {index + 1}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Col>
+                    <Col>
+                      <Form.Select>
+                        <option value="">Day</option>
+                        {[...Array(31)].map((_, index) => (
+                          <option key={index} value={index + 1}>
+                            {index + 1}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Col>
+                    <Col>
+                      <Form.Select>
+                        <option value="">Year</option>
+                        {[...Array(100)].map((_, index) => {
+                          const year = new Date().getFullYear() - index;
+                          return (
+                            <option key={index} value={year}>
+                              {year}
+                            </option>
+                          );
+                        })}
+                      </Form.Select>
+                    </Col>
+                  </Row>
+                </Form.Group>
+
+                <Button
+                  className="register-button"
+                  variant="warning"
+                  type="submit"
                 >
-                  <option value="">Month</option>
-                </select>
+                  Register
+                </Button>
+              </Form>
 
-                <select
-                  name="dobDay"
-                  className="dob-select"
-                  value={formData.dobDay}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Day</option>
-                </select>
-
-                <select
-                  name="dobYear"
-                  className="dob-select"
-                  value={formData.dobYear}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Year</option>
-                </select>
+              <div className="login-link">
+                Already have an account? <Link to="/login">Log in</Link>
               </div>
             </div>
-
-            <button type="submit" className="custom-button">
-              Continue
-            </button>
-
-            <div className="text-center mt-3">
-              <Link to="/login" className="link">
-                Already have an account?
-              </Link>
-            </div>
-          </form>
-        </div>
-      </div>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 }
