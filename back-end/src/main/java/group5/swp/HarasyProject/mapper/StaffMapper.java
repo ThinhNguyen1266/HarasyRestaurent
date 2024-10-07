@@ -2,20 +2,16 @@ package group5.swp.HarasyProject.mapper;
 
 import group5.swp.HarasyProject.dto.response.staff.StaffResponse;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 
-@Component
-public class StaffMapper {
+@Mapper(componentModel = "spring") // Enables Spring's dependency injection
+public interface StaffMapper {
 
-    public StaffResponse toResponse(StaffAccountEntity staff) {
-        if (staff == null) {
-            return null;
-        }
-        return StaffResponse.builder()
-                .fullName(staff.getAccount().getFullName())
-                .phone(staff.getAccount().getPhone())
-                .role(staff.getRole())
-                .branch(staff.getBranch() != null ? staff.getBranch().getId() : null)
-                .build();
-    }
+    @Mapping(target = "fullName", source = "account.fullName")
+    @Mapping(target = "phone", source = "account.phone")
+    @Mapping(target = "role", source = "role")
+    @Mapping(target = "branch", source = "branch.id")
+    StaffResponse toResponse(StaffAccountEntity staff);
 }
