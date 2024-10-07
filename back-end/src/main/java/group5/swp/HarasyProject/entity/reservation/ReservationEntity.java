@@ -31,7 +31,7 @@ public class ReservationEntity extends Auditable {
     @Column(name = "reservation_date", nullable = false)
     Timestamp reservationDate;
 
-    @Column(name = "anount_guest", nullable = false)
+    @Column(name = "amount_guest", nullable = false)
     int amountGuest;
 
     @Column(nullable = false)

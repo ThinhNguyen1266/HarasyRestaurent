@@ -27,10 +27,11 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
-
-            "/users","/regis/user","/auth/**","/branches","/uploadImage","/profile/{AccountId}","/menus","/menu/{id}", "/branch/{id}"
-
+            "/users", "/regis/user", "/auth/**", "/branch", "/uploadImage", "/profile/{AccountId}"
+            , "/menus", "/menu/{id}", "/reservations", "/search", "/reservation/{id}", "/table", "/tables", "/table/{tableId}"
+            , "/branches", "/branch/{id}"
     };
+
 
     CustomJwtDecoder jwtDecoder;
 
@@ -39,16 +40,16 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(requests ->
                 requests
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/staff","/sorted","/staff/{role}").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.POST,"/menu").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.DELETE,"/menu/{id}").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.PUT,"/menu/{id}").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.POST,"/branch").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/staff", "/sorted", "/staff/{role}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/menu").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/menu/{id}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/menu/{id}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/branch").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
         );
-        httpSecurity.oauth2ResourceServer(oauth2->
+        httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer.decoder(jwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())

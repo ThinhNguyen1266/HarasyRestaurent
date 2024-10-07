@@ -18,6 +18,8 @@ public enum ErrorCode {
     TOKEN_EXPIRED(4003,"expired token", HttpStatus.UNAUTHORIZED),
     ACCOUNT_NOT_ACTIVE(4004, "account not active", HttpStatus.UNAUTHORIZED),
     BRANCH_NOT_FOUND(4005, "branch not found", HttpStatus.NOT_FOUND),
+    TABLE_EXIST(4005, "table already exist", HttpStatus.UNAUTHORIZED),
+    TABLE_NOT_FOUND(4006, "table not found", HttpStatus.UNAUTHORIZED)
     ;
 
     int code;
