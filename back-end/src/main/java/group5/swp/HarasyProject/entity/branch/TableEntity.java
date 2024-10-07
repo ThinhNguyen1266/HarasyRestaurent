@@ -5,6 +5,7 @@ import group5.swp.HarasyProject.entity.Auditable;
 import group5.swp.HarasyProject.entity.order.OrderEntity;
 import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
 import group5.swp.HarasyProject.enums.Status;
+import group5.swp.HarasyProject.enums.TableStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -31,7 +32,7 @@ public class TableEntity extends Auditable {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    Status status= Status.ACTIVE;
+    TableStatus status= TableStatus.AVAILABLE;
 
     @Column(nullable = false)
     int capacity;
