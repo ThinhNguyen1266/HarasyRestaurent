@@ -27,7 +27,8 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
-            "/users","/regis/user","/auth/**","/branch","/uploadImage","/profile/{AccountId}","/menus","/menu/{id}"
+            "/users","/regis/user","/auth/**","/branch","/uploadImage","/profile/{AccountId}","/menus","/menu/{id}","/table"
+            ,"/tables","/tables/{branchId}","/table/{tableId}", "/table/{tableId}"
     };
 
 

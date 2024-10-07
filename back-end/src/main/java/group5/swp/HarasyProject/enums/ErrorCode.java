@@ -17,6 +17,8 @@ public enum ErrorCode {
     OTP_EXPIRED(4002, "expired otp", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED(4003,"expired token", HttpStatus.UNAUTHORIZED),
     ACCOUNT_NOT_ACTIVE(4004, "account not active", HttpStatus.UNAUTHORIZED),
+    TABLE_EXIST(4005, "table already exist", HttpStatus.UNAUTHORIZED),
+    TABLE_NOT_FOUND(4006, "table not found", HttpStatus.UNAUTHORIZED)
     ;
 
     int code;
