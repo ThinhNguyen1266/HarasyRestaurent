@@ -17,6 +17,7 @@ public enum ErrorCode {
     OTP_EXPIRED(4002, "expired otp", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED(4003,"expired token", HttpStatus.UNAUTHORIZED),
     ACCOUNT_NOT_ACTIVE(4004, "account not active", HttpStatus.UNAUTHORIZED),
+    BRANCH_NOT_FOUND(4005, "branch not found", HttpStatus.NOT_FOUND),
     ;
 
     int code;

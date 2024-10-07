@@ -27,9 +27,10 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
-            "/users","/regis/user","/auth/**","/branch","/uploadImage","/profile/{AccountId}","/menus","/menu/{id}"
-    };
 
+            "/users","/regis/user","/auth/**","/branches","/uploadImage","/profile/{AccountId}","/menus","/menu/{id}", "/branch/{id}"
+
+    };
 
     CustomJwtDecoder jwtDecoder;
 
@@ -43,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/menu").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.DELETE,"/menu/{id}").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.PUT,"/menu/{id}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.POST,"/branch").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
         );
         httpSecurity.oauth2ResourceServer(oauth2->

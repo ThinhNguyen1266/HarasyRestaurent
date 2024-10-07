@@ -27,12 +27,11 @@ public class BranchEntity extends Auditable {
     Integer id;
 
 
-    @Column(name = "branch_name", nullable = false)
+    @Column(name = "branch_name", nullable = false,unique = true)
     String name;
 
     @Column(nullable = false)
     String location;
-
 
     @Column(name="branch_image",nullable = false)
     String image;
@@ -42,12 +41,16 @@ public class BranchEntity extends Auditable {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    Status status = Status.ACTIVE;
+    Status status = Status.INACTIVE;
 
     @OneToMany(mappedBy = "branch")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     Set<StaffAccountEntity> staffs;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     Set<BranchWorkingHourEntity> workingHours;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
