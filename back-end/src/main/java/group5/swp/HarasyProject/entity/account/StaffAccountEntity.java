@@ -42,6 +42,7 @@ public class StaffAccountEntity {
 
     @OneToOne
     @JoinColumn(name = "account_id", nullable = false)
+    @ToString.Exclude
     AccountEntity account;
 
     @ManyToOne(fetch = FetchType.LAZY)

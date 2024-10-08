@@ -15,7 +15,7 @@ import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+    @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,10 +51,14 @@ public class AccountEntity extends Auditable {
 
 
     @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     CustomerAccountEntity customer;
 
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     StaffAccountEntity staff;
 
 

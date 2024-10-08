@@ -1,5 +1,4 @@
-package group5.swp.HarasyProject.dto.response;
-
+package group5.swp.HarasyProject.dto.request.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -11,12 +10,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ApiResponse<D> {
-    @Builder.Default
-    boolean success = true;
-    @Builder.Default
-    String message = "Success";
-    @Builder.Default
-    int code=200;
-    D data;
+public class CreateBranchRequest {
+    String name;
+    String location;
+    String image;
+    String phone;
 }

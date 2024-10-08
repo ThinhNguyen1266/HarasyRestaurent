@@ -149,8 +149,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
-        if(isRefresh)
-            redisService.storeRefreshToken(accountEntity.getUsername(), claimsSet.getJWTID(), claimsSet.getExpirationTime().toInstant().toEpochMilli());
+        if(isRefresh){
+            long exTime = claimsSet.getExpirationTime().getTime();
+            long now = Instant.now().toEpochMilli();
+            long timeToExpire = exTime - now;
+            redisService.storeRefreshToken(accountEntity.getUsername(), claimsSet.getJWTID(), timeToExpire);
+        }
         JWSObject jwsObject = new JWSObject(header, payload);
         try {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));

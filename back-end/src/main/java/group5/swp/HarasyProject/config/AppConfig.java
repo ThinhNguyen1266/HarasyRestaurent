@@ -24,12 +24,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.time.LocalTime;
+import java.util.*;
 
 @Configuration
 @Slf4j
@@ -95,7 +92,7 @@ public class AppConfig {
                             .staffs(new HashSet<>())
                             .status(Status.ACTIVE)
                             .build();
-                    List<BranchWorkingHourEntity> workingHours = new ArrayList<>();
+                    Set<BranchWorkingHourEntity> workingHours = new HashSet<>();
                     for (int j = 0; j < 4; j++) {
                         BranchWorkingHourEntity workingHour = BranchWorkingHourEntity.builder()
                                 .dayOfWeek(
@@ -107,9 +104,13 @@ public class AppConfig {
                                             default -> DayOfWeek.FRIDAY;
                                         }
                                 )
+                                .openingTime(LocalTime.of(3,0))
+                                .closingTime(LocalTime.of(5,5))
+                                .branch(branch)
                                 .build();
-
+                        workingHours.add(workingHour);
                     }
+                    branch.setWorkingHours(workingHours);
                     branchRepository.save(branch);
                     for (int j = 0; j < 4; j++) {
                         AccountEntity staffAccount = AccountEntity.builder()
