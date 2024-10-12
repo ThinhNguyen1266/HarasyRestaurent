@@ -18,6 +18,4 @@ public class TableRequest {
     Integer number;
     TableStatus status;
     Integer capacity;
-    Integer branchId;
-
 }
