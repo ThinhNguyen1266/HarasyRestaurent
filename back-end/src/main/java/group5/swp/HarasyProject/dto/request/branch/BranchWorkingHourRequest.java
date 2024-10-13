@@ -1,11 +1,11 @@
 package group5.swp.HarasyProject.dto.request.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.dto.request.table.CreateTableRequest;
+import group5.swp.HarasyProject.enums.DayOfWeek;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Set;
+import java.time.LocalTime;
 
 @Data
 @AllArgsConstructor
@@ -13,11 +13,8 @@ import java.util.Set;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateBranchRequest {
-    String name;
-    String location;
-    String image;
-    String phone;
-    Set<BranchWorkingHourRequest> workingHours;
-    Set<CreateTableRequest> tables;
+public class BranchWorkingHourRequest {
+    DayOfWeek dayOfWeek;
+    LocalTime openingTime;
+    LocalTime closingTime;
 }

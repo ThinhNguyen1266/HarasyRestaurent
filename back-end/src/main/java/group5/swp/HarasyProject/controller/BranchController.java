@@ -1,12 +1,14 @@
 package group5.swp.HarasyProject.controller;
 
 import group5.swp.HarasyProject.dto.request.branch.CreateBranchRequest;
+import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
 import group5.swp.HarasyProject.service.BranchService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,5 +35,15 @@ public class BranchController {
     @PostMapping("/branch")
     ApiResponse<BranchInfoResponse> createBranch(@RequestBody CreateBranchRequest request){
         return branchService.createBranch(request);
+    }
+
+    @PutMapping("/branch/{id}")
+    ApiResponse<BranchInfoResponse> updateBranch(@PathVariable int id, @RequestBody UpdateBranchRequest request){
+        return branchService.updateBranch(id, request);
+    }
+
+    @DeleteMapping("/branch/{id}")
+    ApiResponse<?> deleteBranch(@PathVariable int id) {
+       return branchService.deleteBranch(id);
     }
 }
