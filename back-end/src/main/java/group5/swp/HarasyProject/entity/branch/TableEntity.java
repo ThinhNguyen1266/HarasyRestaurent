@@ -32,7 +32,7 @@ public class TableEntity extends Auditable {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    TableStatus status= TableStatus.AVAILABLE;
+    TableStatus status= TableStatus.UNAVAILABLE;
 
     @Column(nullable = false)
     int capacity;

@@ -1,12 +1,8 @@
-package group5.swp.HarasyProject.dto.response.branch;
+package group5.swp.HarasyProject.dto.request.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -14,12 +10,9 @@ import java.util.Set;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BranchInfoResponse {
-    Integer id;
+public class UpdateBranchRequest {
     String name;
     String location;
     String image;
     String phone;
-    Set<BranchWorkingHourResponse> workingHours;
-    Set<TableResponse> tables;
 }

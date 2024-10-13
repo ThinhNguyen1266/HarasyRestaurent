@@ -28,7 +28,7 @@ public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
             "/users", "/regis/user", "/auth/**", "/branch", "/uploadImage", "/profile/{AccountId}"
-            , "/menus", "/menu/{id}", "/reservations", "/search", "/reservation/{id}", "/table", "/tables", "/table/{tableId}"
+            , "/menus", "/menu/{id}", "/reservations", "/search", "/reservation/{id}"
             , "/branches", "/branch/{id}"
     };
 
@@ -46,7 +46,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/menu/{id}").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/menu/{id}").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/branch").hasRole("ADMIN")
-
+                        .requestMatchers(HttpMethod.PUT, "/branch/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/branch/{id}").hasRole("ADMIN")
                         .anyRequest().authenticated()
         );
         httpSecurity.oauth2ResourceServer(oauth2 ->

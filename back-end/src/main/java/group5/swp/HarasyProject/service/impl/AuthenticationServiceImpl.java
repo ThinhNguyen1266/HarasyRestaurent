@@ -142,6 +142,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(accountEntity.getUsername())
                 .issueTime(new Date())
                 .claim("scope", buildScope(accountEntity))
+                .claim("id",accountEntity.getId().toString())
                 .jwtID(UUID.randomUUID().toString())
                 .expirationTime(new Date(Instant.now().plus(isRefresh
                         ? REFRESH_DURATION

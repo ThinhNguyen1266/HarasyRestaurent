@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BranchWorkingHourResponse {
+    int id;
     DayOfWeek dayOfWeek;
     LocalTime openingTime;
     LocalTime closingTime;

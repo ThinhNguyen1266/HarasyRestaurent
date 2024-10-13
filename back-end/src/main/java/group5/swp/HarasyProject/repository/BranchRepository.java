@@ -9,6 +9,9 @@ import java.util.Set;
 
 
 public interface BranchRepository extends JpaRepository<BranchEntity,Integer> {
-    Optional<BranchEntity> findById(Integer id);
+    Optional<BranchEntity> findById( Integer id);
     Set<BranchEntity> findAllByStatus(Status status);
+
+    boolean existsByNameAndIdNot(String name, Integer id);
+    boolean existsByName(String name);
 }

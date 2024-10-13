@@ -30,6 +30,4 @@ public class AccountController  {
         return accountService.viewProfile(AccountId);
     }
 
-
-
 }
