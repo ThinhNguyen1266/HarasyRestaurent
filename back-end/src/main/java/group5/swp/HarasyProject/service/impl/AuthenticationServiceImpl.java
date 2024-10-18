@@ -32,7 +32,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -64,15 +63,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ApiResponse<IntrospectResponse> introspect(IntrospectRequest introspectRequest) throws JOSEException, ParseException {
         String token = introspectRequest.getToken();
         boolean isValid = true;
+        ErrorCode errorCode = null;
         try {
             verifyToken(token);
         } catch (AppException e) {
             isValid = false;
+            errorCode = e.getErrorCode();
         }
 
         return ApiResponse.<IntrospectResponse>builder()
                 .data(IntrospectResponse.builder()
                         .valid(isValid)
+                        .errorCode(errorCode)
                         .build())
                 .build();
     }
@@ -86,11 +88,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), accountEntity.getPassword());
             return ApiResponse.<AuthenticationResponse>builder()
                     .code(authenticated ? 200 : HttpStatus.UNAUTHORIZED.value())
-                    .message(authenticated ? "Login successful":"Login failed")
+                    .message(authenticated ? "Login successful" : "Login failed")
                     .data(AuthenticationResponse.builder()
                             .authenticated(authenticated)
-                            .accessToken(authenticated ? generateToken(accountEntity,false) : null)
-                            .refreshToken(authenticated ? generateToken(accountEntity,true) : null)
+                            .accessToken(authenticated ? generateToken(accountEntity, false) : null)
+                            .refreshToken(authenticated ? generateToken(accountEntity, true) : null)
                             .build())
                     .build();
         } else throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
@@ -125,9 +127,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jit = jwt.getJWTClaimsSet().getJWTID();
         String username = jwt.getJWTClaimsSet().getSubject();
         AccountEntity account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        String token="";
-        if (redisService.isRefreshToken(username,jit))
-            token = generateToken(account,false);
+        String token = "";
+        if (redisService.isRefreshToken(username, jit))
+            token = generateToken(account, false);
         return ApiResponse.<RefreshResponse>builder()
                 .data(RefreshResponse.builder()
                         .token(token)
@@ -142,7 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(accountEntity.getUsername())
                 .issueTime(new Date())
                 .claim("scope", buildScope(accountEntity))
-                .claim("id",accountEntity.getId().toString())
+                .claim("id", accountEntity.getId().toString())
                 .jwtID(UUID.randomUUID().toString())
                 .expirationTime(new Date(Instant.now().plus(isRefresh
                         ? REFRESH_DURATION
@@ -150,7 +152,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
-        if(isRefresh){
+        if (isRefresh) {
             long exTime = claimsSet.getExpirationTime().getTime();
             long now = Instant.now().toEpochMilli();
             long timeToExpire = exTime - now;
@@ -167,15 +169,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         SignedJWT signedJWT = SignedJWT.parse(token);
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
         Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         boolean verified = signedJWT.verify(verifier);
-        if (!(verified && expirationTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!verified) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (expirationTime.before(new Date())) throw new AppException(ErrorCode.TOKEN_EXPIRED);
         if (redisService.isTokenInBlacklist(signedJWT.getJWTClaimsSet().getJWTID()))
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new AppException(ErrorCode.TOKEN_REVOKED);
         return signedJWT;
     }
 

@@ -9,7 +9,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Set;
+import java.util.List;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -45,34 +46,34 @@ public class BranchEntity extends Auditable {
     @OneToMany(mappedBy = "branch")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    Set<StaffAccountEntity> staffs;
+    List<StaffAccountEntity> staffs;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    Set<BranchWorkingHourEntity> workingHours;
+    List<BranchWorkingHourEntity> workingHours;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    Set<MenuEntity> menus;
+    List<MenuEntity> menus;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    Set<TableEntity> tables;
+    List<TableEntity> tables;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-    Set<ReservationEntity> reservations;
+    List<ReservationEntity> reservations;
 
-    public void setWorkingHours(Set<BranchWorkingHourEntity> workingHours) {
+    public void setWorkingHours(List<BranchWorkingHourEntity> workingHours) {
         if (workingHours != null && !workingHours.isEmpty()) {
             workingHours.forEach(workingHour -> workingHour.setBranch(this));
         }
         this.workingHours = workingHours;
     }
 
-    public void setTables(Set<TableEntity> tables) {
+    public void setTables(List<TableEntity> tables) {
         if (tables != null && !tables.isEmpty()) {
             tables.forEach(table -> table.setBranch(this));
         }

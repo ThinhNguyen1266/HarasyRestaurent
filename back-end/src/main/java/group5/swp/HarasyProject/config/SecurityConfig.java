@@ -27,11 +27,10 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
-            "/users", "/regis/user", "/auth/**", "/branch", "/uploadImage", "/profile/{AccountId}"
+            "/users", "/regis/user", "/auth/**", "/uploadImage", "/profile/{AccountId}"
             , "/menus", "/menu/{id}", "/reservations", "/search", "/reservation/{id}"
-            , "/branches", "/branch/{id}"
+            , "/branches", "/branch/{id}","/branch/{id}/tables"
     };
-
 
     CustomJwtDecoder jwtDecoder;
 
@@ -48,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/branch").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/branch/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/branch/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/branch/{id}/tables").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/table/{id}").hasAnyRole("BRANCH_MANAGER","RECEPTIONIST","WAITER")
                         .anyRequest().authenticated()
         );
         httpSecurity.oauth2ResourceServer(oauth2 ->
@@ -56,6 +57,7 @@ public class SecurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
 
                 ).authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
         );
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();

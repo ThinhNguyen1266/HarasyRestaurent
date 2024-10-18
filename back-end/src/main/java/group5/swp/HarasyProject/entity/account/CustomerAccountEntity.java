@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,5 +35,5 @@ public class CustomerAccountEntity {
     OrderEntity order;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    Set<ReservationEntity> reservations;
+    List<ReservationEntity> reservations;
 }

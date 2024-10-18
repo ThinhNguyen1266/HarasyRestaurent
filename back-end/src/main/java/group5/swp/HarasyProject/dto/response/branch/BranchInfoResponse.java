@@ -20,6 +20,6 @@ public class BranchInfoResponse {
     String location;
     String image;
     String phone;
-    Set<BranchWorkingHourResponse> workingHours;
-    Set<TableResponse> tables;
+    List<BranchWorkingHourResponse> workingHours;
+    List<TableResponse> tables;
 }

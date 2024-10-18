@@ -32,5 +32,5 @@ public class CategoryEntity {
     List<CategoryEntity> children;
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
-    Set<FoodEntity> foods;
+    List<FoodEntity> foods;
 }

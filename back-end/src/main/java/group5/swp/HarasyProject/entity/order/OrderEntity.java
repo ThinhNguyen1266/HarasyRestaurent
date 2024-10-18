@@ -9,8 +9,10 @@ import group5.swp.HarasyProject.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Fetch;
 
 
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -44,16 +46,16 @@ public class OrderEntity extends Auditable {
     CustomerAccountEntity customer;
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "orders_table",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "table_id")
     )
-    Set<TableEntity> tables;
+    List<TableEntity> tables;
 
     @OneToMany(mappedBy = "order")
-    Set<OrderItem> orderItems;
+    List<OrderItem> orderItems;
 
 
     @OneToOne(mappedBy = "order")

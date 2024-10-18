@@ -5,15 +5,17 @@ import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
-import java.util.Set;
+
+
 
 @Service
 public interface BranchService {
-    ApiResponse<Set<BranchListResponse>> getAllBranches();
+    ApiResponse<List<BranchListResponse>> getAllBranches();
 
     ApiResponse<BranchInfoResponse> getBranchInfo(int branchId);
 
@@ -21,5 +23,10 @@ public interface BranchService {
 
     ApiResponse<BranchInfoResponse> updateBranch(Integer id , UpdateBranchRequest request);
 
-    ApiResponse<?> deleteBranch(Integer id);
+    ApiResponse<?> deleteBranch(Integer BranchId);
+
+    ApiResponse<List<TableResponse>> getAllTablesInBranch(int branchId);
+
+
+    ApiResponse<BranchInfoResponse> addTables(Integer branchId, CreateBranchRequest request );
 }
