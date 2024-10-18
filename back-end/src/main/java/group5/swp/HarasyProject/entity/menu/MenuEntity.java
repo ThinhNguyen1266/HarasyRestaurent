@@ -8,7 +8,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
-import java.util.Set;
+import java.util.List;
+
 
 
 @Entity
@@ -33,6 +34,6 @@ public class MenuEntity {
     BranchEntity branch;
 
     @ManyToMany(mappedBy = "menus")
-    Set<FoodEntity> foods;
+    List<FoodEntity> foods;
 
 }

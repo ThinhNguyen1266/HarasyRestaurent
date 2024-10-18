@@ -5,14 +5,14 @@ import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.service.BranchService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -22,7 +22,7 @@ public class BranchController {
     BranchService branchService;
 
     @GetMapping("/branches")
-    ApiResponse<Set<BranchListResponse>> getAllBranch() {
+    ApiResponse<List<BranchListResponse>> getAllBranch() {
         return branchService.getAllBranches();
     }
 
@@ -45,5 +45,15 @@ public class BranchController {
     @DeleteMapping("/branch/{id}")
     ApiResponse<?> deleteBranch(@PathVariable int id) {
        return branchService.deleteBranch(id);
+    }
+
+    @GetMapping("/branch/{id}/tables")
+    ApiResponse<List<TableResponse>> tablesInBranch(@PathVariable int id) {
+        return branchService.getAllTablesInBranch(id);
+    }
+
+    @PostMapping("/branch/{id}/tables")
+    ApiResponse<BranchInfoResponse> addTables(@PathVariable int id, @RequestBody CreateBranchRequest request){
+        return branchService.addTables(id, request);
     }
 }

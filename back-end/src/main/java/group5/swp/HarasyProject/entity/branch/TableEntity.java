@@ -11,6 +11,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -42,7 +43,7 @@ public class TableEntity extends Auditable {
     BranchEntity branch;
 
     @ManyToMany(mappedBy = "tables")
-    Set<OrderEntity> orders;
+    List<OrderEntity> orders;
 
 
     @ManyToMany
@@ -51,5 +52,5 @@ public class TableEntity extends Auditable {
             joinColumns = @JoinColumn(name = "table_id"),
             inverseJoinColumns  = @JoinColumn(name = "reservation_id")
     )
-    Set<ReservationEntity> reservations;
+    List<ReservationEntity> reservations;
 }

@@ -89,10 +89,10 @@ public class AppConfig {
                             .image("/iamge2")
                             .location((faker.address().streetAddress()))
                             .phone(faker.phoneNumber().phoneNumber())
-                            .staffs(new HashSet<>())
+                            .staffs(new ArrayList<>())
                             .status(Status.ACTIVE)
                             .build();
-                    Set<BranchWorkingHourEntity> workingHours = new HashSet<>();
+                    List<BranchWorkingHourEntity> workingHours = new ArrayList<>();
                     for (int j = 0; j < 4; j++) {
                         BranchWorkingHourEntity workingHour = BranchWorkingHourEntity.builder()
                                 .dayOfWeek(

@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -46,7 +47,7 @@ public class FoodEntity extends Auditable {
             joinColumns = @JoinColumn(name = "food_id"),
             inverseJoinColumns = @JoinColumn(name = "menu_id")
     )
-    Set<MenuEntity> menus;
+    List<MenuEntity> menus;
 
 
     @ManyToOne
@@ -54,6 +55,6 @@ public class FoodEntity extends Auditable {
     CategoryEntity category;
 
     @OneToMany(mappedBy = "food")
-    Set<OrderItem> orderItems;
+    List<OrderItem> orderItems;
 
 }

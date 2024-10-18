@@ -5,10 +5,12 @@ import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.enums.ErrorCode;
 import group5.swp.HarasyProject.enums.Status;
+import group5.swp.HarasyProject.enums.TableStatus;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.BranchMapper;
 import group5.swp.HarasyProject.mapper.TableMapper;
@@ -20,8 +22,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
+
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -32,6 +34,8 @@ public class BranchServiceImpl implements BranchService {
     BranchRepository branchRepository;
     BranchMapper branchMapper;
     TableMapper tableMapper;
+
+
     @Override
     public ApiResponse<BranchInfoResponse> getBranchInfo(int branchId) {
         BranchEntity branch = branchRepository.findById(branchId)
@@ -44,10 +48,10 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
-    public ApiResponse<Set<BranchListResponse>> getAllBranches() {
-        Set<BranchEntity> branches = branchRepository.findAllByStatus(Status.ACTIVE);
-        Set<BranchListResponse> branchesListResponses = branchMapper.toBranchListResponse(branches);
-        return ApiResponse.<Set<BranchListResponse>>builder()
+    public ApiResponse<List<BranchListResponse>> getAllBranches() {
+        List<BranchEntity> branches = branchRepository.findAllByStatus(Status.ACTIVE);
+        List<BranchListResponse> branchesListResponses = branchMapper.toBranchListResponse(branches);
+        return ApiResponse.<List<BranchListResponse>>builder()
                 .data(branchesListResponses)
                 .build();
     }
@@ -59,7 +63,9 @@ public class BranchServiceImpl implements BranchService {
         }
         BranchEntity branch = new BranchEntity();
         branch = branchMapper.toBranchEntity(request, branch);
-        Set<TableEntity> tables = request.getTables().stream().map(tableMapper::toTable).collect(Collectors.toSet());
+        List<TableEntity> tables = request.getTables()
+                .stream().map(createTableRequest -> tableMapper.toTable(createTableRequest,new TableEntity()))
+                .toList();
         branch.setTables(tables);
         branch = branchRepository.save(branch);
         BranchInfoResponse info = branchMapper.toBranchInfoResponse(branch);
@@ -74,7 +80,8 @@ public class BranchServiceImpl implements BranchService {
         if (branchRepository.existsByNameAndIdNot(request.getName(), id)) {
             throw new AppException(ErrorCode.BRANCH_IS_EXIST);
         }
-        BranchEntity branch = branchRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.BRANCH_NOT_FOUND));
+        BranchEntity branch = branchRepository.findById(id)
+                .orElseThrow(()->new AppException(ErrorCode.BRANCH_NOT_FOUND));
         branch = branchMapper.updateEntity(request, branch);
         branch = branchRepository.save(branch);
         BranchInfoResponse info = branchMapper.toBranchInfoResponse(branch);
@@ -83,12 +90,43 @@ public class BranchServiceImpl implements BranchService {
                 .build();
     }
 
+    @Override
+    public ApiResponse<?> deleteBranch(Integer branchId) {
+        BranchEntity branch = branchRepository.findById(branchId)
+                .orElseThrow(()->new AppException(ErrorCode.BRANCH_NOT_FOUND));
+        branch.setStatus(Status.DELETED);
+        branchRepository.save(branch);
+        return ApiResponse.builder()
+                .build();
+    }
 
     @Override
-    public ApiResponse<?> deleteBranch(Integer id) {
-        BranchEntity branch = branchRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.BRANCH_NOT_FOUND));
-        branchRepository.delete(branch);
-        return ApiResponse.builder()
+    public ApiResponse<List<TableResponse>> getAllTablesInBranch(int branchId) {
+        BranchEntity branch = branchRepository.findById(branchId)
+                .orElseThrow(()->new AppException(ErrorCode.BRANCH_NOT_FOUND));
+        List<TableEntity> tables = branch.getTables()
+                .stream().filter(tableEntity -> !tableEntity.getStatus().equals(TableStatus.DELETED))
+                .toList();
+        List<TableResponse> tableResponses  = tableMapper.toSetResponse(tables);
+        return ApiResponse.<List<TableResponse>>builder()
+                .data(tableResponses)
+                .build();
+    }
+
+    @Override
+    public ApiResponse<BranchInfoResponse> addTables(Integer branchId, CreateBranchRequest request) {
+         BranchEntity branch = branchRepository.findById(branchId)
+                .orElseThrow(()->new AppException(ErrorCode.BRANCH_NOT_FOUND));
+        List<TableEntity> tables = request.getTables()
+                .stream().map(tableRequest -> tableMapper.toTable(tableRequest,new TableEntity()))
+                .toList();
+        for (TableEntity tableEntity : tables) {
+            branchMapper.addTables(tableEntity,branch);
+        }
+        branch = branchRepository.save(branch);
+        BranchInfoResponse info = branchMapper.toBranchInfoResponse(branch);
+        return ApiResponse.<BranchInfoResponse>builder()
+                .data(info)
                 .build();
     }
 }

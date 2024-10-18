@@ -1,6 +1,7 @@
 package group5.swp.HarasyProject.dto.response.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import group5.swp.HarasyProject.enums.ErrorCode;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,4 +13,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class IntrospectResponse {
     boolean valid;
+    ErrorCode errorCode;
 }

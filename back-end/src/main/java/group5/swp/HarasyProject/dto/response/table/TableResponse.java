@@ -19,5 +19,4 @@ public class TableResponse {
     TableStatus status;
     int capacity;
     Integer branchId;
-
 }
