@@ -34,3 +34,5 @@ build/
 
 ###
 /src/main/resources/application.yml
+/src/main/resources/application.yaml
+/src/main/java/group5/swp/HarasyProject/config/LoggingAspect.java

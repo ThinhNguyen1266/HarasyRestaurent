@@ -3,7 +3,6 @@ package group5.swp.HarasyProject.entity.account;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import group5.swp.HarasyProject.entity.Auditable;
-import group5.swp.HarasyProject.entity.OtpTokenEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +15,7 @@ import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+    @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,15 +51,15 @@ public class AccountEntity extends Auditable {
 
 
     @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     CustomerAccountEntity customer;
 
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     StaffAccountEntity staff;
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    Set<OtpTokenEntity> otpToken;
-
 
 
 

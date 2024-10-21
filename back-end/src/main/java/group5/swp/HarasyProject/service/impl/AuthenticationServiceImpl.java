@@ -10,6 +10,7 @@ import group5.swp.HarasyProject.dto.request.auth.IntrospectRequest;
 import group5.swp.HarasyProject.dto.request.auth.LogoutRequest;
 import group5.swp.HarasyProject.dto.request.auth.RefreshRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
+import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.auth.AuthenticationResponse;
 import group5.swp.HarasyProject.dto.response.auth.IntrospectResponse;
 import group5.swp.HarasyProject.dto.response.auth.LogoutResponse;
@@ -18,6 +19,7 @@ import group5.swp.HarasyProject.entity.account.AccountEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
+import group5.swp.HarasyProject.mapper.AccountMapper;
 import group5.swp.HarasyProject.repository.AccountRepository;
 import group5.swp.HarasyProject.service.AuthenticationService;
 import group5.swp.HarasyProject.service.RedisService;
@@ -31,7 +33,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -47,7 +48,7 @@ import java.util.UUID;
 public class AuthenticationServiceImpl implements AuthenticationService {
     AccountRepository accountRepository;
     RedisService redisService;
-
+    AccountMapper accountMapper;
     @NonFinal
     @Value("${jwt.signerKey}")
     String SIGNER_KEY;
@@ -64,15 +65,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ApiResponse<IntrospectResponse> introspect(IntrospectRequest introspectRequest) throws JOSEException, ParseException {
         String token = introspectRequest.getToken();
         boolean isValid = true;
+        ErrorCode errorCode = null;
         try {
             verifyToken(token);
         } catch (AppException e) {
             isValid = false;
+            errorCode = e.getErrorCode();
         }
 
         return ApiResponse.<IntrospectResponse>builder()
                 .data(IntrospectResponse.builder()
                         .valid(isValid)
+                        .errorCode(errorCode)
                         .build())
                 .build();
     }
@@ -82,15 +86,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         AccountEntity accountEntity = accountRepository.findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        if (accountEntity.getStatus() == AccountStatus.ACTIVE) {
+        if (accountEntity.getStatus() != AccountStatus.DELETED) {
             boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), accountEntity.getPassword());
+            ProfileResponse profileResponse = accountEntity.getCustomer()!=null
+                    ? accountMapper.toCustomerProfileResponse(accountEntity)
+                    : accountMapper.toStaffProfileResponse(accountEntity);
             return ApiResponse.<AuthenticationResponse>builder()
                     .code(authenticated ? 200 : HttpStatus.UNAUTHORIZED.value())
-                    .message(authenticated ? "Login successful":"Login failed")
+                    .message(authenticated ? "Login successful" : "Login failed")
                     .data(AuthenticationResponse.builder()
                             .authenticated(authenticated)
-                            .accessToken(authenticated ? generateToken(accountEntity,false) : null)
-                            .refreshToken(authenticated ? generateToken(accountEntity,true) : null)
+                            .user(profileResponse)
+                            .accessToken(authenticated ? generateToken(accountEntity, false) : null)
+                            .refreshToken(authenticated ? generateToken(accountEntity, true) : null)
                             .build())
                     .build();
         } else throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
@@ -125,9 +133,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jit = jwt.getJWTClaimsSet().getJWTID();
         String username = jwt.getJWTClaimsSet().getSubject();
         AccountEntity account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        String token="";
-        if (redisService.isRefreshToken(username,jit))
-            token = generateToken(account,false);
+        String token = "";
+        if (redisService.isRefreshToken(username, jit))
+            token = generateToken(account, false);
         return ApiResponse.<RefreshResponse>builder()
                 .data(RefreshResponse.builder()
                         .token(token)
@@ -142,6 +150,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(accountEntity.getUsername())
                 .issueTime(new Date())
                 .claim("scope", buildScope(accountEntity))
+                .claim("id", accountEntity.getId().toString())
                 .jwtID(UUID.randomUUID().toString())
                 .expirationTime(new Date(Instant.now().plus(isRefresh
                         ? REFRESH_DURATION
@@ -149,8 +158,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
-        if(isRefresh)
-            redisService.storeRefreshToken(accountEntity.getUsername(), claimsSet.getJWTID(), claimsSet.getExpirationTime().toInstant().toEpochMilli());
+        if (isRefresh) {
+            long exTime = claimsSet.getExpirationTime().getTime();
+            long now = Instant.now().toEpochMilli();
+            long timeToExpire = exTime - now;
+            redisService.storeRefreshToken(accountEntity.getUsername(), claimsSet.getJWTID(), timeToExpire);
+        }
         JWSObject jwsObject = new JWSObject(header, payload);
         try {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
@@ -162,15 +175,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         SignedJWT signedJWT = SignedJWT.parse(token);
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
         Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         boolean verified = signedJWT.verify(verifier);
-        if (!(verified && expirationTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!verified) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (expirationTime.before(new Date())) throw new AppException(ErrorCode.TOKEN_EXPIRED);
         if (redisService.isTokenInBlacklist(signedJWT.getJWTClaimsSet().getJWTID()))
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new AppException(ErrorCode.TOKEN_REVOKED);
         return signedJWT;
     }
 

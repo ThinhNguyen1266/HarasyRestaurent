@@ -4,15 +4,20 @@ import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.auth.EmailRequest;
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
+import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
+import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.RegisResponse;
 import group5.swp.HarasyProject.dto.response.auth.OtpResponse;
 import group5.swp.HarasyProject.entity.account.AccountEntity;
 import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
+import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.AccountMapper;
 import group5.swp.HarasyProject.repository.AccountRepository;
+import group5.swp.HarasyProject.repository.CustomerAccountRepository;
+import group5.swp.HarasyProject.repository.StaffAccountRepository;
 import group5.swp.HarasyProject.service.AccountService;
 import group5.swp.HarasyProject.service.MailService;
 import group5.swp.HarasyProject.service.OtpService;
@@ -27,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Service
@@ -36,6 +42,8 @@ import java.io.IOException;
 public class AccountServiceImpl implements AccountService {
 
     AccountRepository accountRepository;
+    CustomerAccountRepository customerAccountRepository;
+    StaffAccountRepository staffAccountRepository;
 
 
     AccountMapper accountMapper;
@@ -43,6 +51,7 @@ public class AccountServiceImpl implements AccountService {
 
     OtpService otpService;
 
+    RedisServiceImpl redisService;
 
     MailService mailService;
 
@@ -67,10 +76,25 @@ public class AccountServiceImpl implements AccountService {
         if (otpService.validateOtp(otpRequest)) {
             AccountEntity account = accountRepository.findByEmail(otpRequest.getEmail()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
             account.setStatus(AccountStatus.ACTIVE);
+            redisService.deleteOtp(otpRequest.getEmail());
             accountRepository.save(account);
-            otpService.deleteOtp(otpRequest.getToken());
             return ApiResponse.<OtpResponse>builder().data(OtpResponse.builder().message("Successfully verified OTP, you can sign in now!").username(account.getUsername()).build()).build();
         }
         return ApiResponse.<OtpResponse>builder().success(false).data(OtpResponse.builder().message("Invalid otp").build()).build();
+    }
+
+    @Override
+    public ApiResponse<ProfileResponse> viewProfile(Integer id) throws IOException, MessagingException {
+        AccountEntity account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found Account ID: "+id));
+        ProfileResponse response;
+        if(account.getCustomer()!=null ){
+            response = accountMapper.toCustomerProfileResponse(account);
+        }else {
+            response = accountMapper.toStaffProfileResponse(account);
+        }
+
+
+        return ApiResponse.<ProfileResponse>builder().data(response)
+                .build();
     }
 }

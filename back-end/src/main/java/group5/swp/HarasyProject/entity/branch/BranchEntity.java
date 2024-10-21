@@ -9,8 +9,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 
-import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -27,35 +27,56 @@ public class BranchEntity extends Auditable {
     Integer id;
 
 
-    @Column(name = "branch_name", nullable = false)
+    @Column(name = "branch_name", nullable = false, unique = true)
     String name;
 
     @Column(nullable = false)
     String location;
 
-
-    @Column(name="branch_image",nullable = false)
+    @Column(name = "branch_image", nullable = false)
     String image;
-    
+
     @Column(name = "branch_phone", nullable = false)
     String phone;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    Status status = Status.ACTIVE;
+    Status status = Status.INACTIVE;
 
     @OneToMany(mappedBy = "branch")
-    Set<StaffAccountEntity> staffs;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    List<StaffAccountEntity> staffs;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-    Set<BranchWorkingHourEntity> workingHours;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    List<BranchWorkingHourEntity> workingHours;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-    Set<MenuEntity> menus;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    List<MenuEntity> menus;
 
-    @OneToMany(mappedBy = "branch",cascade = CascadeType.ALL)
-    Set<TableEntity> tables;
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    List<TableEntity> tables;
 
-    @OneToMany(mappedBy = "branch",cascade = CascadeType.ALL)
-    Set<ReservationEntity> reservations;
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    List<ReservationEntity> reservations;
+
+    public void setWorkingHours(List<BranchWorkingHourEntity> workingHours) {
+        if (workingHours != null && !workingHours.isEmpty()) {
+            workingHours.forEach(workingHour -> workingHour.setBranch(this));
+        }
+        this.workingHours = workingHours;
+    }
+
+    public void setTables(List<TableEntity> tables) {
+        if (tables != null && !tables.isEmpty()) {
+            tables.forEach(table -> table.setBranch(this));
+        }
+        this.tables = tables;
+    }
 }

@@ -2,6 +2,7 @@ package group5.swp.HarasyProject.dto.response.auth;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,5 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class AuthenticationResponse {
     String accessToken;
     String refreshToken;
+    ProfileResponse user;
     boolean authenticated;
 }

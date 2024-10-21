@@ -5,11 +5,13 @@ import group5.swp.HarasyProject.entity.Auditable;
 import group5.swp.HarasyProject.entity.order.OrderEntity;
 import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
 import group5.swp.HarasyProject.enums.Status;
+import group5.swp.HarasyProject.enums.TableStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -31,7 +33,7 @@ public class TableEntity extends Auditable {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    Status status= Status.ACTIVE;
+    TableStatus status= TableStatus.UNAVAILABLE;
 
     @Column(nullable = false)
     int capacity;
@@ -41,7 +43,7 @@ public class TableEntity extends Auditable {
     BranchEntity branch;
 
     @ManyToMany(mappedBy = "tables")
-    Set<OrderEntity> orders;
+    List<OrderEntity> orders;
 
 
     @ManyToMany
@@ -50,5 +52,5 @@ public class TableEntity extends Auditable {
             joinColumns = @JoinColumn(name = "table_id"),
             inverseJoinColumns  = @JoinColumn(name = "reservation_id")
     )
-    Set<ReservationEntity> reservations;
+    List<ReservationEntity> reservations;
 }

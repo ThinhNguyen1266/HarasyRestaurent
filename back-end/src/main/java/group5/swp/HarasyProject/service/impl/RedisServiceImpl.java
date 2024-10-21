@@ -38,4 +38,23 @@ public class RedisServiceImpl implements RedisService {
         String key = "refreshToken:"+username;
         redisTemplate.delete(key);
     }
+
+    @Override
+    public void addOtp(String otp, String email) {
+        String key = "otp:"+email;
+        redisTemplate.opsForValue().set(key,otp,5, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public boolean checkOtp(String otp, String email) {
+        String key = "otp:"+email;
+        String tmpOtp = redisTemplate.opsForValue().get(key);
+        return tmpOtp != null && tmpOtp.equals(otp) ;
+    }
+
+    @Override
+    public void deleteOtp(String email) {
+        String key = "otp:"+email;
+        redisTemplate.delete(key);
+    }
 }

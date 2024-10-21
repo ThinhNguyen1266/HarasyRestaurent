@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -31,7 +32,7 @@ public class ReservationEntity extends Auditable {
     @Column(name = "reservation_date", nullable = false)
     Timestamp reservationDate;
 
-    @Column(name = "anount_guest", nullable = false)
+    @Column(name = "amount_guest", nullable = false)
     int amountGuest;
 
     @Column(nullable = false)
@@ -56,5 +57,5 @@ public class ReservationEntity extends Auditable {
     OrderEntity order;
 
     @ManyToMany(mappedBy = "reservations", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    Set<TableEntity> tables;
+    List<TableEntity> tables;
 }

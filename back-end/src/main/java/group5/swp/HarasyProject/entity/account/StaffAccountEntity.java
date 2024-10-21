@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,6 +43,7 @@ public class StaffAccountEntity {
 
     @OneToOne
     @JoinColumn(name = "account_id", nullable = false)
+    @ToString.Exclude
     AccountEntity account;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,5 +51,5 @@ public class StaffAccountEntity {
     BranchEntity branch;
 
     @OneToMany(mappedBy = "staff",cascade = CascadeType.ALL)
-    Set<OrderEntity> orders;
+    List<OrderEntity> orders;
 }

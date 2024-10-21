@@ -4,6 +4,9 @@ import com.nimbusds.jose.JOSEException;
 import group5.swp.HarasyProject.dto.request.auth.IntrospectRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.auth.IntrospectResponse;
+import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.AppException;
+import group5.swp.HarasyProject.exception.JwtAuthenticationException;
 import group5.swp.HarasyProject.service.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -42,9 +45,9 @@ public class CustomJwtDecoder implements JwtDecoder {
             response = authenticationService.introspect(IntrospectRequest.builder()
                     .token(token)
                     .build());
-            if (!response.getData().isValid()) throw new JwtException("Token invalid");
+            if (!response.getData().isValid()) throw new JwtAuthenticationException(new AppException(response.getData().getErrorCode()));
         } catch (JOSEException | ParseException e) {
-            throw new JwtException(e.getMessage());
+            throw new JwtAuthenticationException(new AppException(ErrorCode.UNAUTHENTICATED));
         }
         if (Objects.isNull(jwtDecoder)) {
             SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");

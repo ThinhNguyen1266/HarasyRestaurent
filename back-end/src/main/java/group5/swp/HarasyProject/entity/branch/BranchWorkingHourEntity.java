@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 
 import java.sql.Time;
+import java.time.LocalTime;
 
 @Entity
 @Data
@@ -26,12 +27,14 @@ public class BranchWorkingHourEntity {
     DayOfWeek dayOfWeek;
 
     @Column(name = "opening_time", nullable = false)
-    Time openingTime;
+    LocalTime openingTime;
 
     @Column(name = "closing_time", nullable = false)
-    Time closingTime;
+    LocalTime closingTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "branch_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     BranchEntity branch;
 }
