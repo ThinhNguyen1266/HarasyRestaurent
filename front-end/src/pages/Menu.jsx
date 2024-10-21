@@ -1,31 +1,28 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import "../assets/styles/Menu.css";
 
-function Menu({ data }) {
-  console.log(data);
-
+function Menu() {
   return (
-    <div className="container mt-5">
-      <h1 className="mb-4">Menu</h1>
-      <div className="row">
-        {data.map((product) => (
-          <div key={product.id} className="col-md-3 mb-4">
-            <div className="card h-100">
-              <img
-                src={product.thumbnail}
-                className="card-img-top"
-                alt={product.title}
-              />
-              <div className="card-body">
-                <h5 className="card-title">{product.title}</h5>
-                <p className="card-text">{product.description}</p>
-                <p className="card-text">${product.price}</p>
-              </div>
-              <div className="card-footer">
-                <small className="text-muted">Rating: {product.rating}</small>
-              </div>
-            </div>
-          </div>
-        ))}
+    <div className="menu-container">
+      <div className="menu-header">
+        <h1>OUR MENUS</h1>
+      </div>
+      <div className="menu-cities">
+        <div className="menu-city">
+          <div className="menu-city-image menu-hanoi-image"></div>
+          <div className="menu-city-name">HA NOI</div>
+          <Link to="/menu/hanoi" className="menu-button">
+            VIEW THE MENU
+          </Link>
+        </div>
+        <div className="menu-city">
+          <div className="menu-city-image menu-hcm-image"></div>
+          <div className="menu-city-name">HO CHI MINH</div>
+          <Link to="/menu/hcm" className="menu-button">
+            VIEW THE MENU
+          </Link>
+        </div>
       </div>
     </div>
   );

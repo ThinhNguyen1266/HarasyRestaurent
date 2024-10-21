@@ -51,7 +51,6 @@ function Register() {
                   <Form.Label>DATE OF BIRTH</Form.Label>
                   <Row className="custom-dob">
                     {" "}
-                    {/* Thêm lớp custom-dob */}
                     <Col>
                       <Form.Select>
                         <option value="">Month</option>

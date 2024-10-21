@@ -1,0 +1,113 @@
+.venues-container {
+  text-align: center;
+  color: #ffffff;
+  background-color: #000; /* Nền đen cho phần toàn trang */
+}
+
+.venues-header {
+  padding: 285px 0 30px;
+  height: 75vh;
+  background-image: url("../img/us.png");
+  background-size: cover;
+  background-position: center bottom 12%;
+  position: relative;
+}
+
+.venues-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 0;
+}
+
+.venues-header h1 {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #ffffff;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  cursor: default;
+}
+
+.venues-cities {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  padding: 200px 0;
+  background-image: url("../img/black.jpg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.venues-cities::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 0;
+}
+
+.city {
+  position: relative;
+  width: 600px;
+  height: 420px;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.city-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.hanoi-image {
+  background-image: url("../img/HRS2.png");
+  position: relative;
+  z-index: 1;
+}
+
+.hcm-image {
+  background-image: url("../img/HCM.png");
+  position: relative;
+  z-index: 1;
+}
+
+.city::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+.city-name {
+  position: absolute;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #ffffff;
+  z-index: 3;
+  text-align: center;
+}
+
+.city:hover .city-image {
+  transform: scale(1.05);
+}
