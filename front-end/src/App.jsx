@@ -18,19 +18,19 @@ function App() {
 
   const showNavFooter = !noNavFooterRoutes.includes(location.pathname);
 
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await intance.get("/products");
-        console.log(data);
-        setProducts(data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const { data } = await intance.get("/products");
+  //       console.log(data);
+  //       setProducts(data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   })();
+  // }, []);
 
   return (
     <div className="App">
@@ -38,7 +38,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/venues" element={<Venues />} />
-        <Route path="/menu" element={<Menu data={products} />} />
+        {/* <Route path="/menu" element={<Menu data={products} />} /> */}
         <Route path="/about" element={<About />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/login" element={<Login />} />

@@ -7,7 +7,7 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import { Link } from "react-router-dom";
 import logo from "../assets/img/logo.png";
 import "../assets/styles/Nav.css";
-
+import Profile from "./Profile";
 function NavigationBar() {
   return (
     <>
@@ -52,9 +52,7 @@ function NavigationBar() {
                   <Link to="/login" className="reservations">
                     RESERVATIONS
                   </Link>
-                  <Link to="/login" className="login">
-                    LOGIN
-                  </Link>
+                  <Profile />
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>

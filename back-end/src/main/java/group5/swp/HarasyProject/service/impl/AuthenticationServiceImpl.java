@@ -10,6 +10,7 @@ import group5.swp.HarasyProject.dto.request.auth.IntrospectRequest;
 import group5.swp.HarasyProject.dto.request.auth.LogoutRequest;
 import group5.swp.HarasyProject.dto.request.auth.RefreshRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
+import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.auth.AuthenticationResponse;
 import group5.swp.HarasyProject.dto.response.auth.IntrospectResponse;
 import group5.swp.HarasyProject.dto.response.auth.LogoutResponse;
@@ -18,6 +19,7 @@ import group5.swp.HarasyProject.entity.account.AccountEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
+import group5.swp.HarasyProject.mapper.AccountMapper;
 import group5.swp.HarasyProject.repository.AccountRepository;
 import group5.swp.HarasyProject.service.AuthenticationService;
 import group5.swp.HarasyProject.service.RedisService;
@@ -46,7 +48,7 @@ import java.util.UUID;
 public class AuthenticationServiceImpl implements AuthenticationService {
     AccountRepository accountRepository;
     RedisService redisService;
-
+    AccountMapper accountMapper;
     @NonFinal
     @Value("${jwt.signerKey}")
     String SIGNER_KEY;
@@ -84,13 +86,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         AccountEntity accountEntity = accountRepository.findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        if (accountEntity.getStatus() == AccountStatus.ACTIVE) {
+        if (accountEntity.getStatus() != AccountStatus.DELETED) {
             boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), accountEntity.getPassword());
+            ProfileResponse profileResponse = accountEntity.getCustomer()!=null
+                    ? accountMapper.toCustomerProfileResponse(accountEntity)
+                    : accountMapper.toStaffProfileResponse(accountEntity);
             return ApiResponse.<AuthenticationResponse>builder()
                     .code(authenticated ? 200 : HttpStatus.UNAUTHORIZED.value())
                     .message(authenticated ? "Login successful" : "Login failed")
                     .data(AuthenticationResponse.builder()
                             .authenticated(authenticated)
+                            .user(profileResponse)
                             .accessToken(authenticated ? generateToken(accountEntity, false) : null)
                             .refreshToken(authenticated ? generateToken(accountEntity, true) : null)
                             .build())
