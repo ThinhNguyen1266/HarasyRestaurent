@@ -5,7 +5,7 @@ function Profile() {
   const user = useSelector((state) => state.auth.login.currentUser);
   console.log(user);
   if (user) {
-    return <h1>Hi , {user.username}</h1>;
+    return <h5>Hi , {user.username}</h5>;
   } else {
     return (
       <Link to="/login" className="login">
