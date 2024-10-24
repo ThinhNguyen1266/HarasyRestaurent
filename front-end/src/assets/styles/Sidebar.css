@@ -1,0 +1,142 @@
+/* Base styles for Sidebar */
+.sidebar {
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: width 0.3s ease; /* Smooth transition for sidebar width */
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* Expanded Sidebar */
+.sidebar.expanded {
+  width: 250px;
+  padding: 0 20px;
+}
+
+/* Collapsed Sidebar */
+.sidebar.collapsed {
+  width: 80px; /* Collapsed width to only show icons */
+}
+
+/* Logo visibility */
+.logo {
+  width: 70%;
+  padding-top: 10px;
+}
+
+/* Sidebar header where logo and toggle button is */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+}
+
+/* Hamburger menu (toggle button) */
+.hamburger-menu {
+  cursor: pointer;
+  padding: 15px;
+  color: #fff;
+}
+
+/* User info (hidden when collapsed) */
+.sidebar-user {
+  margin: 30px 0;
+  font-family: "Futura", "Nunito Sans", sans-serif;
+}
+
+.sidebar-user span {
+  font-size: 18px;
+}
+
+/* Sidebar section items */
+.sidebar-section {
+  margin-bottom: 20px;
+}
+
+.sidebar-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 16px;
+  color: #ccc;
+  font-family: "Futura", "Nunito Sans", sans-serif;
+  transition: color 0.3s;
+}
+
+/* Sidebar hover effects */
+.sidebar-item:hover {
+  color: orange;
+}
+
+/* ul list */
+ul {
+  padding: 0;
+}
+
+ul li {
+  list-style-type: none;
+  margin: 10px 0;
+}
+
+ul li a {
+  text-decoration: none;
+  font-size: 16px;
+  color: #fff;
+  display: block;
+  padding: 10px 15px;
+  border-radius: 6px;
+}
+
+ul li a:hover,
+ul li a.active {
+  background: orange;
+  color: black;
+}
+
+/* Logout section */
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 16px;
+  color: #ccc;
+  font-family: "Futura", "Nunito Sans", sans-serif;
+}
+
+.sidebar-logout:hover {
+  color: orange;
+}
+
+.sidebar-logout span {
+  margin-left: 10px;
+}
+
+/* Adjustments for text visibility */
+.sidebar.expanded .sidebar-item span {
+  display: inline-block;
+}
+
+.sidebar.collapsed .sidebar-item span {
+  display: none; /* Hide text when collapsed */
+}
+
+.sidebar.expanded .sidebar-user span {
+  display: inline-block;
+}
+
+.sidebar.collapsed .sidebar-user span {
+  display: none; /* Hide user name when collapsed */
+}
+
+/* Ensure sidebar content is not overflowing */
+.sidebar ul {
+  overflow: hidden;
+}

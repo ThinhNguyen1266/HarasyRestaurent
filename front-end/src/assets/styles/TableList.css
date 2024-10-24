@@ -1,0 +1,72 @@
+/* App.css or custom styles */
+/* App.css or custom styles */
+.custom-checkbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.custom-checkbox input {
+  margin-right: 10px;
+  transform: scale(1.5); /* Make the checkbox larger */
+}
+
+.custom-checkbox label {
+  margin-left: 10px;
+  font-weight: bold;
+}
+.count-table {
+  display: flex;
+}
+.count-available {
+  padding-right: 20px;
+}
+.content {
+  background-color: black;
+  border-radius: 30px;
+  padding-bottom: 30px;
+  color: white;
+}
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 30px;
+}
+.Body {
+  background-color: #1c1c1c;
+  color: white;
+}
+.card-body {
+  color: white;
+  background-color: #1c1c1c;
+}
+.card:hover {
+  transform: scale(1.05); /* Slightly increase the size of the card */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+  background-color: #282828;
+  cursor: pointer; /* Change background color on hover */
+}
+/* Custom switch styling */
+.custom-switch .form-check-input:checked {
+  background-color: green;
+  border-color: green;
+}
+
+.custom-switch .form-check-input {
+  background-color: red;
+  border-color: red;
+}
+
+/* Toggle colors when hovering */
+.custom-switch .form-check-input:checked:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+  cursor: pointer;
+}
+
+.custom-switch .form-check-input:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  cursor: pointer;
+}
