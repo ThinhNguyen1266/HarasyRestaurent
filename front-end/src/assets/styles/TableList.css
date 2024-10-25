@@ -1,5 +1,3 @@
-/* App.css or custom styles */
-/* App.css or custom styles */
 .custom-checkbox {
   display: flex;
   justify-content: center;
@@ -9,7 +7,7 @@
 
 .custom-checkbox input {
   margin-right: 10px;
-  transform: scale(1.5); /* Make the checkbox larger */
+  transform: scale(1.5);
 }
 
 .custom-checkbox label {
@@ -42,12 +40,12 @@
   background-color: #1c1c1c;
 }
 .card:hover {
-  transform: scale(1.05); /* Slightly increase the size of the card */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   background-color: #282828;
-  cursor: pointer; /* Change background color on hover */
+  cursor: pointer;
 }
-/* Custom switch styling */
+
 .custom-switch .form-check-input:checked {
   background-color: green;
   border-color: green;
@@ -58,7 +56,6 @@
   border-color: red;
 }
 
-/* Toggle colors when hovering */
 .custom-switch .form-check-input:checked:hover {
   background-color: #28a745;
   border-color: #28a745;

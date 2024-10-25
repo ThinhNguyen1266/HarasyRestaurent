@@ -42,13 +42,13 @@ const Sidebar = () => {
         {showDashboards && (
           <ul>
             <li>
-              <a href="/">Overview</a>
+              <a href="/table">View table</a>
             </li>
             <li>
-              <a href="/">Harasy Ha Noi</a>
+              <a href="/">View Orders</a>
             </li>
             <li>
-              <a href="/">Harasy Ho Chi Minh</a>
+              <a href="/">View Reservation</a>
             </li>
           </ul>
         )}

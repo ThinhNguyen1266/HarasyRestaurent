@@ -9,7 +9,6 @@ import Login from "./pages/Login";
 import Menu from "./pages/Menu";
 import Register from "./pages/Register";
 import Venues from "./pages/Venues";
-import "../src/assets/styles/App.css";
 import TableList from "./pages/TableList";
 
 function App() {

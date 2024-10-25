@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaCheck, FaTimes, FaChair, FaUsers } from "react-icons/fa";
 import { Card, Row, Col, Badge, Container, Form } from "react-bootstrap";
 import Sidebar from "../components/Sidebar";
-import "../assets/styles/TableList.css"; // Ensure that the CSS file is imported here
+import "../assets/styles/TableList.css";
 
 const TableList = () => {
   const [tables, setTables] = useState([
