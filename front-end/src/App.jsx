@@ -9,11 +9,12 @@ import Login from "./pages/Login";
 import Menu from "./pages/Menu";
 import Register from "./pages/Register";
 import Venues from "./pages/Venues";
+import TableList from "./pages/TableList";
 
 function App() {
   const location = useLocation();
 
-  const noNavFooterRoutes = ["/login", "/register"];
+  const noNavFooterRoutes = ["/login", "/register", "/table"];
 
   const showNavFooter = !noNavFooterRoutes.includes(location.pathname);
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/table" element={<TableList />} />
       </Routes>
       {showNavFooter && <Footer />}
     </div>
