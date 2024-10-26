@@ -6,6 +6,7 @@ import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
+import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import org.mapstruct.*;
 
 import java.util.ArrayList;
@@ -32,4 +33,12 @@ public interface BranchMapper {
         table.setBranch(branch);
         branch.getTables().add(table);
     };
+
+    default void addMenus(MenuEntity menu, @MappingTarget BranchEntity branch){
+        if (branch.getMenus() == null) {
+            branch.setMenus(new ArrayList<>());
+        }
+        menu.setBranch(branch);
+        branch.getMenus().add(menu);
+    }
 }

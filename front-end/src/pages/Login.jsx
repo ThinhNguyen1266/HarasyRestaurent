@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import "../assets/styles/Login.css";
 import { login } from "../services/authRequest";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -18,8 +19,7 @@ function Login() {
       username,
       password,
     };
-    console.log(user);
-    login(user, dispatch, navigate);
+    login(user, dispatch, navigate, location);
   };
 
   return (

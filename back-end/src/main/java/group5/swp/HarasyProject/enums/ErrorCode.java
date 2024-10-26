@@ -22,7 +22,8 @@ public enum ErrorCode {
     BRANCH_NOT_FOUND(4005, "branch not found", HttpStatus.NOT_FOUND),
     TABLE_EXIST(4006, "table already exist", HttpStatus.UNAUTHORIZED),
     TABLE_NOT_FOUND(4007, "table not found", HttpStatus.UNAUTHORIZED),
-    BRANCH_IS_EXIST(4008,"branch name is duplicate",HttpStatus.CONFLICT)
+    BRANCH_IS_EXIST(4008,"branch name is duplicate",HttpStatus.CONFLICT),
+    MENU_NOT_FOUND(4009, "menu not found", HttpStatus.NOT_FOUND),
     ;
 
     int code;

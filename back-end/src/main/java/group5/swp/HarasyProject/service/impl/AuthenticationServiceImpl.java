@@ -8,7 +8,6 @@ import com.nimbusds.jwt.SignedJWT;
 import group5.swp.HarasyProject.dto.request.auth.AuthenticationRequest;
 import group5.swp.HarasyProject.dto.request.auth.IntrospectRequest;
 import group5.swp.HarasyProject.dto.request.auth.LogoutRequest;
-import group5.swp.HarasyProject.dto.request.auth.RefreshRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.auth.AuthenticationResponse;
@@ -23,6 +22,9 @@ import group5.swp.HarasyProject.mapper.AccountMapper;
 import group5.swp.HarasyProject.repository.AccountRepository;
 import group5.swp.HarasyProject.service.AuthenticationService;
 import group5.swp.HarasyProject.service.RedisService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -82,23 +84,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ApiResponse<AuthenticationResponse> login(AuthenticationRequest authenticationRequest) {
+    public ApiResponse<AuthenticationResponse> login(AuthenticationRequest authenticationRequest, HttpServletResponse response) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         AccountEntity accountEntity = accountRepository.findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         if (accountEntity.getStatus() != AccountStatus.DELETED) {
             boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), accountEntity.getPassword());
-            ProfileResponse profileResponse = accountEntity.getCustomer()!=null
-                    ? accountMapper.toCustomerProfileResponse(accountEntity)
-                    : accountMapper.toStaffProfileResponse(accountEntity);
+            ProfileResponse profileResponse = null;
+            String accessToken = null;
+
+            if(authenticated){
+                profileResponse= accountEntity.getCustomer()!=null
+                        ? accountMapper.toCustomerProfileResponse(accountEntity)
+                        : accountMapper.toStaffProfileResponse(accountEntity);
+                accessToken = generateToken(accountEntity, false);
+                String refreshToken = generateToken(accountEntity, true);
+
+                Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+                refreshTokenCookie.setHttpOnly(true);
+                refreshTokenCookie.setSecure(true);
+                refreshTokenCookie.setPath("/");
+                refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+                response.addCookie(refreshTokenCookie);
+            }
             return ApiResponse.<AuthenticationResponse>builder()
                     .code(authenticated ? 200 : HttpStatus.UNAUTHORIZED.value())
                     .message(authenticated ? "Login successful" : "Login failed")
                     .data(AuthenticationResponse.builder()
                             .authenticated(authenticated)
                             .user(profileResponse)
-                            .accessToken(authenticated ? generateToken(accountEntity, false) : null)
-                            .refreshToken(authenticated ? generateToken(accountEntity, true) : null)
+                            .accessToken(accessToken)
                             .build())
                     .build();
         } else throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
@@ -128,8 +143,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public ApiResponse<RefreshResponse> refreshToken(RefreshRequest refreshRequest) throws ParseException, JOSEException {
-        SignedJWT jwt = verifyToken(refreshRequest.getToken());
+    public ApiResponse<RefreshResponse> refreshToken(HttpServletRequest request) throws ParseException, JOSEException {
+        String refreshToken = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        SignedJWT jwt = verifyToken(refreshToken);
         String jit = jwt.getJWTClaimsSet().getJWTID();
         String username = jwt.getJWTClaimsSet().getSubject();
         AccountEntity account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -138,7 +162,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             token = generateToken(account, false);
         return ApiResponse.<RefreshResponse>builder()
                 .data(RefreshResponse.builder()
-                        .token(token)
+                        .accessToken(token)
                         .build())
                 .build();
     }

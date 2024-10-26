@@ -10,5 +10,5 @@ public interface TableService {
 
     ApiResponse<TableResponse> updateTable(int tableId, TableRequest request);
 
-
+    ApiResponse<?> deleteTable(int tableId);
 }

@@ -25,4 +25,9 @@ public class TableController {
         return tableService.updateTable(id,request);
     }
 
+    @DeleteMapping("/table/{id}")
+    ApiResponse<?> deleteTable(@PathVariable int id) {
+        return tableService.deleteTable(id);
+    }
+
 }

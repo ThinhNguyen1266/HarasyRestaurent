@@ -7,6 +7,8 @@ import group5.swp.HarasyProject.dto.response.auth.*;
 import group5.swp.HarasyProject.service.AccountService;
 import group5.swp.HarasyProject.service.AuthenticationService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,8 +36,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/auth/login")
-    public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) {
-        return authenticationService.login(authenticationRequest);
+    public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) {
+        return authenticationService.login(authenticationRequest, response);
     }
 
     @PostMapping("/auth/introspect")
@@ -49,7 +51,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/auth/refreshToken")
-    public ApiResponse<RefreshResponse> refreshToken(@RequestBody RefreshRequest refreshRequest) throws ParseException, JOSEException {
-        return authenticationService.refreshToken(refreshRequest);
+    public ApiResponse<RefreshResponse> refreshToken(HttpServletRequest request) throws ParseException, JOSEException {
+        return authenticationService.refreshToken(request);
     }
 }
