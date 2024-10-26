@@ -5,6 +5,7 @@ import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
+import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.service.BranchService;
 import lombok.AccessLevel;
@@ -55,5 +56,15 @@ public class BranchController {
     @PostMapping("/branch/{id}/tables")
     ApiResponse<BranchInfoResponse> addTables(@PathVariable int id, @RequestBody CreateBranchRequest request){
         return branchService.addTables(id, request);
+    }
+
+    @GetMapping("/branch/{id}/menus")
+    ApiResponse<List<MenuResponse>> getAllMenus(@PathVariable int id) {
+        return branchService.getAllMenusInBranch(id);
+    }
+
+    @PostMapping("/branch/{id}/menus")
+    ApiResponse<BranchInfoResponse> addMenus(@PathVariable int id, @RequestBody CreateBranchRequest request){
+        return branchService.addMenus(id, request);
     }
 }

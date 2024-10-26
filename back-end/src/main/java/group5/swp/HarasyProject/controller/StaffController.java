@@ -24,20 +24,17 @@ public class StaffController {
     StaffService staffService;
 
     @GetMapping("/staff")
-    public ResponseEntity<ApiResponse<List<StaffResponse>>> getActiveStaff() {
-        ApiResponse<List<StaffResponse>> response = staffService.getActiveStaff();
-        return ResponseEntity.status(response.getCode()).body(response);
+    public ApiResponse<List<StaffResponse>> getActiveStaff() {
+        return staffService.getActiveStaff();
     }
 
     @GetMapping("/sorted")
-    public ResponseEntity<ApiResponse<List<StaffResponse>>> getStaffSortedByRole() {
-        ApiResponse<List<StaffResponse>> response = staffService.getStaffSortedByRole();
-        return ResponseEntity.status(response.getCode()).body(response);
+    public ApiResponse<List<StaffResponse>> getStaffSortedByRole() {
+        return staffService.getStaffSortedByRole();
     }
 
     @GetMapping("/staff/{role}")
-    public ResponseEntity<ApiResponse<List<StaffResponse>>> searchStaffByRole(@PathVariable StaffRole role) {
-        ApiResponse<List<StaffResponse>> response = staffService.searchStaffByRole(role);
-        return ResponseEntity.ok(response);
+    public ApiResponse<List<StaffResponse>> searchStaffByRole(@PathVariable StaffRole role) {
+        return  staffService.searchStaffByRole(role);
     }
 }

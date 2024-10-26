@@ -3,7 +3,6 @@ package group5.swp.HarasyProject.controller;
 
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
-import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.RegisResponse;
 import group5.swp.HarasyProject.service.AccountService;

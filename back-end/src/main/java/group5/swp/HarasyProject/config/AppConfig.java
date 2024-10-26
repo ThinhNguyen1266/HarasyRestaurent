@@ -7,9 +7,11 @@ import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.BranchWorkingHourEntity;
+import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
 import group5.swp.HarasyProject.enums.DayOfWeek;
+import group5.swp.HarasyProject.enums.MenuType;
 import group5.swp.HarasyProject.enums.Status;
 import group5.swp.HarasyProject.repository.AccountRepository;
 import group5.swp.HarasyProject.repository.BranchRepository;
@@ -93,6 +95,7 @@ public class AppConfig {
                             .status(Status.ACTIVE)
                             .build();
                     List<BranchWorkingHourEntity> workingHours = new ArrayList<>();
+                    List<MenuEntity> menus = new ArrayList<>();
                     for (int j = 0; j < 4; j++) {
                         BranchWorkingHourEntity workingHour = BranchWorkingHourEntity.builder()
                                 .dayOfWeek(
@@ -109,7 +112,20 @@ public class AppConfig {
                                 .branch(branch)
                                 .build();
                         workingHours.add(workingHour);
+                        MenuEntity menuEntity = MenuEntity.builder()
+                                .type(
+                                        switch (j){
+                                            case 0 -> MenuType.DESSERT;
+                                            case 1 -> MenuType.BREAKFAST;
+                                            case 2 -> MenuType.DINNER;
+                                            case 3 -> MenuType.LUNCH;
+                                            default -> null;
+                                        }
+                                )
+                                .build();
+                        menus.add(menuEntity);
                     }
+                    branch.setMenus(menus);
                     branch.setWorkingHours(workingHours);
                     branchRepository.save(branch);
                     for (int j = 0; j < 4; j++) {

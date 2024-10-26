@@ -4,41 +4,30 @@ import group5.swp.HarasyProject.dto.request.menu.MenuRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.service.MenuService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class MenuController {
 
-    private final MenuService menuService;
-
-    @GetMapping("/menus")
-    public ResponseEntity<ApiResponse<List<MenuResponse>>> getAllMenus() {
-        return ResponseEntity.ok(menuService.getAllMenus());
-    }
+    MenuService menuService;
 
     @GetMapping("/menu/{id}")
-    public ResponseEntity<ApiResponse<MenuResponse>> getMenuById(@PathVariable Integer id) {
-        return ResponseEntity.ok(menuService.getMenuById(id));
-    }
-
-    @PostMapping("/menu")
-    public ResponseEntity<ApiResponse<MenuResponse>> createMenu(@RequestBody MenuRequest menuRequest) {
-        return ResponseEntity.ok(menuService.createMenu(menuRequest));
+    public ApiResponse<MenuResponse> getMenu(@PathVariable int id) {
+        return menuService.getMenu(id);
     }
 
     @PutMapping("/menu/{id}")
-    public ResponseEntity<ApiResponse<MenuResponse>> updateMenu(@PathVariable Integer id, @RequestBody MenuRequest menuRequest) {
-        return ResponseEntity.ok(menuService.updateMenu(id, menuRequest));
+    public ApiResponse<MenuResponse> updateMenu(@PathVariable int id, @RequestBody MenuRequest menuRequest) {
+        return menuService.updateMenu(id, menuRequest);
     }
 
     @DeleteMapping("/menu/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteMenu(@PathVariable Integer id) {
-        return ResponseEntity.ok(menuService.deleteMenu(id));
+    public ApiResponse<?> deleteMenu(@PathVariable int id) {
+        return menuService.deleteMenu(id);
     }
 }

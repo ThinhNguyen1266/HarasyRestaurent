@@ -8,5 +8,4 @@ import lombok.Data;
 @Builder
 public class MenuRequest {
     MenuType type;
-    Integer branchId;
 }

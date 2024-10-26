@@ -9,14 +9,7 @@ import java.util.List;
 
 @Service
 public interface MenuService {
-
-    ApiResponse<List<MenuResponse>> getAllMenus();
-
-    ApiResponse<MenuResponse> getMenuById(Integer id);
-
-    ApiResponse<MenuResponse> createMenu(MenuRequest menuRequest);
-
-    ApiResponse<MenuResponse> updateMenu(Integer id, MenuRequest menuRequest);
-
-    ApiResponse<Void> deleteMenu(Integer id);
+    ApiResponse<MenuResponse> updateMenu(int menuId,MenuRequest menuRequest);
+    ApiResponse<?> deleteMenu(int menuId);
+    ApiResponse<MenuResponse> getMenu(int menuId);
 }

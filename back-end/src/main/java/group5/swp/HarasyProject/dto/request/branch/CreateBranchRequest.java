@@ -1,6 +1,7 @@
 package group5.swp.HarasyProject.dto.request.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import group5.swp.HarasyProject.dto.request.menu.MenuRequest;
 import group5.swp.HarasyProject.dto.request.table.TableRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,4 +21,5 @@ public class CreateBranchRequest {
     String phone;
     List<BranchWorkingHourRequest> workingHours;
     List<TableRequest> tables;
+    List<MenuRequest> menus;
 }

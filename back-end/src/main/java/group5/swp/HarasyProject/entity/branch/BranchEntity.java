@@ -79,4 +79,11 @@ public class BranchEntity extends Auditable {
         }
         this.tables = tables;
     }
+
+    public void setMenus(List<MenuEntity> menus) {
+        if (menus != null && !menus.isEmpty()) {
+            menus.forEach(menu -> menu.setBranch(this));
+        }
+        this.menus = menus;
+    }
 }

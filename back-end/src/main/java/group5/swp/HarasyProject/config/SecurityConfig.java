@@ -28,10 +28,13 @@ public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
             "/users", "/regis/user", "/auth/**", "/uploadImage", "/profile/{AccountId}"
-            , "/menus", "/menu/{id}", "/reservations", "/search", "/reservation/{id}"
-            , "/branches", "/branch/{id}","/branch/{id}/tables"
+            , "/reservations", "/search", "/reservation/{id}"
+            , "/branches",
     };
-
+    String[] GET_PUBLIC_ENDPOINT ={
+            "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
+            "/menu/{id}"
+    };
     CustomJwtDecoder jwtDecoder;
 
     @Bean
@@ -39,16 +42,17 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(requests ->
                 requests
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.GET,GET_PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET, "/").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/staff", "/sorted", "/staff/{role}").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/menu").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.DELETE, "/menu/{id}").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.PUT, "/menu/{id}").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/branch").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/branch/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/branch/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/branch/{id}/tables").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/table/{id}").hasAnyRole("BRANCH_MANAGER","RECEPTIONIST","WAITER")
+                        .requestMatchers(HttpMethod.POST,"/branch/{id}/menus").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.PUT,"/menu/{id}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE,"/menu/{id}","/table/{id}").hasRole("BRANCH_MANAGER")
                         .anyRequest().authenticated()
         );
         httpSecurity.oauth2ResourceServer(oauth2 ->

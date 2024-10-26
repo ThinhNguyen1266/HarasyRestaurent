@@ -22,29 +22,22 @@ public class ReservationController {
 
     ReservationService reservationService;
 
-    /**
-     * Get all reservations
-     * @return ResponseEntity containing the list of ReservationResponse
-     */
     @GetMapping("/reservations")
-    public ResponseEntity<ApiResponse<List<ReservationResponse>>> getAllReservations() {
-        ApiResponse<List<ReservationResponse>> response = reservationService.getApprovedReservations();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ApiResponse<List<ReservationResponse>> getAllReservations() {
+        return reservationService.getApprovedReservations();
     }
 
     @PostMapping("/search")
-    public ResponseEntity<ApiResponse<List<ReservationResponse>>> searchReservationsByCustomerName(
+    public ApiResponse<List<ReservationResponse>> searchReservationsByCustomerName(
             @RequestBody Map<String, String> requestBody) {
         String customerName = requestBody.get("customerName").trim();
-        ApiResponse<List<ReservationResponse>> response = reservationService.searchReservationsByCustomerName(customerName);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return reservationService.searchReservationsByCustomerName(customerName);
     }
 
     @PutMapping("/reservation/{id}")
-    public ResponseEntity<ApiResponse<ReservationResponse>> updateReservationStatus(
+    public ApiResponse<ReservationResponse> updateReservationStatus(
             @PathVariable Integer id) {
-        ApiResponse<ReservationResponse> response = reservationService.updateReservationStatus(id);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return reservationService.updateReservationStatus(id);
     }
 
 }
