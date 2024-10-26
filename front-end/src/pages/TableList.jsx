@@ -35,7 +35,7 @@ const TableList = () => {
 
   return (
     <div className="layout">
-      <Sidebar /> {/* Sidebar component */}
+      <Sidebar />
       <div className="main-content">
         <h1 className="text-center text-white mb-4 pt-5">Table</h1>
 
