@@ -15,6 +15,11 @@ html {
   position: relative;
 }
 
+
+.main-content {
+  margin-left: 250px; 
+}
+
 .register-page::before {
   content: "";
   position: fixed;
@@ -22,7 +27,6 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  /* background-image: url('/public/images/pizza1.jpg'); */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -34,7 +38,6 @@ html {
   padding: 35px;
   color: white;
   width: 450px;
-  height: auto;
   margin: 50px 0;
   border-radius: 5px;
   position: relative;
@@ -51,12 +54,6 @@ html {
   border-radius: 4px;
   margin-top: 5px;
   padding: 10px;
-}
-
-.brand-logo img {
-  width: 180px;
-  height: auto;
-  margin-bottom: 25px;
 }
 
 .register-button {
@@ -76,16 +73,7 @@ html {
   background-color: #e07a00;
 }
 
-.login-link a:hover {
-  text-decoration: underline;
-}
-
-.form-control:focus {
-  box-shadow: none;
-  outline: 0;
-  border-color: white;
-}
-
+.form-control:focus,
 .form-select:focus {
   box-shadow: none;
   outline: 0;
