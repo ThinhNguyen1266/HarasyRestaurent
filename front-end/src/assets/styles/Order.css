@@ -1,0 +1,94 @@
+/* Order.css */
+
+body {
+  background-color: #1a1a1a; /* Dark background */
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Offset the main content to make room for the sidebar */
+.main-content {
+  margin-left: 250px; /* Adjust this margin to match the sidebar width */
+}
+
+.order-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 90vh; /* Fixed height to allow scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.header-row {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #fff;
+}
+
+.create-order-button {
+  background-color: #ff6600;
+  border: none;
+}
+
+.order-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.order-card {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #ff6600;
+  background-size: cover;
+  background-position: center;
+}
+
+.order-header {
+  background-color: transparent;
+  color: #E55B00;
+  font-weight: bold;
+}
+
+/* Scrollable items container within each card */
+.order-items-container {
+  max-height: 150px; /* Set height to control scroll area */
+  overflow-y: auto; /* Enable scroll for the items */
+  margin-bottom: 10px;
+  padding-right: 5px; /* Add some padding for better scroll bar alignment */
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.item-name {
+  color: #ff6600;
+}
+
+.item-details {
+  color: #ccc;
+}
+
+.update-button {
+  background-color: #ff6600;
+  border: none;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.item-count {
+  color: #ccc;
+  margin-bottom: 10px;
+}
