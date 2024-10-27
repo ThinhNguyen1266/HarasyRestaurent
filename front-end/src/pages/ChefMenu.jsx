@@ -3,7 +3,7 @@ import { MdRestaurantMenu } from "react-icons/md";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "../components/Sidebar";
-import "../assets/styles/Chef_Menu.css";
+import "../assets/styles/ChefMenu.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -80,7 +80,7 @@ const staticMenuData = {
     },
   ],
 };
-const Chef_Menu = () => {
+const ChefMenu = () => {
   const [menuData, setMenuData] = useState(staticMenuData);
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -268,4 +268,4 @@ const Chef_Menu = () => {
   );
 };
 
-export default Chef_Menu;
+export default ChefMenu;
