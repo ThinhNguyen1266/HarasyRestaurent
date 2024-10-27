@@ -10,13 +10,12 @@ import Menu from "./pages/Menu";
 import Register from "./pages/Register";
 import Venues from "./pages/Venues";
 import TableList from "./pages/TableList";
-import MenuManagement from "./pages/Chef_Menu";
-import Chef_Menu from "./pages/Chef_Menu";
+import ChefMenu from "./pages/ChefMenu";
 
 function App() {
   const location = useLocation();
 
-  const noNavFooterRoutes = ["/login", "/register", "/table", "/chef_menu"];
+  const noNavFooterRoutes = ["/login", "/register", "/table", "/chefmenu"];
 
   const showNavFooter = !noNavFooterRoutes.includes(location.pathname);
 
@@ -32,7 +31,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
-        <Route path="/chef_menu" element={<Chef_Menu />} />
+        <Route path="/chefmenu" element={<ChefMenu />} />
       </Routes>
       {showNavFooter && <Footer />}
     </div>
