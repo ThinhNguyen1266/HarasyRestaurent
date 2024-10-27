@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import Sidebar from "../components/Sidebar"; // Import Sidebar component
+import Sidebar from "../components/Sidebar";
+import CreateOrder from "../components/CreateOder";
+import UpdateOrder from "../components/UpdateOrder"; // Import UpdateOrder component
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../assets/styles/Order.css'; // Custom CSS for additional styling
+import '../assets/styles/Order.css';
 
 function Order() {
+  const [showCreateOrder, setShowCreateOrder] = useState(false);
+  const [showUpdateOrder, setShowUpdateOrder] = useState(false);
+  const [currentOrderItems, setCurrentOrderItems] = useState([]);
+
+  const handleShowCreateOrder = () => setShowCreateOrder(true);
+  const handleCloseCreateOrder = () => setShowCreateOrder(false);
+
+  const handleShowUpdateOrder = (items) => {
+    setCurrentOrderItems(items);
+    setShowUpdateOrder(true);
+  };
+
+  const handleCloseUpdateOrder = () => setShowUpdateOrder(false);
+
   const orders = [
     {
       id: 351,
@@ -146,14 +162,16 @@ function Order() {
 
   return (
     <div className="d-flex">
-      <Sidebar /> {/* Sidebar component */}
+      <Sidebar />
       <div className="main-content">
         <div className="order-page">
           <div className="header-row">
             <h1>View Orders</h1>
           </div>
           <div className="button-row">
-            <Button className="create-order-button">Create Order</Button>
+            <Button className="create-order-button" onClick={handleShowCreateOrder}>
+              Create Order
+            </Button>
           </div>
           <div className="order-list">
             {orders.map((order, index) => (
@@ -173,7 +191,7 @@ function Order() {
                   </div>
                   <Card.Footer>
                     <div className="item-count">x{order.items.length} items</div>
-                    <Button variant="warning" className="update-button">
+                    <Button variant="warning" className="update-button" onClick={() => handleShowUpdateOrder(order.items)}>
                       Update
                     </Button>
                   </Card.Footer>
@@ -183,6 +201,8 @@ function Order() {
           </div>
         </div>
       </div>
+      <CreateOrder show={showCreateOrder} handleClose={handleCloseCreateOrder} />
+      <UpdateOrder show={showUpdateOrder} handleClose={handleCloseUpdateOrder} initialItems={currentOrderItems} />
     </div>
   );
 }
