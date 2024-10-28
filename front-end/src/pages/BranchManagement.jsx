@@ -3,6 +3,7 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../components/Sidebar";
+import "../assets/styles/BranchManagement.css";
 
 const BranchManagement = () => {
   const initialBranchData = [
