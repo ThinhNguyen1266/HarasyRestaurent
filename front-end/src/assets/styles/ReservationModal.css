@@ -1,0 +1,74 @@
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+  }
+  
+  /* Modal Content */
+  .modal-dialog {
+    background-color: #1c1c1c;
+    color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px; /* Added padding to the entire modal content */
+  }
+  
+  .modal-header {
+    border-bottom: none;
+    padding-bottom: 10px;
+  }
+  
+  .modal-title {
+    text-align: center;
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  
+  .reservation-detail {
+    padding: 20px; /* Added padding around reservation details */
+  }
+  
+  .reservation-detail .row {
+    padding: 10px 0;
+    border-bottom: 1px solid #555;
+  }
+  
+  .reservation-detail .row:last-child {
+    border-bottom: none;
+  }
+  
+  .order-list {
+    padding-left: 0;
+    columns: 2;
+    font-size: 1rem;
+    padding-top: 5px; /* Add space above orders list */
+  }
+  
+  .order-list li {
+    margin-bottom: 5px;
+  }
+  
+  .check-button {
+    background-color: #fb8500;
+    color: black;
+    font-weight: bold;
+    font-size: 18px;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .modal-footer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  

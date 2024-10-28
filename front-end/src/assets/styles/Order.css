@@ -1,0 +1,156 @@
+/* Order.css */
+
+body {
+  background-color: #1a1a1a;
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+}
+
+.main-content {
+  margin-left: 250px;
+}
+
+.order-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 90vh;
+  overflow-y: auto;
+}
+
+.order-page::-webkit-scrollbar,
+.order-items-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.order-page::-webkit-scrollbar-thumb,
+.order-items-container::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 10px;
+}
+
+.order-page::-webkit-scrollbar-thumb:hover,
+.order-items-container::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+.order-page::-webkit-scrollbar-track,
+.order-items-container::-webkit-scrollbar-track {
+  background: #222;
+  border-radius: 10px;
+}
+
+.header-row {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #fff;
+}
+
+.create-order-button {
+  background-color: #ff6600;
+  border: none;
+}
+
+.order-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.order-card {
+  background-color: #333;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.order-header {
+  background-color: #222;
+  color: #E55B00;
+  font-weight: bold;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.order-items-container {
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Modern and Stylish Scrollbar */
+.order-items-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.order-items-container::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 10px;
+}
+
+.order-items-container::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Styling each item with modern design */
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.order-item:hover {
+  background-color: #3a3a3a;
+  transform: scale(1.02);
+}
+
+.item-name {
+  color: #ff9500;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.item-details {
+  color: #ddd;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+/* Update Button Styling */
+.update-button {
+  background-color: #ff6600;
+  border: none;
+  width: 100%;
+  margin-top: 10px;
+  font-weight: bold;
+  padding: 8px 0;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #e07a00;
+}
+
+.item-count {
+  color: #ccc;
+  margin-bottom: 10px;
+  font-weight: 500;
+}

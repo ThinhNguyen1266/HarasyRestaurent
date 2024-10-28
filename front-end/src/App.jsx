@@ -12,6 +12,7 @@ import Venues from "./pages/Venues";
 import TableList from "./pages/TableList";
 import ChefMenu from "./pages/ChefMenu";
 import BranchManagement from "./pages/BranchManagement";
+import ReservationsPage from "./pages/AllReservation";
 
 function App() {
   const location = useLocation();
@@ -40,6 +41,7 @@ function App() {
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/branch" element={<BranchManagement />} />
+        <Route path="/reservation" element={<ReservationsPage />} />
       </Routes>
       {showNavFooter && <Footer />}
     </div>
