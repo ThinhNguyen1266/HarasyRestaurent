@@ -38,7 +38,7 @@ const BranchManagement = () => {
 
   const [branches, setBranches] = useState(initialBranchData);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState("add"); // add, edit
+  const [modalMode, setModalMode] = useState("add"); // "add" or "edit"
   const [currentBranch, setCurrentBranch] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -48,12 +48,14 @@ const BranchManagement = () => {
     image: "",
     status: "active",
   });
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleOpenModal = (mode, branch = null) => {
     setModalMode(mode);
     if (branch) {
       setCurrentBranch(branch);
       setFormData(branch);
+      setPreviewUrl(branch.image); // Set preview to existing image when editing
     } else {
       setFormData({
         name: "",
@@ -63,6 +65,7 @@ const BranchManagement = () => {
         image: "",
         status: "active",
       });
+      setPreviewUrl(null); // Reset preview for adding a new branch
     }
     setIsModalOpen(true);
   };
@@ -78,29 +81,44 @@ const BranchManagement = () => {
       image: "",
       status: "active",
     });
+    setPreviewUrl(null);
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, files } = e.target;
+
+    if (name === "image") {
+      const file = files[0];
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+      setPreviewUrl(URL.createObjectURL(file)); // Update preview for new image
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (modalMode === "add") {
       const newBranch = {
         ...formData,
         id: branches.length + 1,
+        image: previewUrl, // Use preview URL for new image
       };
       setBranches((prev) => [...prev, newBranch]);
       toast.success("Branch added successfully!");
     } else {
       setBranches((prev) =>
         prev.map((branch) =>
-          branch.id === currentBranch.id ? { ...formData } : branch
+          branch.id === currentBranch.id
+            ? { ...formData, image: previewUrl || branch.image } // Keep existing image if no new one is selected
+            : branch
         )
       );
       toast.success("Branch updated successfully!");
@@ -160,7 +178,7 @@ const BranchManagement = () => {
                       {branch.status}
                     </span>
                   </div>
-                  <div className="card-footer d-flex justify-content-end ">
+                  <div className="card-footer d-flex justify-content-end">
                     <button
                       onClick={() => handleOpenModal("edit", branch)}
                       className="btn btn-warning btn-sm"
@@ -240,15 +258,25 @@ const BranchManagement = () => {
                         />
                       </div>
                       <div className="mb-3">
-                        <label className="form-label">Image URL</label>
+                        <label className="form-label">Upload Image</label>
                         <input
-                          type="text"
+                          type="file"
                           name="image"
-                          value={formData.image}
-                          onChange={handleInputChange}
+                          onChange={handleInputChange} // No value attribute for file input
                           className="form-control"
-                          required
                         />
+                        {previewUrl && (
+                          <img
+                            src={previewUrl}
+                            alt="Preview"
+                            style={{
+                              width: "100%",
+                              marginTop: "10px",
+                              height: "200px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        )}
                       </div>
                       <div className="mb-3">
                         <label className="form-label">Status</label>
