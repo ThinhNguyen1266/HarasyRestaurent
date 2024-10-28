@@ -10,13 +10,20 @@ import Menu from "./pages/Menu";
 import Register from "./pages/Register";
 import Venues from "./pages/Venues";
 import TableList from "./pages/TableList";
-import MenuManagement from "./pages/Chef_Menu";
-import Chef_Menu from "./pages/Chef_Menu";
-import AuthRoute from "./components/AuthRoute";
+import ChefMenu from "./pages/ChefMenu";
+import BranchManagement from "./pages/BranchManagement";
+import ReservationsPage from "./pages/AllReservation";
+
 function App() {
   const location = useLocation();
 
-  const noNavFooterRoutes = ["/login", "/register", "/table", "/chef_menu"];
+  const noNavFooterRoutes = [
+    "/login",
+    "/register",
+    "/table",
+    "/chefmenu",
+    "/branch",
+  ];
 
   const showNavFooter = !noNavFooterRoutes.includes(location.pathname);
 
@@ -31,10 +38,10 @@ function App() {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route element={<AuthRoute allowedRoles={["WAITER"]} />}>
-          <Route path="/table" element={<TableList />} />
-        </Route>
-        {/* <Route path="/chef_menu" element={<Chef_Menu />} /> */}
+        <Route path="/table" element={<TableList />} />
+        <Route path="/chefmenu" element={<ChefMenu />} />
+        <Route path="/branch" element={<BranchManagement />} />
+        <Route path="/reservation" element={<ReservationsPage />} />
       </Routes>
       {showNavFooter && <Footer />}
     </div>
