@@ -26,12 +26,14 @@ const BranchManagement = () => {
     image: "",
     status: "active",
   });
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleOpenModal = (mode, branch = null) => {
     setModalMode(mode);
     if (branch) {
       // setCurrentBranch(branch);
       setFormData(branch);
+      setPreviewUrl(branch.image); // Set preview to existing image when editing
     } else {
       setFormData({
         name: "",
@@ -41,6 +43,7 @@ const BranchManagement = () => {
         image: "",
         status: "active",
       });
+      setPreviewUrl(null); // Reset preview for adding a new branch
     }
     setIsModalOpen(true);
   };
@@ -56,25 +59,45 @@ const BranchManagement = () => {
       image: "",
       status: "active",
     });
+    setPreviewUrl(null);
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, files } = e.target;
+
+    if (name === "image") {
+      const file = files[0];
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+      setPreviewUrl(URL.createObjectURL(file)); // Update preview for new image
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (modalMode === "add") {
       const newBranch = {
         ...formData,
+        image: previewUrl, // Use preview URL for new image
       };
 
       toast.success("Branch added successfully!");
     } else {
+      // setBranches((prev) =>
+      //   prev.map((branch) =>
+      //     branch.id === currentBranch.id
+      //       ? { ...formData, image: previewUrl || branch.image } // Keep existing image if no new one is selected
+      //       : branch
+      //   )
+      // );
       toast.success("Branch updated successfully!");
     }
     handleCloseModal();
@@ -104,57 +127,51 @@ const BranchManagement = () => {
             </button>
           </div>
 
-          {isLoading ? (
-            <h1>...laoding</h1>
-          ) : (
-            <div className="row g-4">
-              {branches.map((branch) => (
-                <div key={branch.id} className="col-md-4">
-                  <div className="card h-100">
-                    <img
-                      src={branch.image}
-                      className="card-img-top"
-                      alt={branch.name}
-                      style={{ height: "200px", objectFit: "cover" }}
-                    />
-                    <div className="card-body">
-                      <h5 className="card-title">{branch.name}</h5>
-                      <p className="card-text">
-                        <strong>Address:</strong> {branch.address}
-                        <br />
-                        <strong>Phone:</strong> {branch.phone}
-                        <br />
-                        <strong>Manager:</strong> {branch.manager}
-                      </p>
-                      <span
-                        className={`badge ${
-                          branch.status === "active"
-                            ? "bg-success"
-                            : "bg-danger"
-                        }`}
-                      >
-                        {branch.status}
-                      </span>
-                    </div>
-                    <div className="card-footer d-flex justify-content-end ">
-                      <button
-                        onClick={() => handleOpenModal("edit", branch)}
-                        className="btn btn-warning btn-sm"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(branch.id)}
-                        className="btn btn-danger btn-sm"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
+          <div className="row g-4">
+            {branches.map((branch) => (
+              <div key={branch.id} className="col-md-4">
+                <div className="card h-100">
+                  <img
+                    src={branch.image}
+                    className="card-img-top"
+                    alt={branch.name}
+                    style={{ height: "200px", objectFit: "cover" }}
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{branch.name}</h5>
+                    <p className="card-text">
+                      <strong>Address:</strong> {branch.address}
+                      <br />
+                      <strong>Phone:</strong> {branch.phone}
+                      <br />
+                      <strong>Manager:</strong> {branch.manager}
+                    </p>
+                    <span
+                      className={`badge ${
+                        branch.status === "active" ? "bg-success" : "bg-danger"
+                      }`}
+                    >
+                      {branch.status}
+                    </span>
+                  </div>
+                  <div className="card-footer d-flex justify-content-end">
+                    <button
+                      onClick={() => handleOpenModal("edit", branch)}
+                      className="btn btn-warning btn-sm"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(branch.id)}
+                      className="btn btn-danger btn-sm"
+                    >
+                      <FaTrash />
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
 
           {isModalOpen && (
             <div className="modal show d-block" tabIndex="-1">
@@ -217,15 +234,25 @@ const BranchManagement = () => {
                         />
                       </div>
                       <div className="mb-3">
-                        <label className="form-label">Image URL</label>
+                        <label className="form-label">Upload Image</label>
                         <input
-                          type="text"
+                          type="file"
                           name="image"
-                          value={formData.image}
-                          onChange={handleInputChange}
+                          onChange={handleInputChange} // No value attribute for file input
                           className="form-control"
-                          required
                         />
+                        {previewUrl && (
+                          <img
+                            src={previewUrl}
+                            alt="Preview"
+                            style={{
+                              width: "100%",
+                              marginTop: "10px",
+                              height: "200px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        )}
                       </div>
                       <div className="mb-3">
                         <label className="form-label">Status</label>
