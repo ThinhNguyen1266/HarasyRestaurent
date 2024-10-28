@@ -20,8 +20,8 @@ export const axiosPrivate = axios.create({
 });
 
 axiosPublic.interceptors.response.use(
-  async (response) => {
-    return await response.data;
+  (response) => {
+    return response.data;
   },
   (error) => {
     return Promise.reject(error);

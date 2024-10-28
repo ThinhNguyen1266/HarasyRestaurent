@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 public interface BranchService {
-    ApiResponse<List<BranchListResponse>> getAllBranches();
+    ApiResponse<List<BranchInfoResponse>> getAllBranches();
 
     ApiResponse<BranchInfoResponse> getBranchInfo(int branchId);
 

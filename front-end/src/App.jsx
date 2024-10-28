@@ -13,7 +13,7 @@ import TableList from "./pages/TableList";
 import ChefMenu from "./pages/ChefMenu";
 import BranchManagement from "./pages/BranchManagement";
 import ReservationsPage from "./pages/AllReservation";
-
+import AuthRoute from "./components/AuthRoute";
 function App() {
   const location = useLocation();
 
@@ -31,7 +31,9 @@ function App() {
     <div className="App">
       {showNavFooter && <NavigationBar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}>
+          <Route path="/" element={<Home />} />
+        </Route>
         <Route path="/venues" element={<Venues />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/about" element={<About />} />
@@ -40,7 +42,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
-        <Route path="/branch" element={<BranchManagement />} />
+        <Route element={<AuthRoute allowedRoles={["BRANCH_MANAGER"]} />}>
+          <Route path="/branch" element={<BranchManagement />} />
+        </Route>
         <Route path="/reservation" element={<ReservationsPage />} />
       </Routes>
       {showNavFooter && <Footer />}

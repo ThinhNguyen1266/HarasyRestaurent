@@ -51,10 +51,10 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
-    public ApiResponse<List<BranchListResponse>> getAllBranches() {
+    public ApiResponse<List<BranchInfoResponse>> getAllBranches() {
         List<BranchEntity> branches = branchRepository.findAllByStatus(Status.ACTIVE);
-        List<BranchListResponse> branchesListResponses = branchMapper.toBranchListResponse(branches);
-        return ApiResponse.<List<BranchListResponse>>builder()
+        List<BranchInfoResponse> branchesListResponses = branchMapper.toBranchInfoResponses(branches);
+        return ApiResponse.<List<BranchInfoResponse>>builder()
                 .data(branchesListResponses)
                 .build();
     }

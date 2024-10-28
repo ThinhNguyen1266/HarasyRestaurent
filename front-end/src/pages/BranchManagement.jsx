@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../components/Sidebar";
-
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import axios from "../services/axios";
 const BranchManagement = () => {
   const initialBranchData = [
     {
@@ -35,7 +36,7 @@ const BranchManagement = () => {
     },
   ];
 
-  const [branches, setBranches] = useState(initialBranchData);
+  const [branches, setBranches] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add"); // add, edit
   const [currentBranch, setCurrentBranch] = useState(null);
@@ -47,6 +48,20 @@ const BranchManagement = () => {
     image: "",
     status: "active",
   });
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        let branchesData = (await axios.get("/branches")).data;
+        console.log(branchesData);
+        setBranches(branchesData);
+      } catch (error) {
+        console.error("Error fetching branches:", error);
+      }
+    };
+    fetchBranches();
+    return () => {};
+  }, []);
 
   const handleOpenModal = (mode, branch = null) => {
     setModalMode(mode);

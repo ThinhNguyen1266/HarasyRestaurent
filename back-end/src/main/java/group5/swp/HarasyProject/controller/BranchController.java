@@ -23,7 +23,7 @@ public class BranchController {
     BranchService branchService;
 
     @GetMapping("/branches")
-    ApiResponse<List<BranchListResponse>> getAllBranch() {
+    ApiResponse<List<BranchInfoResponse>> getAllBranch() {
         return branchService.getAllBranches();
     }
 

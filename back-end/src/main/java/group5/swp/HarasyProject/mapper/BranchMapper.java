@@ -21,6 +21,8 @@ public interface BranchMapper {
     List<BranchListResponse> toBranchListResponse(List<BranchEntity> branches);
     BranchInfoResponse toBranchInfoResponse(BranchEntity branch);
 
+    List<BranchInfoResponse> toBranchInfoResponses(List<BranchEntity> branches);
+
     @Mapping(target = "status", ignore = true)
     BranchEntity toBranchEntity(CreateBranchRequest request, @MappingTarget BranchEntity branch);
 
