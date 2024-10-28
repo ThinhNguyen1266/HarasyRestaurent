@@ -122,7 +122,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ApiResponse<LogoutResponse> logout(LogoutRequest logoutRequest) throws ParseException, JOSEException {
-        SignedJWT jwt = verifyToken(logoutRequest.getToken());
+        SignedJWT jwt = verifyToken(logoutRequest.getAccessToken());
         String username = jwt.getJWTClaimsSet().getSubject();
         String jit = jwt.getJWTClaimsSet().getJWTID();
         long exTime = jwt.getJWTClaimsSet().getExpirationTime().getTime();

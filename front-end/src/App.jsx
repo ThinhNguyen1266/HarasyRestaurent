@@ -12,7 +12,7 @@ import Venues from "./pages/Venues";
 import TableList from "./pages/TableList";
 import MenuManagement from "./pages/Chef_Menu";
 import Chef_Menu from "./pages/Chef_Menu";
-
+import AuthRoute from "./components/AuthRoute";
 function App() {
   const location = useLocation();
 
@@ -31,8 +31,10 @@ function App() {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/table" element={<TableList />} />
-        <Route path="/chef_menu" element={<Chef_Menu />} />
+        <Route element={<AuthRoute allowedRoles={["WAITER"]} />}>
+          <Route path="/table" element={<TableList />} />
+        </Route>
+        {/* <Route path="/chef_menu" element={<Chef_Menu />} /> */}
       </Routes>
       {showNavFooter && <Footer />}
     </div>

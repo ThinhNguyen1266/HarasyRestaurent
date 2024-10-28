@@ -27,6 +27,18 @@ const authSlice = createSlice({
     newAccessToken: (state, action) => {
       state.login.accessToken = action.payload.data.accessToken;
     },
+    logoutStart: (state) => {
+      state.login.isFetching = true;
+    },
+    logoutSuccess: (state) => {
+      state.login.isFetching = false;
+      state.login.currentUser = null;
+      state.login.accessToken = null;
+    },
+    logoutFail: (state) => {
+      state.login.isFetching = false;
+      state.login.error = true;
+    },
   },
 });
 const persistConfig = {
@@ -34,7 +46,14 @@ const persistConfig = {
   storage,
 };
 
-export const { loginStart, loginSuccess, loginFail, newAccessToken } =
-  authSlice.actions;
+export const {
+  loginStart,
+  loginSuccess,
+  loginFail,
+  newAccessToken,
+  logoutStart,
+  logoutFail,
+  logoutSuccess,
+} = authSlice.actions;
 
 export default persistReducer(persistConfig, authSlice.reducer);

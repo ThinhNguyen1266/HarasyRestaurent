@@ -11,5 +11,5 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LogoutRequest {
-    String token;
+    String accessToken;
 }
