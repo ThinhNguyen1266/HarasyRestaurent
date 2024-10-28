@@ -1,18 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, ListGroup, InputGroup } from 'react-bootstrap';
-import '../assets/styles/CreateOrder.css';
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Form, ListGroup, InputGroup } from "react-bootstrap";
+import "../assets/styles/CreateOrder.css";
 
 const UpdateOrder = ({ show, handleClose, initialItems }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [availableItems, setAvailableItems] = useState([
-    'Vegetable Mixups', 'Chinese Takeout Dish', 'Pasta', 'Garlic Bread', 
-    'Pizza', 'Caesar Salad', 'Sushi', 'Miso Soup', 'Burger', 'Fries', 
-    'Tacos', 'Nachos'
+  const [searchTerm, setSearchTerm] = useState("");
+  const [availableItems] = useState([
+    "Vegetable Mixups",
+    "Chinese Takeout Dish",
+    "Pasta",
+    "Garlic Bread",
+    "Pizza",
+    "Caesar Salad",
+    "Sushi",
+    "Miso Soup",
+    "Burger",
+    "Fries",
+    "Tacos",
+    "Nachos",
   ]);
   const [selectedItems, setSelectedItems] = useState({});
 
   useEffect(() => {
-    // Initialize selectedItems based on initialItems prop when the component mounts
     const initialSelectedItems = initialItems.reduce((acc, item) => {
       acc[item] = (acc[item] || 0) + 1;
       return acc;
@@ -20,44 +28,46 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
     setSelectedItems(initialSelectedItems);
   }, [initialItems]);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const handleSearch = (e) => setSearchTerm(e.target.value);
 
   const handleAddItem = (item) => {
     setSelectedItems((prevItems) => ({
       ...prevItems,
-      [item]: (prevItems[item] || 0) + 1 // Increase count or initialize to 1
+      [item]: (prevItems[item] || 0) + 1,
     }));
   };
 
   const handleRemoveItem = (item) => {
     setSelectedItems((prevItems) => {
       const updatedItems = { ...prevItems };
-      if (updatedItems[item] > 1) {
-        updatedItems[item] -= 1; // Decrement count if more than 1
-      } else {
-        delete updatedItems[item]; // Remove item if count is 1
-      }
+      if (updatedItems[item] > 1) updatedItems[item] -= 1;
+      else delete updatedItems[item];
       return updatedItems;
     });
   };
 
-  const handleUpdateOrder = () => {
-    // Logic to save updated order
-    handleClose(); // Close the modal after updating the order
-  };
+  const handleUpdateOrder = () => handleClose();
 
   const filteredItems = availableItems.filter((item) =>
     item.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalItemsCount = Object.values(selectedItems).reduce((sum, count) => sum + count, 0);
+  const totalItemsCount = Object.values(selectedItems).reduce(
+    (sum, count) => sum + count,
+    0
+  );
 
   return (
-    <Modal show={show} onHide={handleClose} centered dialogClassName="custom-create-order-modal">
-      <Modal.Header closeButton className="modal-header-custom">
-        <Modal.Title className="modal-title-custom">Update Order</Modal.Title>
+    <Modal
+      show={show}
+      onHide={handleClose}
+      centered
+      dialogClassName="custom-create-order-modal"
+    >
+      <Modal.Header className="modal-header-custom">
+        <Modal.Title className="modal-title-custom">
+          Create New Order
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className="modal-body-custom">
         <InputGroup className="mb-3 custom-search">
@@ -80,7 +90,9 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
             </ListGroup.Item>
           ))}
         </ListGroup>
-        <h5 className="selected-items-title">Selected Items (Total: {totalItemsCount}):</h5>
+        <h5 className="selected-items-title">
+          Selected Items (Total: {totalItemsCount}):
+        </h5>
         <ListGroup className="selected-items-list">
           {Object.entries(selectedItems).map(([item, count], index) => (
             <ListGroup.Item key={index} className="selected-item">
@@ -98,10 +110,18 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
         </ListGroup>
       </Modal.Body>
       <Modal.Footer className="modal-footer-custom">
-        <Button variant="outline-light" onClick={handleClose} className="modal-cancel-button">
+        <Button
+          variant="outline-light"
+          onClick={handleClose}
+          className="modal-cancel-button"
+        >
           Cancel
         </Button>
-        <Button variant="outline-warning" onClick={handleUpdateOrder} className="modal-create-button">
+        <Button
+          variant="outline-warning"
+          onClick={handleUpdateOrder}
+          className="modal-create-button"
+        >
           Save Changes
         </Button>
       </Modal.Footer>
