@@ -1,45 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../components/Sidebar";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import axios from "../services/axios";
+import "../assets/styles/BranchManagement.css";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { getBranches } from "../services/branchRequest";
 const BranchManagement = () => {
-  const initialBranchData = [
-    {
-      id: 1,
-      name: "Downtown Branch",
-      address: "123 Main Street, Downtown",
-      phone: "(555) 123-4567",
-      manager: "John Smith",
-      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
-      status: "active",
+  const queryClient = useQueryClient();
+  const { data: branches = [], isLoading } = useQuery({
+    queryKey: ["branches"],
+    queryFn: getBranches,
+    onError: (error) => {
+      toast.error(`Failed to fetch branches: ${error.message}`);
     },
-    {
-      id: 2,
-      name: "Riverside Location",
-      address: "456 River Road, Riverside",
-      phone: "(555) 987-6543",
-      manager: "Sarah Johnson",
-      image: "https://images.unsplash.com/photo-1552566626-52f8b828add9",
-      status: "active",
-    },
-    {
-      id: 3,
-      name: "Mall Branch",
-      address: "789 Shopping Center, Mall Area",
-      phone: "(555) 456-7890",
-      manager: "Michael Brown",
-      image: "https://images.unsplash.com/photo-1559339352-11d035aa65de",
-      status: "inactive",
-    },
-  ];
-
-  const [branches, setBranches] = useState([]);
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add"); // add, edit
-  const [currentBranch, setCurrentBranch] = useState(null);
+  // const [currentBranch, setCurrentBranch] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -49,24 +27,10 @@ const BranchManagement = () => {
     status: "active",
   });
 
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        let branchesData = (await axios.get("/branches")).data;
-        console.log(branchesData);
-        setBranches(branchesData);
-      } catch (error) {
-        console.error("Error fetching branches:", error);
-      }
-    };
-    fetchBranches();
-    return () => {};
-  }, []);
-
   const handleOpenModal = (mode, branch = null) => {
     setModalMode(mode);
     if (branch) {
-      setCurrentBranch(branch);
+      // setCurrentBranch(branch);
       setFormData(branch);
     } else {
       setFormData({
@@ -83,7 +47,7 @@ const BranchManagement = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setCurrentBranch(null);
+    // setCurrentBranch(null);
     setFormData({
       name: "",
       address: "",
@@ -107,16 +71,10 @@ const BranchManagement = () => {
     if (modalMode === "add") {
       const newBranch = {
         ...formData,
-        id: branches.length + 1,
       };
-      setBranches((prev) => [...prev, newBranch]);
+
       toast.success("Branch added successfully!");
     } else {
-      setBranches((prev) =>
-        prev.map((branch) =>
-          branch.id === currentBranch.id ? { ...formData } : branch
-        )
-      );
       toast.success("Branch updated successfully!");
     }
     handleCloseModal();
@@ -124,7 +82,6 @@ const BranchManagement = () => {
 
   const handleDelete = (branchId) => {
     if (window.confirm("Are you sure you want to delete this branch?")) {
-      setBranches((prev) => prev.filter((branch) => branch.id !== branchId));
       toast.success("Branch deleted successfully!");
     }
   };
@@ -147,51 +104,57 @@ const BranchManagement = () => {
             </button>
           </div>
 
-          <div className="row g-4">
-            {branches.map((branch) => (
-              <div key={branch.id} className="col-md-4">
-                <div className="card h-100">
-                  <img
-                    src={branch.image}
-                    className="card-img-top"
-                    alt={branch.name}
-                    style={{ height: "200px", objectFit: "cover" }}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{branch.name}</h5>
-                    <p className="card-text">
-                      <strong>Address:</strong> {branch.address}
-                      <br />
-                      <strong>Phone:</strong> {branch.phone}
-                      <br />
-                      <strong>Manager:</strong> {branch.manager}
-                    </p>
-                    <span
-                      className={`badge ${
-                        branch.status === "active" ? "bg-success" : "bg-danger"
-                      }`}
-                    >
-                      {branch.status}
-                    </span>
-                  </div>
-                  <div className="card-footer d-flex justify-content-end ">
-                    <button
-                      onClick={() => handleOpenModal("edit", branch)}
-                      className="btn btn-warning btn-sm"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(branch.id)}
-                      className="btn btn-danger btn-sm"
-                    >
-                      <FaTrash />
-                    </button>
+          {isLoading ? (
+            <h1>...laoding</h1>
+          ) : (
+            <div className="row g-4">
+              {branches.map((branch) => (
+                <div key={branch.id} className="col-md-4">
+                  <div className="card h-100">
+                    <img
+                      src={branch.image}
+                      className="card-img-top"
+                      alt={branch.name}
+                      style={{ height: "200px", objectFit: "cover" }}
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">{branch.name}</h5>
+                      <p className="card-text">
+                        <strong>Address:</strong> {branch.address}
+                        <br />
+                        <strong>Phone:</strong> {branch.phone}
+                        <br />
+                        <strong>Manager:</strong> {branch.manager}
+                      </p>
+                      <span
+                        className={`badge ${
+                          branch.status === "active"
+                            ? "bg-success"
+                            : "bg-danger"
+                        }`}
+                      >
+                        {branch.status}
+                      </span>
+                    </div>
+                    <div className="card-footer d-flex justify-content-end ">
+                      <button
+                        onClick={() => handleOpenModal("edit", branch)}
+                        className="btn btn-warning btn-sm"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(branch.id)}
+                        className="btn btn-danger btn-sm"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {isModalOpen && (
             <div className="modal show d-block" tabIndex="-1">
