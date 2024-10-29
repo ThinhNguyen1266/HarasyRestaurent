@@ -3,6 +3,8 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import NavigationBar from "./components/NavigationBar";
 import About from "./pages/About";
+import ReservationsPage from "./pages/AllReservation";
+import BranchManagement from "./pages/BranchManagement";
 import ChefMenu from "./pages/ChefMenu";
 import Contacts from "./pages/Contacts";
 import HCMMenu from "./pages/HCMMenu";
@@ -17,7 +19,13 @@ import Venues from "./pages/Venues";
 function App() {
   const location = useLocation();
 
-  const noNavFooterRoutes = ["/login", "/register", "/table", "/chefmenu"];
+  const noNavFooterRoutes = [
+    "/login",
+    "/register",
+    "/table",
+    "/chefmenu",
+    "/branch",
+  ];
 
   const showNavFooter = !noNavFooterRoutes.includes(location.pathname);
 
@@ -36,6 +44,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
+        <Route path="/branch" element={<BranchManagement />} />
+        <Route path="/reservation" element={<ReservationsPage />} />
       </Routes>
       {showNavFooter && <Footer />}
     </div>
