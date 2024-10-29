@@ -1,21 +1,22 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useAuth from "../hooks/useAuth";
 const AuthRoute = ({ allowedRoles }) => {
-  const user = useSelector((state) => state.auth.login.currentUser);
-  const location = useLocation;
+  const { user } = useAuth();
+  const location = useLocation();
 
   const defaultRolePath = {
     RECEPTIONIST: "/receptionist-home",
     CHEF: "/chef-home",
-    ADMIN: "/admin-home",
-    BRANCH_MANAGER: "/branch-manager-home",
+    ADMIN: "/branch",
+    BRANCH_MANAGER: "/branch",
     WAITER: "/waiter-home",
     CUSTOMER: "/",
   };
-  return allowedRoles.find((role) => role === user.role) ? (
+
+  return allowedRoles.find((role) => role === user?.role) ? (
     <Outlet />
   ) : user ? (
-    <Navigate to={defaultRolePath[user]} replace />
+    <Navigate to={defaultRolePath[user?.role]} replace />
   ) : (
     <Navigate to={"/login"} state={{ from: location }} replace />
   );

@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Menu from "./pages/Menu";
 import Register from "./pages/Register";
 import TableList from "./pages/TableList";
+import AuthRoute from "./components/AuthRoute";
 import Venues from "./pages/Venues";
 
 function App() {
@@ -33,7 +34,9 @@ function App() {
     <div className="App">
       {showNavFooter && <NavigationBar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}>
+          <Route path="/" element={<Home />} />
+        </Route>
         <Route path="/venues" element={<Venues />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/menu/hcm" element={<HCMMenu />} />
@@ -44,7 +47,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
-        <Route path="/branch" element={<BranchManagement />} />
+        <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
+          <Route path="/branch" element={<BranchManagement />} />
+        </Route>
         <Route path="/reservation" element={<ReservationsPage />} />
       </Routes>
       {showNavFooter && <Footer />}

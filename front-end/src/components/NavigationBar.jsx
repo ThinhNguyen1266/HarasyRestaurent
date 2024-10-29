@@ -8,7 +8,18 @@ import { Link } from "react-router-dom";
 import logo from "../assets/img/logo.png";
 import "../assets/styles/Nav.css";
 import Profile from "./Profile";
+import { logout } from "../services/authRequest";
+import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 function NavigationBar() {
+  const { accessToken } = useAuth();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout(accessToken, dispatch, navigate);
+  };
+
   return (
     <>
       {["sm"].map((expand) => (
@@ -56,6 +67,7 @@ function NavigationBar() {
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
+            <button onClick={handleLogout}>Logout</button>
           </Container>
         </Navbar>
       ))}

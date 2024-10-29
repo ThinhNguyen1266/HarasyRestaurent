@@ -2,6 +2,7 @@ package group5.swp.HarasyProject.dto.response.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
+import group5.swp.HarasyProject.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,6 +21,7 @@ public class BranchInfoResponse {
     String location;
     String image;
     String phone;
+    Status status;
     List<BranchWorkingHourResponse> workingHours;
     List<TableResponse> tables;
 }

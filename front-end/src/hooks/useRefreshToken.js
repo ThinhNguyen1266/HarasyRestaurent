@@ -4,11 +4,15 @@ import { newAccessToken } from "../redux/authSlice";
 const useRefreshToken = () => {
   const dispatch = useDispatch();
   const refresh = async () => {
-    const response = await axios.post("/refresh", {
-      withCredentials: true,
-    });
-    dispatch(newAccessToken(response));
-    return response.data.accessToken;
+    try {
+      const response = await axios.post("/auth/refreshToken", null, {
+        withCredentials: true,
+      });
+      dispatch(newAccessToken(response));
+      return response.data.accessToken;
+    } catch (error) {
+      console.log(`error: ${error}`);
+    }
   };
 
   return refresh;

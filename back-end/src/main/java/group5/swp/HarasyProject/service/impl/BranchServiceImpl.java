@@ -51,10 +51,15 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
-    public ApiResponse<List<BranchListResponse>> getAllBranches() {
-        List<BranchEntity> branches = branchRepository.findAllByStatus(Status.ACTIVE);
-        List<BranchListResponse> branchesListResponses = branchMapper.toBranchListResponse(branches);
-        return ApiResponse.<List<BranchListResponse>>builder()
+    public ApiResponse<List<BranchInfoResponse>> getAllBranches(boolean isStaff) {
+        List<BranchEntity> branches = branchRepository.findAll();
+        if (!isStaff) {
+            branches = branches
+                    .stream().filter(branchEntity -> branchEntity.getStatus().equals(Status.ACTIVE))
+                    .toList();
+        }
+        List<BranchInfoResponse> branchesListResponses = branchMapper.toBranchInfoResponses(branches);
+        return ApiResponse.<List<BranchInfoResponse>>builder()
                 .data(branchesListResponses)
                 .build();
     }
@@ -66,12 +71,17 @@ public class BranchServiceImpl implements BranchService {
         }
         BranchEntity branch = new BranchEntity();
         branch = branchMapper.toBranchEntity(request, branch);
-
-        List<TableEntity> tables = request.getTables()
-                .stream().map(createTableRequest -> tableMapper.toTable(createTableRequest, new TableEntity()))
-                .toList();
+        List<TableEntity> tables = null;
+        if(request.getTables()!=null){
+            tables = request.getTables()
+                    .stream().map(createTableRequest -> tableMapper.toTable(createTableRequest, new TableEntity()))
+                    .toList();
+        }
         branch.setTables(tables);
-        List<MenuEntity> menus = menuMapper.toMenuEntities(request.getMenus());
+        List<MenuEntity> menus = null;
+        if(request.getMenus()!=null){
+            menus = menuMapper.toMenuEntities(request.getMenus());
+        }
         branch.setMenus(menus);
         branch = branchRepository.save(branch);
         BranchInfoResponse info = branchMapper.toBranchInfoResponse(branch);

@@ -32,11 +32,13 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -93,19 +95,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             ProfileResponse profileResponse = null;
             String accessToken = null;
 
-            if(authenticated){
-                profileResponse= accountEntity.getCustomer()!=null
+            if(authenticated) {
+                profileResponse = accountEntity.getCustomer() != null
                         ? accountMapper.toCustomerProfileResponse(accountEntity)
                         : accountMapper.toStaffProfileResponse(accountEntity);
                 accessToken = generateToken(accountEntity, false);
                 String refreshToken = generateToken(accountEntity, true);
-
-                Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-                refreshTokenCookie.setHttpOnly(true);
-                refreshTokenCookie.setSecure(true);
-                refreshTokenCookie.setPath("/");
-                refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-                response.addCookie(refreshTokenCookie);
+                ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                        .httpOnly(true)
+                        .secure(false)
+                        .path("/")
+                        .maxAge(Duration.ofDays(7))
+                        .sameSite("Strict")
+                        .build();
+                response.addHeader("Set-Cookie", cookie.toString());
             }
             return ApiResponse.<AuthenticationResponse>builder()
                     .code(authenticated ? 200 : HttpStatus.UNAUTHORIZED.value())
@@ -122,7 +125,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ApiResponse<LogoutResponse> logout(LogoutRequest logoutRequest) throws ParseException, JOSEException {
-        SignedJWT jwt = verifyToken(logoutRequest.getToken());
+        SignedJWT jwt = verifyToken(logoutRequest.getAccessToken());
         String username = jwt.getJWTClaimsSet().getSubject();
         String jit = jwt.getJWTClaimsSet().getJWTID();
         long exTime = jwt.getJWTClaimsSet().getExpirationTime().getTime();
@@ -153,6 +156,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 }
             }
         }
+        if (refreshToken == null) throw new AppException(ErrorCode.TOKEN_NULL);
         SignedJWT jwt = verifyToken(refreshToken);
         String jit = jwt.getJWTClaimsSet().getJWTID();
         String username = jwt.getJWTClaimsSet().getSubject();
@@ -160,6 +164,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = "";
         if (redisService.isRefreshToken(username, jit))
             token = generateToken(account, false);
+        if(token==null) throw new AppException(ErrorCode.UNAUTHENTICATED);
         return ApiResponse.<RefreshResponse>builder()
                 .data(RefreshResponse.builder()
                         .accessToken(token)
