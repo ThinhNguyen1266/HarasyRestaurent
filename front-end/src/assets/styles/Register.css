@@ -67,13 +67,13 @@ html {
   border: none;
   border-radius: 4px;
   margin-top: 25px;
-  color: white;
+  color: rgb(0, 0, 0);
   font-size: 20px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .register-button:hover {
-  background-color: #e07a00;
+  background-color: #f89e38;
 }
 
 .login-link {
