@@ -1,9 +1,7 @@
-/* Base styles for Sidebar */
-
 .sidebar {
   height: 100vh;
   width: 250px;
-  background-color: #1a1a1a;
+  background-color: #141414;
   color: #fff;
   padding: 0 30px;
   position: fixed;
@@ -21,24 +19,20 @@
   min-height: 100vh;
 }
 
-/* Expanded Sidebar */
 .sidebar.expanded {
   width: 250px;
   padding: 0 20px;
 }
 
-/* Collapsed Sidebar */
 .sidebar.collapsed {
-  width: 80px; /* Collapsed width to only show icons */
+  width: 80px;
 }
 
-/* Logo visibility */
 .logo {
   width: 70%;
-  padding-top: 10px;
+  padding-top: 20px;
 }
 
-/* Sidebar header where logo and toggle button is */
 .sidebar-header {
   display: flex;
   justify-content: space-between;
@@ -46,14 +40,12 @@
   padding: 15px 0;
 }
 
-/* Hamburger menu (toggle button) */
 .hamburger-menu {
   cursor: pointer;
   padding: 15px;
   color: #fff;
 }
 
-/* User info (hidden when collapsed) */
 .sidebar-user {
   margin: 30px 0;
   font-family: "Futura", "Nunito Sans", sans-serif;
@@ -63,7 +55,6 @@
   font-size: 18px;
 }
 
-/* Sidebar section items */
 .sidebar-section {
   margin-bottom: 20px;
 }
@@ -73,16 +64,17 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
+  font-weight: 600;
   cursor: pointer;
   font-size: 16px;
+  text-transform: uppercase;
   color: #ccc;
   font-family: "Futura", "Nunito Sans", sans-serif;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
 }
 
-/* Sidebar hover effects */
 .sidebar-item:hover {
-  color: orange;
+  color: #fb8500;
 }
 
 /* ul list */
@@ -97,16 +89,18 @@
 
 .sidebar-section ul li a {
   text-decoration: none;
-  font-size: 16px;
+  font-size: 14px;
+  text-transform: uppercase;
   color: #fff;
   display: block;
   padding: 10px 15px;
   border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
 .sidebar-section ul li a:hover,
 .sidebar-section ul li a.active {
-  background: orange;
+  background: #fb8500;
   color: black;
 }
 
@@ -122,7 +116,7 @@
 }
 
 .sidebar-logout:hover {
-  color: orange;
+  color: #fb8500;
 }
 
 .sidebar-logout span {
