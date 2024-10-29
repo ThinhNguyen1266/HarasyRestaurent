@@ -24,6 +24,7 @@ public enum ErrorCode {
     TABLE_NOT_FOUND(4007, "table not found", HttpStatus.UNAUTHORIZED),
     BRANCH_IS_EXIST(4008,"branch name is duplicate",HttpStatus.CONFLICT),
     MENU_NOT_FOUND(4009, "menu not found", HttpStatus.NOT_FOUND),
+    TOKEN_NULL(10000, "token is null", HttpStatus.UNAUTHORIZED),
     ;
 
     int code;

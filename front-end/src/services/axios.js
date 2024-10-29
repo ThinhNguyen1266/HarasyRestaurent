@@ -1,9 +1,8 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080";
+// const BASE_URL = "http://localhost:8080";
 
 const axiosPublic = axios.create({
-  baseURL: BASE_URL,
   timeout: 3000,
   header: {
     "Content-Type": "application/json",
@@ -11,7 +10,6 @@ const axiosPublic = axios.create({
 });
 
 export const axiosPrivate = axios.create({
-  baseURL: BASE_URL,
   timeout: 3000,
   header: {
     "Content-Type": "application/json",

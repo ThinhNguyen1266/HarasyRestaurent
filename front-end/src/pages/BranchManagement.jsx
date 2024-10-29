@@ -4,74 +4,123 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../components/Sidebar";
 import "../assets/styles/BranchManagement.css";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { getBranches } from "../services/branchRequest";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
+import useBranchApi from "../hooks/api/useBranchApi";
+import uploadImage from "../services/uploadImage";
+
 const BranchManagement = () => {
   const queryClient = useQueryClient();
+  const { getBranchesStaff, createBranch, updateBranch, deleteBranch } =
+    useBranchApi();
   const { data: branches = [], isLoading } = useQuery({
     queryKey: ["branches"],
-    queryFn: getBranches,
+    queryFn: getBranchesStaff,
     onError: (error) => {
       toast.error(`Failed to fetch branches: ${error.message}`);
     },
   });
+
+  const uploadImageMutate = useMutation({
+    mutationFn: uploadImage,
+    onSuccess: (data) => {
+      toast.success("Image uploaded successfully!");
+    },
+    onError: (error) => {
+      toast.error(`Image uploaded fail!`);
+    },
+  });
+
+  const saveBranchMutate = useMutation({
+    mutationFn: createBranch,
+    onSuccess: () => {
+      queryClient.invalidateQueries("branches");
+    },
+    onError: (error) => {
+      toast.error(`Failed to create branches: ${error.message}`);
+    },
+  });
+
+  const updateBranchMutate = useMutation({
+    mutationFn: updateBranch,
+    onSuccess: () => {
+      queryClient.invalidateQueries("branches");
+    },
+    onError: (error) => {
+      toast.error(`Failed to update branches: ${error.message}`);
+    },
+  });
+
+  const deleteBranchMutate = useMutation({
+    mutationFn: deleteBranch,
+    onSuccess: () => {
+      queryClient.invalidateQueries("branches");
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete branches: ${error.message}`);
+    },
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState("add"); // add, edit
-  // const [currentBranch, setCurrentBranch] = useState(null);
+  const [modalMode, setModalMode] = useState("add");
+
   const [formData, setFormData] = useState({
+    id: "",
     name: "",
-    address: "",
+    location: "",
     phone: "",
     manager: "",
     image: "",
-    status: "active",
+    imageFile: null,
+    status: "INACTIVE",
   });
   const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleOpenModal = (mode, branch = null) => {
     setModalMode(mode);
     if (branch) {
-      // setCurrentBranch(branch);
-      setFormData(branch);
-      setPreviewUrl(branch.image); // Set preview to existing image when editing
+      setFormData({ ...branch, id: branch.id });
+      setPreviewUrl(branch.image);
     } else {
       setFormData({
+        id: "",
         name: "",
-        address: "",
+        location: "",
         phone: "",
         manager: "",
         image: "",
-        status: "active",
+        imageFile: null,
+        status: "INACTIVE",
       });
-      setPreviewUrl(null); // Reset preview for adding a new branch
+      setPreviewUrl(null);
     }
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    // setCurrentBranch(null);
+
     setFormData({
+      id: "",
       name: "",
-      address: "",
+      location: "",
       phone: "",
       manager: "",
       image: "",
-      status: "active",
+      imageFile: null,
+      status: "",
     });
     setPreviewUrl(null);
   };
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-
-    if (name === "image") {
+    if (name === "imageFile") {
       const file = files[0];
       setFormData((prev) => ({
         ...prev,
-        image: file,
+        imageFile: file,
       }));
-      setPreviewUrl(URL.createObjectURL(file)); // Update preview for new image
+      setPreviewUrl(URL.createObjectURL(file));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -80,32 +129,41 @@ const BranchManagement = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (modalMode === "add") {
-      const newBranch = {
-        ...formData,
-        image: previewUrl, // Use preview URL for new image
-      };
-
-      toast.success("Branch added successfully!");
+      if (formData.imageFile) {
+        uploadImageMutate.mutate(formData.imageFile, {
+          onSuccess: (data) => {
+            saveBranchMutate.mutate({ ...formData, image: data });
+          },
+        });
+      } else {
+        saveBranchMutate.mutate(formData);
+      }
     } else {
-      // setBranches((prev) =>
-      //   prev.map((branch) =>
-      //     branch.id === currentBranch.id
-      //       ? { ...formData, image: previewUrl || branch.image } // Keep existing image if no new one is selected
-      //       : branch
-      //   )
-      // );
-      toast.success("Branch updated successfully!");
+      console.log("hi");
+      if (formData.imageFile) {
+        uploadImageMutate.mutate(formData.imageFile, {
+          onSuccess: (data) => {
+            updateBranchMutate.mutate({ ...formData, image: data });
+          },
+        });
+      } else {
+        updateBranchMutate.mutate(formData);
+      }
     }
-    handleCloseModal();
+
+    setIsModalOpen(false);
   };
 
   const handleDelete = (branchId) => {
     if (window.confirm("Are you sure you want to delete this branch?")) {
-      toast.success("Branch deleted successfully!");
+      deleteBranchMutate.mutate(branchId, {
+        onSuccess: () => {
+          toast.success("Branch deleted successfully!");
+        },
+      });
     }
   };
 
@@ -126,52 +184,57 @@ const BranchManagement = () => {
               Add New Branch
             </button>
           </div>
-
-          <div className="row g-4">
-            {branches.map((branch) => (
-              <div key={branch.id} className="col-md-4">
-                <div className="card h-100">
-                  <img
-                    src={branch.image}
-                    className="card-img-top"
-                    alt={branch.name}
-                    style={{ height: "200px", objectFit: "cover" }}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{branch.name}</h5>
-                    <p className="card-text">
-                      <strong>Address:</strong> {branch.address}
-                      <br />
-                      <strong>Phone:</strong> {branch.phone}
-                      <br />
-                      <strong>Manager:</strong> {branch.manager}
-                    </p>
-                    <span
-                      className={`badge ${
-                        branch.status === "active" ? "bg-success" : "bg-danger"
-                      }`}
-                    >
-                      {branch.status}
-                    </span>
-                  </div>
-                  <div className="card-footer d-flex justify-content-end">
-                    <button
-                      onClick={() => handleOpenModal("edit", branch)}
-                      className="btn btn-warning btn-sm"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(branch.id)}
-                      className="btn btn-danger btn-sm"
-                    >
-                      <FaTrash />
-                    </button>
+          {isLoading ? (
+            <h1>....Loading</h1>
+          ) : (
+            <div className="row g-4">
+              {branches?.map((branch) => (
+                <div key={branch.id} className="col-md-4">
+                  <div className="card h-100">
+                    <img
+                      src={branch.image}
+                      className="card-img-top"
+                      alt={branch.name}
+                      style={{ height: "200px", objectFit: "cover" }}
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">{branch.name}</h5>
+                      <p className="card-text">
+                        <strong>Address:</strong> {branch.location}
+                        <br />
+                        <strong>Phone:</strong> {branch.phone}
+                        <br />
+                        <strong>Manager:</strong> {branch.manager}
+                      </p>
+                      <span
+                        className={`badge ${
+                          branch.status === "active"
+                            ? "bg-success"
+                            : "bg-danger"
+                        }`}
+                      >
+                        {branch.status}
+                      </span>
+                    </div>
+                    <div className="card-footer d-flex justify-content-end">
+                      <button
+                        onClick={() => handleOpenModal("edit", branch)}
+                        className="btn btn-warning btn-sm"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(branch.id)}
+                        className="btn btn-danger btn-sm"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {isModalOpen && (
             <div className="modal show d-block" tabIndex="-1">
@@ -201,11 +264,11 @@ const BranchManagement = () => {
                         />
                       </div>
                       <div className="mb-3">
-                        <label className="form-label">Address</label>
+                        <label className="form-label">location</label>
                         <input
                           type="text"
-                          name="address"
-                          value={formData.address}
+                          name="location"
+                          value={formData.location}
                           onChange={handleInputChange}
                           className="form-control"
                           required
@@ -237,7 +300,7 @@ const BranchManagement = () => {
                         <label className="form-label">Upload Image</label>
                         <input
                           type="file"
-                          name="image"
+                          name="imageFile"
                           onChange={handleInputChange} // No value attribute for file input
                           className="form-control"
                         />
@@ -262,8 +325,8 @@ const BranchManagement = () => {
                           onChange={handleInputChange}
                           className="form-select"
                         >
-                          <option value="active">Active</option>
-                          <option value="inactive">Inactive</option>
+                          <option value="ACTIVE">Active</option>
+                          <option value="INACTIVE">Inactive</option>
                         </select>
                       </div>
                       <div className="d-flex justify-content-end gap-2">

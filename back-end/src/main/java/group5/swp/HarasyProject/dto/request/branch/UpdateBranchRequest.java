@@ -1,6 +1,7 @@
 package group5.swp.HarasyProject.dto.request.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import group5.swp.HarasyProject.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,4 +16,5 @@ public class UpdateBranchRequest {
     String location;
     String image;
     String phone;
+    Status status;
 }

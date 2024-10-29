@@ -7,7 +7,7 @@ const AuthRoute = ({ allowedRoles }) => {
   const defaultRolePath = {
     RECEPTIONIST: "/receptionist-home",
     CHEF: "/chef-home",
-    ADMIN: "/admin-home",
+    ADMIN: "/branch",
     BRANCH_MANAGER: "/branch",
     WAITER: "/waiter-home",
     CUSTOMER: "/",

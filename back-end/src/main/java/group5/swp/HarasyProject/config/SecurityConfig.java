@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -29,7 +30,7 @@ public class SecurityConfig {
     String[] PUBLIC_ENDPOINT = {
             "/users", "/regis/user", "/auth/**", "/uploadImage", "/profile/{AccountId}"
             , "/reservations", "/search", "/reservation/{id}"
-            , "/branches",
+            , "/staff/branches","/customer/branches"
     };
     String[] GET_PUBLIC_ENDPOINT ={
             "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
@@ -39,8 +40,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+        httpSecurity.cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()));
         httpSecurity.authorizeHttpRequests(requests ->
                 requests
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET,GET_PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET, "/").hasRole("ADMIN")
@@ -63,7 +67,6 @@ public class SecurityConfig {
                 ).authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                         .accessDeniedHandler(new CustomAccessDeniedHandler())
         );
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }
 
@@ -82,16 +85,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
-        corsConfiguration.addAllowedOrigin("http://localhost:3000");
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedOrigin("http://localhost:3000/");
+        corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
+        corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
+        corsConfiguration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
 
-        return new CorsFilter(urlBasedCorsConfigurationSource);
+        return source;
     }
 }

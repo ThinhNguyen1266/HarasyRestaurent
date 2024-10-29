@@ -42,7 +42,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
-        <Route element={<AuthRoute allowedRoles={["BRANCH_MANAGER"]} />}>
+        <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
           <Route path="/branch" element={<BranchManagement />} />
         </Route>
         <Route path="/reservation" element={<ReservationsPage />} />
