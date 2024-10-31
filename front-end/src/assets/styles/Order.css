@@ -18,6 +18,7 @@ body {
   overflow-y: auto;
 }
 
+/* Responsive scrollbar styling */
 .order-page::-webkit-scrollbar,
 .order-items-container::-webkit-scrollbar {
   width: 8px;
@@ -60,12 +61,14 @@ h1 {
   border: none;
 }
 
+/* Responsive Grid for Order List */
 .order-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive min size */
   gap: 20px;
 }
 
+/* Responsive Order Card Styling */
 .order-card {
   background-color: #333;
   color: #fff;
@@ -76,6 +79,7 @@ h1 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Responsive Order Header */
 .order-header {
   background-color: #222;
   color: #E55B00;
@@ -84,27 +88,14 @@ h1 {
   border-bottom: 1px solid #444;
 }
 
+/* Scrollable Items Container */
 .order-items-container {
   max-height: 150px;
   overflow-y: auto;
   padding-right: 5px;
 }
 
-/* Modern and Stylish Scrollbar */
-.order-items-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.order-items-container::-webkit-scrollbar-thumb {
-  background: #444;
-  border-radius: 10px;
-}
-
-.order-items-container::-webkit-scrollbar-thumb:hover {
-  background: #666;
-}
-
-/* Styling each item with modern design */
+/* Styling for Each Item */
 .order-item {
   display: flex;
   justify-content: space-between;
@@ -153,4 +144,49 @@ h1 {
   color: #ccc;
   margin-bottom: 10px;
   font-weight: 500;
+}
+
+/* Media Queries for Smaller Screens */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+
+  .header-row h1 {
+    font-size: 1.5rem;
+  }
+
+  .button-row {
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .order-items-container {
+    max-height: 120px;
+  }
+
+  .order-item {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .order-list {
+    grid-template-columns: 1fr; /* Stacks cards vertically */
+  }
+
+  .create-order-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .order-card {
+    padding: 15px;
+  }
+
+  .update-button {
+    font-size: 0.9rem;
+    padding: 6px 0;
+  }
 }
