@@ -7,6 +7,7 @@ import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.BranchWorkingHourEntity;
+import group5.swp.HarasyProject.entity.food.CategoryEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
@@ -45,7 +46,7 @@ public class AppConfig {
     static final String ADMIN_PASSWORD = "admin";
 
     @Bean
-    ApplicationRunner applicationRunner(AccountRepository accountRepository, BranchRepository branchRepository) {
+    ApplicationRunner applicationRunner(AccountRepository accountRepository, BranchRepository branchRepository){
         return args -> {
             if (accountRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
                 AccountEntity account = AccountEntity.builder()
@@ -97,6 +98,7 @@ public class AppConfig {
                     List<BranchWorkingHourEntity> workingHours = new ArrayList<>();
                     List<MenuEntity> menus = new ArrayList<>();
                     for (int j = 0; j < 4; j++) {
+
                         BranchWorkingHourEntity workingHour = BranchWorkingHourEntity.builder()
                                 .dayOfWeek(
                                         switch (j){

@@ -3,7 +3,6 @@ package group5.swp.HarasyProject.service;
 import com.nimbusds.jose.JOSEException;
 import group5.swp.HarasyProject.dto.request.auth.AuthenticationRequest;
 import group5.swp.HarasyProject.dto.request.auth.IntrospectRequest;
-import group5.swp.HarasyProject.dto.request.auth.LogoutRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.auth.AuthenticationResponse;
 import group5.swp.HarasyProject.dto.response.auth.IntrospectResponse;
@@ -23,7 +22,7 @@ public interface AuthenticationService {
 
     ApiResponse<IntrospectResponse> introspect(IntrospectRequest introspectRequest)throws JOSEException, ParseException;
 
-    ApiResponse<LogoutResponse> logout(LogoutRequest logoutRequest) throws ParseException, JOSEException;
+    ApiResponse<LogoutResponse> logout(String accessToken) throws ParseException, JOSEException;
 
     ApiResponse<RefreshResponse> refreshToken(HttpServletRequest request) throws ParseException, JOSEException;
 }

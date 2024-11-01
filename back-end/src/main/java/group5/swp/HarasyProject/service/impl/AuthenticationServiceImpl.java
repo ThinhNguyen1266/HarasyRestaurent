@@ -7,7 +7,6 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import group5.swp.HarasyProject.dto.request.auth.AuthenticationRequest;
 import group5.swp.HarasyProject.dto.request.auth.IntrospectRequest;
-import group5.swp.HarasyProject.dto.request.auth.LogoutRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.auth.AuthenticationResponse;
@@ -89,7 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ApiResponse<AuthenticationResponse> login(AuthenticationRequest authenticationRequest, HttpServletResponse response) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         AccountEntity accountEntity = accountRepository.findByUsername(authenticationRequest.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.ENTITY_NOT_FOUND));
         if (accountEntity.getStatus() != AccountStatus.DELETED) {
             boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), accountEntity.getPassword());
             ProfileResponse profileResponse = null;
@@ -124,8 +123,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public ApiResponse<LogoutResponse> logout(LogoutRequest logoutRequest) throws ParseException, JOSEException {
-        SignedJWT jwt = verifyToken(logoutRequest.getAccessToken());
+    public ApiResponse<LogoutResponse> logout(String accessToken) throws ParseException, JOSEException {
+        SignedJWT jwt = verifyToken(accessToken);
         String username = jwt.getJWTClaimsSet().getSubject();
         String jit = jwt.getJWTClaimsSet().getJWTID();
         long exTime = jwt.getJWTClaimsSet().getExpirationTime().getTime();
@@ -136,7 +135,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (timeToExpire > 0) {
             redisService.addTokenToBlacklist(jit, timeToExpire);
         } else
-            message = "Token has already expired";
+           throw new AppException(ErrorCode.TOKEN_EXPIRED);
         return ApiResponse.<LogoutResponse>builder()
                 .data(LogoutResponse.builder()
                         .message(message)
@@ -160,7 +159,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SignedJWT jwt = verifyToken(refreshToken);
         String jit = jwt.getJWTClaimsSet().getJWTID();
         String username = jwt.getJWTClaimsSet().getSubject();
-        AccountEntity account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        AccountEntity account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.ENTITY_NOT_FOUND));
         String token = "";
         if (redisService.isRefreshToken(username, jit))
             token = generateToken(account, false);

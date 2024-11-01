@@ -74,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest) throws IOException, MessagingException {
         if (otpService.validateOtp(otpRequest)) {
-            AccountEntity account = accountRepository.findByEmail(otpRequest.getEmail()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+            AccountEntity account = accountRepository.findByEmail(otpRequest.getEmail()).orElseThrow(() -> new AppException(ErrorCode.ENTITY_NOT_FOUND));
             account.setStatus(AccountStatus.ACTIVE);
             redisService.deleteOtp(otpRequest.getEmail());
             accountRepository.save(account);
