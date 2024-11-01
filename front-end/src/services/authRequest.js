@@ -23,7 +23,7 @@ export const login = async (user, dispatch, navigate, location) => {
 export const logout = async (accessToken, dispatch, navigate) => {
   dispatch(logoutStart());
   try {
-    await axios.post("/logout", {
+    await axios.post("/auth/logout", {
       accessToken,
     });
     dispatch(logoutSuccess());

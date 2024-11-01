@@ -3,6 +3,8 @@ package group5.swp.HarasyProject.entity.food;
 
 import group5.swp.HarasyProject.entity.Auditable;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
+import group5.swp.HarasyProject.entity.menu.MenuItemEntity;
+import group5.swp.HarasyProject.entity.order.OrderEntity;
 import group5.swp.HarasyProject.entity.order.OrderItem;
 import group5.swp.HarasyProject.enums.Status;
 import jakarta.persistence.*;
@@ -44,13 +46,8 @@ public class FoodEntity extends Auditable {
     Status status = Status.INACTIVE;
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "menu_item",
-            joinColumns = @JoinColumn(name = "food_id"),
-            inverseJoinColumns = @JoinColumn(name = "menu_id")
-    )
-    List<MenuEntity> menus;
+    @OneToMany(mappedBy = "food")
+    List<MenuItemEntity> menuItems;
 
 
     @ManyToOne

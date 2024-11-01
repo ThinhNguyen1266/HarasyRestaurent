@@ -33,7 +33,7 @@ public class MenuEntity {
     @JoinColumn(name = "branch_id")
     BranchEntity branch;
 
-    @ManyToMany(mappedBy = "menus")
-    List<FoodEntity> foods;
+    @OneToMany(mappedBy = "menu")
+    List<MenuItemEntity> menuItems;
 
 }
