@@ -16,29 +16,20 @@ import Register from "./pages/Register";
 import TableList from "./pages/TableList";
 import AuthRoute from "./components/AuthRoute";
 import Venues from "./pages/Venues";
-
+import StaffLayout from "./components/StaffLayout";
+import DefaultLayout from "./components/DefaultLayout";
 function App() {
-  const location = useLocation();
-
-  const noNavFooterRoutes = [
-    "/login",
-    "/register",
-    "/table",
-    "/chefmenu",
-    "/branch",
-  ];
-
-  const showNavFooter = !noNavFooterRoutes.includes(location.pathname);
-
   return (
     <div className="App">
-      {showNavFooter && <NavigationBar />}
       <Routes>
-        <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}>
-          <Route path="/" element={<Home />} />
+        <Route element={<DefaultLayout />}>
+          <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/reservation" element={<ReservationsPage />} />
+          </Route>
+          <Route path="/venues" element={<Venues />} />
+          <Route path="/menu" element={<Menu />} />
         </Route>
-        <Route path="/venues" element={<Venues />} />
-        <Route path="/menu" element={<Menu />} />
         <Route path="/menu/hcm" element={<HCMMenu />} />
         <Route path="/menu/hanoi" element={<HNMenu />} />
         <Route path="/about" element={<About />} />
@@ -47,12 +38,12 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
-        <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
-          <Route path="/branch" element={<BranchManagement />} />
+        <Route element={<StaffLayout />}>
+          <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
+            <Route path="/branch" element={<BranchManagement />} />
+          </Route>
         </Route>
-        <Route path="/reservation" element={<ReservationsPage />} />
       </Routes>
-      {showNavFooter && <Footer />}
     </div>
   );
 }

@@ -1,12 +1,9 @@
-package group5.swp.HarasyProject.dto.response.menu;
+package group5.swp.HarasyProject.dto.response.food;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.entity.food.FoodEntity;
-import group5.swp.HarasyProject.enums.MenuType;
+import group5.swp.HarasyProject.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,9 +11,13 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MenuResponse {
+public class FoodResponse {
     Integer id;
-    MenuType type;
-    int branchId;
-    List<FoodEntity> foods;
+    String name;
+    String description;
+    String image;
+    Integer price;
+    Integer pointsPrice;
+    String status;
+    String categoryName;
 }

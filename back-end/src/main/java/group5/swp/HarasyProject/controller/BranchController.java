@@ -4,7 +4,6 @@ import group5.swp.HarasyProject.dto.request.branch.CreateBranchRequest;
 import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
-import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.service.BranchService;

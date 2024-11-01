@@ -2,24 +2,23 @@ import React, { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "../assets/styles/Login.css";
-import { login } from "../services/authRequest";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import useAuthApi from "../hooks/api/useAuthApi";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const handleLogin = (e) => {
+  const { login } = useAuthApi();
+  const handleLogin = async (e) => {
     e.preventDefault();
     const user = {
       username,
       password,
     };
-    login(user, dispatch, navigate, location);
+    await login(user, dispatch, navigate, location);
   };
 
   return (

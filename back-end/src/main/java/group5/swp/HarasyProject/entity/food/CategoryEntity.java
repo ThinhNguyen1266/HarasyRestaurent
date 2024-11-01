@@ -24,13 +24,6 @@ public class CategoryEntity {
     @Column(name = "cat_name",nullable = false)
     String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    CategoryEntity parent;
-
-    @OneToMany(mappedBy = "parent",cascade = CascadeType.ALL)
-    List<CategoryEntity> children;
-
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
     List<FoodEntity> foods;
 }
