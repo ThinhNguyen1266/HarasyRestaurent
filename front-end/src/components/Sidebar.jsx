@@ -5,18 +5,22 @@ import {
   FaUserCircle,
   FaPowerOff,
 } from "react-icons/fa";
-import {
-  BsGrid,
-  BsPerson,
-  BsListTask,
-  BsChevronDown,
-  BsChevronUp,
-} from "react-icons/bs";
+import { BsGrid, BsPerson } from "react-icons/bs";
 import harasylogo from "../assets/img/logo.png";
 import "../assets/styles/Sidebar.css";
+import useAuthApi from "../hooks/api/useAuthApi";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const [showDashboards, setShowDashboards] = React.useState(false);
   const [showAccounts, setShowAccounts] = React.useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { logout } = useAuthApi();
+
+  const handleLogout = async () => {
+    await logout(dispatch, navigate);
+  };
 
   return (
     <aside className="sidebar active">
@@ -81,7 +85,7 @@ const Sidebar = () => {
       {/* Log out Section */}
       <div className="sidebar-logout">
         <FaPowerOff />
-        <span>Log out</span>
+        <span onClick={handleLogout}>Log out</span>
       </div>
     </aside>
   );

@@ -28,13 +28,14 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
-            "/users", "/regis/user", "/auth/**", "/uploadImage", "/profile/{AccountId}"
+            "/auth/login","/auth/validateOtp","/auth/introspect","/auth/refreshToken"
+            ,"/users", "/regis/user", "/uploadImage", "/profile/{AccountId}"
             , "/reservations", "/search", "/reservation/{id}"
-            , "/staff/branches","/customer/branches"
+            , "/staff/branches","/customer/branches","/foods"
     };
     String[] GET_PUBLIC_ENDPOINT ={
             "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
-            "/menu/{id}"
+            "/menu/{id}","/food/{id}"
     };
     CustomJwtDecoder jwtDecoder;
 
@@ -54,9 +55,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/branch/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/branch/{id}/tables").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/table/{id}").hasAnyRole("BRANCH_MANAGER","RECEPTIONIST","WAITER")
-                        .requestMatchers(HttpMethod.POST,"/branch/{id}/menus").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.PUT,"/menu/{id}").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.DELETE,"/menu/{id}","/table/{id}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.POST,"/branch/{id}/menus","/food").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.PUT,"/menu/{id}","/food/{id}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE,"/menu/{id}","/table/{id}","/food/{id}").hasRole("BRANCH_MANAGER")
                         .anyRequest().authenticated()
         );
         httpSecurity.oauth2ResourceServer(oauth2 ->
@@ -95,7 +96,6 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
-
         return source;
     }
 }

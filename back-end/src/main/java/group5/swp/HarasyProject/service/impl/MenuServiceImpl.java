@@ -29,7 +29,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public ApiResponse<MenuResponse> updateMenu(int menuId,MenuRequest menuRequest) {
         MenuEntity menuEntity = menuRepository.findById(menuId)
-                .orElseThrow(()->new AppException(ErrorCode.MENU_NOT_FOUND ));
+                .orElseThrow(()->new AppException(ErrorCode.ENTITY_NOT_FOUND ));
         menuEntity = menuMapper.updateMenu(menuRequest, menuEntity);
         menuEntity = menuRepository.save(menuEntity);
         MenuResponse menuResponse = menuMapper.toMenuResponse(menuEntity);
@@ -42,14 +42,14 @@ public class MenuServiceImpl implements MenuService {
     public ApiResponse<?> deleteMenu(int menuId) {
         if(menuRepository.existsById(menuId)) {
             menuRepository.deleteById(menuId);
-        }else throw new AppException(ErrorCode.MENU_NOT_FOUND);
+        }else throw new AppException(ErrorCode.ENTITY_NOT_FOUND);
         return ApiResponse.builder().build();
     }
 
     @Override
     public ApiResponse<MenuResponse> getMenu(int menuId) {
         MenuEntity menuEntity = menuRepository.findById(menuId)
-                .orElseThrow(() -> new AppException(ErrorCode.MENU_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.ENTITY_NOT_FOUND));
         MenuResponse response = menuMapper.toMenuResponse(menuEntity);
         return ApiResponse.<MenuResponse>builder()
                 .data(response)

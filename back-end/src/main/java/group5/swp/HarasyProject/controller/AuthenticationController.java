@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.text.ParseException;
@@ -46,8 +47,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/auth/logout")
-    public ApiResponse<LogoutResponse> logout(@RequestBody LogoutRequest logoutRequest) throws ParseException, JOSEException {
-        return authenticationService.logout(logoutRequest);
+    public ApiResponse<LogoutResponse> logout(@RequestHeader("Authorization") String accessToken) throws ParseException, JOSEException {
+        if (accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        }
+        return authenticationService.logout(accessToken);
     }
 
     @PostMapping("/auth/refreshToken")
