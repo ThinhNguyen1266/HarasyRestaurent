@@ -18,6 +18,7 @@ import AuthRoute from "./components/AuthRoute";
 import Venues from "./pages/Venues";
 import StaffLayout from "./components/StaffLayout";
 import DefaultLayout from "./components/DefaultLayout";
+import CreateBranch from "./pages/CreateBranch";
 function App() {
   return (
     <div className="App">
@@ -41,6 +42,7 @@ function App() {
         <Route element={<StaffLayout />}>
           <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
             <Route path="/branch" element={<BranchManagement />} />
+            <Route path="/branch/create" element={<CreateBranch />} />
           </Route>
         </Route>
       </Routes>
