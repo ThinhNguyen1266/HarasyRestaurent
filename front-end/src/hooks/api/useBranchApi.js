@@ -20,10 +20,16 @@ const useBranchApi = () => {
           location: newBranch.location,
           image: newBranch.image,
           phone: newBranch.phone,
+          manager: newBranch.manager,
+          status: newBranch.status,
+          workingHours: newBranch.workingHours,
+          tables: newBranch.tables,
+          menus: newBranch.menus,
         })
       ).data;
       return branch;
     } catch (error) {
+      console.error("Server error details:", error.response?.data);
       throw error;
     }
   };
