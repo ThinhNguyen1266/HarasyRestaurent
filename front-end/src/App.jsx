@@ -18,6 +18,9 @@ import AuthRoute from "./components/AuthRoute";
 import Venues from "./pages/Venues";
 import StaffLayout from "./components/StaffLayout";
 import DefaultLayout from "./components/DefaultLayout";
+import CreateBranch from "./pages/CreateBranch";
+import Profile from "./pages/UserProfile";
+
 function App() {
   return (
     <div className="App">
@@ -37,12 +40,15 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
-        <Route path="/chefmenu" element={<ChefMenu />} />
+        <Route path="/chefmenu" element={<ChefMenu />} />        
+        <Route path="/profile/:id" element={<Profile />} />
         <Route element={<StaffLayout />}>
           <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
             <Route path="/branch" element={<BranchManagement />} />
+            <Route path="/branch/create" element={<CreateBranch />} />
           </Route>
         </Route>
+
       </Routes>
     </div>
   );
