@@ -156,9 +156,6 @@ const ReservationsPage = () => {
               ))}
             </select>
           </div>
-          <div className="col-md-2">
-            <button className="btn btn-warning w-100">Search</button>
-          </div>
         </div>
 
         {/* Reservation Groups by Status */}

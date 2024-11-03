@@ -5,9 +5,9 @@ import Sidebar from "../components/Sidebar";
 import CreateOrder from "../components/CreateOder";
 import UpdateOrder from "../components/UpdateOrder";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../assets/styles/Order.css";
+import "../assets/styles/OrderWaiter.css";
 
-function Order() {
+function OrderWaiter() {
   const [showCreateOrder, setShowCreateOrder] = useState(false);
   const [showUpdateOrder, setShowUpdateOrder] = useState(false);
   const [currentOrderItems, setCurrentOrderItems] = useState([]);
@@ -213,4 +213,4 @@ function Order() {
   );
 }
 
-export default Order;
+export default OrderWaiter;
