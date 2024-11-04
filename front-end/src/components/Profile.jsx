@@ -1,52 +1,50 @@
-import React from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import "../assets/styles/Profile.css";
 
-// Define fields to display and if they are read-only
-const customerFields = [
-  { label: "Full Name", key: "fullName"},
-  { label: "Phone Number", key: "phone"},
-  { label: "Email Address", key: "email"},
-  { label: "Date Of Birth", key: "dob"},
-  { label: "VIP Points", key: "vipPoint"},
-];
+function Profile() {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const user = useSelector((state) => state.auth.login.currentUser);
 
-const staffFields = [
-  { label: "Full Name", key: "fullName", readOnly: true },
-  { label: "Phone Number", key: "phone", readOnly: true },
-  { label: "Email Address", key: "email", readOnly: true },
-  { label: "Branch Name", key: "branchName", readOnly: true },
-  { label: "Bank Name", key: "bankName", readOnly: true },
-  { label: "Bank Account", key: "bankAccount", readOnly: true },
-  { label: "Salary", key: "salary", readOnly: true },
-  { label: "Date Of Birth", key: "dob", readOnly: true },
-];
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
-const ProfileForm = ({ profile }) => {
-  // Determine if the profile is for staff based on the presence of "role"
-  const isStaffProfile = profile && profile.role !== undefined;
-  const fields = isStaffProfile ? staffFields : customerFields;
-  const isEditable = !isStaffProfile;
+  const handleLogout = () => {
+    console.log("Logged out");
+  };
 
-  return (
-    <div className="account-settings">
-      <form className="settings-form">
-        {fields.map((field) => (
-          <div className="form-group" key={field.key}>
-            <label>{field.label}</label>
-            <input
-              type={field.key === "email" ? "email" : "text"}
-              value={profile?.[field.key] || ""} // Use optional chaining with default value
-              readOnly={!isEditable || field.readOnly}
-            />
+  if (user) {
+    return (
+      <div className="profile-container">
+        <h5 className="username">{user.username}</h5>
+        <div className="user-avatar" onClick={toggleDropdown}>
+          <img
+            src={user.image || "https://via.placeholder.com/40"}
+            alt="User Avatar"
+          />
+          <div
+            className="dropdown-menu"
+            style={{ display: isDropdownOpen ? "block" : "none" }}
+          >
+            <Link to="/my-profile" className="dropdown-item">
+              My Profile
+            </Link>
+            <button onClick={handleLogout} className="dropdown-item logout">
+              Log out
+            </button>
           </div>
-        ))}
-        {isEditable && (
-          <button type="submit" className="update-btn">
-            Update
-          </button>
-        )}
-      </form>
-    </div>
-  );
-};
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <Link to="/login" className="login">
+        LOGIN
+      </Link>
+    );
+  }
+}
 
-export default ProfileForm;
+export default Profile;
