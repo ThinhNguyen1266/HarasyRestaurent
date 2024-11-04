@@ -8,10 +8,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,15 +23,15 @@ public class CustomerAccountEntity {
     @Column(name = "customer_id")
     Integer id;
 
-    @Column(name = "vip_point",nullable = false, columnDefinition = "integer default 0")
+    @Column(name = "vip_point", nullable = false, columnDefinition = "integer default 0")
     int vipPoint = 0;
 
 
     @OneToOne
-    @JoinColumn(name = "account_id",nullable = false)
+    @JoinColumn(name = "account_id", nullable = false)
     AccountEntity account;
 
-    @OneToOne(mappedBy = "customer",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     OrderEntity order;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)

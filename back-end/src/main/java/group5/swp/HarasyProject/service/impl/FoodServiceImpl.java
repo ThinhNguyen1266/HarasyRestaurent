@@ -52,7 +52,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public ApiResponse<FoodResponse> getFoodById(int id) {
         FoodEntity food = foodRepository.findById(id)
-                .orElseThrow(()-> new AppException(ErrorCode.ENTITY_NOT_FOUND));
+                .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
         FoodResponse response = foodMapper.toResponse(food);
         return ApiResponse.<FoodResponse>builder()
                 .data(response)
@@ -68,7 +68,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public ApiResponse<FoodResponse> updateFood(int id,FoodRequest request) {
         FoodEntity foodEntity = foodRepository.findById(id)
-                .orElseThrow(()-> new AppException(ErrorCode.ENTITY_NOT_FOUND));
+                .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
         foodEntity = foodMapper.toEntity(request,foodEntity);
         return getFoodResponseApiResponse(request, foodEntity);
     }
@@ -76,7 +76,7 @@ public class FoodServiceImpl implements FoodService {
     private ApiResponse<FoodResponse> getFoodResponseApiResponse(FoodRequest request, FoodEntity foodEntity) {
         if (request.getCategoryId()!=null) {
             CategoryEntity categoryEntity = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(()-> new AppException(ErrorCode.ENTITY_NOT_FOUND));
+                    .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
             foodEntity.setCategory(categoryEntity);
         }
         foodEntity = foodRepository.save(foodEntity);
@@ -89,7 +89,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public ApiResponse<?> deleteFood(int id) {
         FoodEntity foodEntity = foodRepository.findById(id)
-                .orElseThrow(()-> new AppException(ErrorCode.ENTITY_NOT_FOUND));
+                .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
         foodEntity.setStatus(Status.DELETED);
         foodRepository.save(foodEntity);
         return ApiResponse.builder().build();

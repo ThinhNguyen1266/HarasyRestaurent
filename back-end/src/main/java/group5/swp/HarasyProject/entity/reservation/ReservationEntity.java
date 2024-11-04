@@ -10,14 +10,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,7 +37,7 @@ public class ReservationEntity extends Auditable {
     @Column(nullable = false)
     int price;
 
-    int deposit=0;
+    int deposit = 0;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -53,7 +52,7 @@ public class ReservationEntity extends Auditable {
     BranchEntity branch;
 
     @OneToOne
-    @JoinColumn(name ="order_id")
+    @JoinColumn(name = "order_id")
     OrderEntity order;
 
     @ManyToMany(mappedBy = "reservations", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})

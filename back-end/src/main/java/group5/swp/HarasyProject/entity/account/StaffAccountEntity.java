@@ -8,12 +8,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-
 import java.util.List;
-import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,7 +29,7 @@ public class StaffAccountEntity {
     StaffRole role;
 
 
-    @Column( name ="bank_account")
+    @Column(name = "bank_account")
     String bankAccount;
 
     @Column(name = "bank_name")
@@ -50,6 +49,6 @@ public class StaffAccountEntity {
     @JoinColumn(name = "branch_id")
     BranchEntity branch;
 
-    @OneToMany(mappedBy = "staff",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
     List<OrderEntity> orders;
 }

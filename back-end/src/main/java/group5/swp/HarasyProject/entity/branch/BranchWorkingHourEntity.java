@@ -5,12 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-
-import java.sql.Time;
 import java.time.LocalTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,7 +33,6 @@ public class BranchWorkingHourEntity {
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+
     BranchEntity branch;
 }

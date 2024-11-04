@@ -20,7 +20,7 @@ public class FoodController {
 
     @GetMapping("/foods")
     public ApiResponse<List<FoodResponse>> getAllFoods(@RequestParam(required = false) boolean includeAll) {
-        return foodService.getAllFood(  includeAll);
+        return foodService.getAllFood( includeAll);
     }
 
     @GetMapping("/food/{id}")

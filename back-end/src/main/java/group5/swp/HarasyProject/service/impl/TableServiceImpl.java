@@ -30,7 +30,7 @@ public class TableServiceImpl implements TableService {
     @Override
     public ApiResponse<TableResponse> updateTable(int tableId, TableRequest request) {
         TableEntity tableEntity = tableRepository.findById(tableId)
-                .orElseThrow(()-> new AppException(ErrorCode.ENTITY_NOT_FOUND));
+                .orElseThrow(()-> new AppException(ErrorCode.TABLE_NOT_FOUND));
         tableEntity = tableMapper.toTable(request,tableEntity);
         tableEntity = tableRepository.save(tableEntity);
         TableResponse tableResponse = tableMapper.toResponse(tableEntity);
@@ -42,7 +42,7 @@ public class TableServiceImpl implements TableService {
     @Override
     public ApiResponse<?> deleteTable(int tableId) {
         TableEntity tableEntity = tableRepository.findById(tableId)
-                .orElseThrow(()-> new AppException(ErrorCode.ENTITY_NOT_FOUND));
+                .orElseThrow(()-> new AppException(ErrorCode.TABLE_NOT_FOUND));
         tableEntity.setStatus(TableStatus.DELETED);
         tableRepository.save(tableEntity);
         return ApiResponse.<TableResponse>builder()
