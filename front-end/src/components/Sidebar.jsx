@@ -63,7 +63,7 @@ const Sidebar = () => {
                     <a href="/table">View table</a>
                   </li>
                   <li>
-                    <a href="/">View Orders</a>
+                    <a href="/">View Branch</a>
                   </li>
                   <li>
                     <a href="/reservation">View Reservation</a>

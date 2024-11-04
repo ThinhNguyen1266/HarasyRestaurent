@@ -13,8 +13,8 @@ const useBranchApi = () => {
   };
   const getBranchManagers = async () => {
     try {
-      const response = await axiosPrivate.get("/staff/BRANCH_MANAGER");
-      return response.data;
+      const response = await axiosPrivate.get("/staff/BRANCH_MANAGER").data;
+      return response;
     } catch (error) {
       console.error("Failed to fetch branch managers:", error);
       throw error;

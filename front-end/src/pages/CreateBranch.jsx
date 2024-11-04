@@ -245,7 +245,7 @@ const CreateBranch = () => {
           </div>
 
           {/* Column 2 */}
-          <div className="col-12 col-md-6">
+          <div className="col-md-6">
             <div className="mb-3">
               <label className="form-label text-white">Status</label>
               <select
@@ -315,11 +315,10 @@ const CreateBranch = () => {
                     }
                     className="form-control me-2"
                   />
-
                   <button
                     type="button"
                     onClick={() => removeWorkingHour(index)}
-                    className="btn btn-danger btn-sm "
+                    className="btn btn-danger btn-sm"
                   >
                     Remove
                   </button>
