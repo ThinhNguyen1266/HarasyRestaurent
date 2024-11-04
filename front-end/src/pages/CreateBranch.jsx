@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useBranchApi from "../hooks/api/useBranchApi";
 import uploadImage from "../services/uploadImage";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const CreateBranch = () => {
   const navigate = useNavigate();
@@ -245,7 +245,7 @@ const CreateBranch = () => {
           </div>
 
           {/* Column 2 */}
-          <div className="col-md-6">
+          <div className="col-12 col-md-6">
             <div className="mb-3">
               <label className="form-label text-white">Status</label>
               <select
@@ -315,10 +315,11 @@ const CreateBranch = () => {
                     }
                     className="form-control me-2"
                   />
+
                   <button
                     type="button"
                     onClick={() => removeWorkingHour(index)}
-                    className="btn btn-danger btn-sm"
+                    className="btn btn-danger btn-sm "
                   >
                     Remove
                   </button>
@@ -429,6 +430,7 @@ const CreateBranch = () => {
         <button type="submit" className="btn btn-primary mt-4">
           Create Branch
         </button>
+        <ToastContainer position="top-right" autoClose={3000} />
       </form>
     </div>
   );

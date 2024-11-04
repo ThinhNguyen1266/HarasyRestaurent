@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useBranchApi from "../hooks/api/useBranchApi";
 import uploadImage from "../services/uploadImage";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const EditBranch = () => {
   const { branchId } = useParams();
@@ -120,27 +120,46 @@ const EditBranch = () => {
     });
   };
 
+  const removeWorkingHour = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      workingHours: prev.workingHours.filter((_, i) => i !== index),
+    }));
+  };
+
   const addTable = () =>
     setFormData((prev) => ({
       ...prev,
       tables: [...prev.tables, { number: "", capacity: "" }],
     }));
 
+  const removeTable = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      tables: prev.tables.filter((_, i) => i !== index),
+    }));
+  };
   const addMenu = () =>
     setFormData((prev) => ({
       ...prev,
       menus: [...prev.menus, { type: "" }],
     }));
 
+  const removeMenu = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      menus: prev.menus.filter((_, i) => i !== index),
+    }));
+  };
   if (isBranchLoading) return <p>Loading branch data...</p>;
 
   return (
     <div className="container my-4">
-      <h1 className="text-white">Edit Branch</h1>
+      <h1 className="text-white text-center text-md-start">Edit Branch</h1>
       <form onSubmit={handleSubmit}>
         <div className="row">
           {/* Column 1 */}
-          <div className="col-md-6">
+          <div className="col-12 col-md-6 mb-4">
             <div className="mb-3">
               <label className="form-label text-white">Branch Name</label>
               <input
@@ -207,10 +226,10 @@ const EditBranch = () => {
                 <img
                   src={previewUrl}
                   alt="Preview"
+                  className="img-fluid mt-2 rounded"
                   style={{
-                    width: "100%",
-                    marginTop: "10px",
-                    height: "200px",
+                    maxWidth: "100%",
+                    height: "auto",
                     objectFit: "cover",
                   }}
                 />
@@ -219,7 +238,7 @@ const EditBranch = () => {
           </div>
 
           {/* Column 2 */}
-          <div className="col-md-6">
+          <div className="col-12 col-md-6">
             <div className="mb-3">
               <label className="form-label text-white">Status</label>
               <select
@@ -289,6 +308,13 @@ const EditBranch = () => {
                     }
                     className="form-control me-2"
                   />
+                  <button
+                    type="button"
+                    onClick={() => removeWorkingHour(index)}
+                    className="btn btn-danger btn-sm "
+                  >
+                    Remove
+                  </button>
                 </div>
               ))}
               <button
@@ -333,6 +359,13 @@ const EditBranch = () => {
                     }
                     className="form-control me-2"
                   />
+                  <button
+                    type="button"
+                    onClick={() => removeTable(index)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    Remove
+                  </button>
                 </div>
               ))}
               <button
@@ -367,6 +400,13 @@ const EditBranch = () => {
                     <option value="DINNER">Dinner</option>
                     <option value="DESSERT">Dessert</option>
                   </select>
+                  <button
+                    type="button"
+                    onClick={() => removeMenu(index)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    Remove
+                  </button>
                 </div>
               ))}
               <button
@@ -383,6 +423,7 @@ const EditBranch = () => {
           Save Changes
         </button>
       </form>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
