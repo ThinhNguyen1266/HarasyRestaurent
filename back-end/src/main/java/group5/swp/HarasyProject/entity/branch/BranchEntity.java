@@ -14,7 +14,8 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,26 +45,23 @@ public class BranchEntity extends Auditable {
     Status status = Status.INACTIVE;
 
     @OneToMany(mappedBy = "branch")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+
     List<StaffAccountEntity> staffs;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+
     List<BranchWorkingHourEntity> workingHours;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+
     List<MenuEntity> menus;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+
     List<TableEntity> tables;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+
     List<ReservationEntity> reservations;
 
     public void setWorkingHours(List<BranchWorkingHourEntity> workingHours) {

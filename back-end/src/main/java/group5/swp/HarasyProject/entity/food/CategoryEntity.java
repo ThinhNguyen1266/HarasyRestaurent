@@ -5,10 +5,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,10 +20,11 @@ public class CategoryEntity {
     @Column(name = "cat_id")
     Integer id;
 
-    
-    @Column(name = "cat_name",nullable = false)
+
+    @Column(name = "cat_name", nullable = false)
     String name;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+
     List<FoodEntity> foods;
 }
