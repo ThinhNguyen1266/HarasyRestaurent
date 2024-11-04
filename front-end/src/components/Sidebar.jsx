@@ -10,9 +10,15 @@ import { BsGrid, BsPerson } from "react-icons/bs";
 import harasylogo from "../assets/img/logo.png";
 import "../assets/styles/Sidebar.css";
 import useAuth from "../hooks/useAuth";
+import useAuthApi from "../hooks/api/useAuthApi";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const { user } = useAuth();
+  const { logout } = useAuthApi();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   console.log(user);
   const [showDashboards, setShowDashboards] = useState(false);
   const [showAccounts, setShowAccounts] = useState(false);
@@ -166,7 +172,12 @@ const Sidebar = () => {
           </>
         ) : null}
         {/* Log out Section */}
-        <div className="sidebar-logout">
+        <div
+          className="sidebar-logout"
+          onClick={async () => {
+            await logout(dispatch, navigate);
+          }}
+        >
           <FaPowerOff />
           <span>Log out</span>
         </div>
