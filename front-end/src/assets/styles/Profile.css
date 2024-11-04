@@ -1,4 +1,5 @@
 .profile-container {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -11,6 +12,7 @@
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #ffffff;
+  cursor: pointer;
 }
 
 .username {
@@ -18,4 +20,33 @@
   font-weight: bold;
   color: #ffffff;
   margin: 0;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%; /* Đặt ở giữa avatar */
+  transform: translateX(-50%); /* Dịch chuyển để căn giữa so với avatar */
+  background-color: #333;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 10;
+  min-width: 110px;
+  padding: 5px 0;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+  color: #ffffff;
+  text-decoration: none;
+  display: block;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background-color: #555;
 }
