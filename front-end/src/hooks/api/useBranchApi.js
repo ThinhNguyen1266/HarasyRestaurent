@@ -13,7 +13,9 @@ const useBranchApi = () => {
   };
   const getBranchManagers = async () => {
     try {
-      const response = await axiosPrivate.get("/staff/BRANCH_MANAGER").data;
+      const response = await axiosPrivate.get("/staff/BRANCH_MANAGER");
+      console.log("Full Response:", response); // Log toàn bộ phản hồi
+
       return response;
     } catch (error) {
       console.error("Failed to fetch branch managers:", error);
@@ -23,7 +25,7 @@ const useBranchApi = () => {
   const getBranchbyID = async (id) => {
     try {
       const response = await axiosPrivate.get(`/branch/${id}`);
-      return response.data;
+      return response;
     } catch (error) {
       console.error(`Failed to fetch branch with ID ${id}:`, error);
       throw error;

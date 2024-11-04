@@ -166,7 +166,7 @@ const CreateBranch = () => {
       <form onSubmit={handleSubmit}>
         <div className="row">
           {/* Column 1 */}
-          <div className="col-md-6">
+          <div className="col-12 col-md-6">
             <div className="mb-3">
               <label className="form-label text-white">Branch Name</label>
               <input
@@ -245,7 +245,7 @@ const CreateBranch = () => {
           </div>
 
           {/* Column 2 */}
-          <div className="col-md-6">
+          <div className="col-12 col-md-6">
             <div className="mb-3">
               <label className="form-label text-white">Status</label>
               <select
@@ -263,7 +263,7 @@ const CreateBranch = () => {
             <div className="mb-3">
               <label className="form-label text-white">Working Hours</label>
               {formData.workingHours.map((hour, index) => (
-                <div key={index} className="d-flex align-items-center mb-2">
+                <div key={index} className="d-flex align-items-center  ">
                   <select
                     value={hour.dayOfWeek}
                     onChange={(e) =>
@@ -318,12 +318,13 @@ const CreateBranch = () => {
                   <button
                     type="button"
                     onClick={() => removeWorkingHour(index)}
-                    className="btn btn-danger btn-sm"
+                    className="btn btn-danger btn-sm  ms-auto "
                   >
                     Remove
                   </button>
                 </div>
               ))}
+
               <button
                 type="button"
                 onClick={addWorkingHour}
@@ -339,7 +340,7 @@ const CreateBranch = () => {
               {formData.tables.map((table, index) => (
                 <div key={index} className="d-flex align-items-center mb-2">
                   <input
-                    type="number"
+                    type="text"
                     placeholder="Table Number"
                     value={table.number}
                     onChange={(e) =>
@@ -353,7 +354,7 @@ const CreateBranch = () => {
                     className="form-control me-2"
                   />
                   <input
-                    type="number"
+                    type="text"
                     placeholder="Capacity"
                     value={table.capacity}
                     onChange={(e) =>
