@@ -1,6 +1,5 @@
 package group5.swp.HarasyProject.service.impl;
 
-import group5.swp.HarasyProject.dto.request.categorys.CategoryRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.category.CategoryResponse;
 import group5.swp.HarasyProject.entity.food.CategoryEntity;
@@ -40,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ApiResponse<CategoryResponse> getCategoryById(int id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         CategoryResponse categoryResponse = categoryMapper.toResponse(categoryEntity);
         return ApiResponse.<CategoryResponse>builder()
                 .data(categoryResponse)

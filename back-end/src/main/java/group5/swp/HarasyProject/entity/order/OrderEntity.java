@@ -9,15 +9,13 @@ import group5.swp.HarasyProject.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.Fetch;
-
 
 import java.util.List;
-import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,7 +31,7 @@ public class OrderEntity extends Auditable {
     @Column(nullable = false)
     long total;
 
-    @Column(name="payment_status",nullable = false)
+    @Column(name = "payment_status", nullable = false)
     @Enumerated(EnumType.STRING)
     PaymentStatus paymentStatus;
 
@@ -42,7 +40,7 @@ public class OrderEntity extends Auditable {
     StaffAccountEntity staff;
 
     @OneToOne
-    @JoinColumn(name="cus_id")
+    @JoinColumn(name = "cus_id")
     CustomerAccountEntity customer;
 
 

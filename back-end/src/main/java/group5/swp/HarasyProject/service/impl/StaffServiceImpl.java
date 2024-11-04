@@ -29,11 +29,8 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public ApiResponse<List<StaffResponse>> getActiveStaff() {
-        // Retrieve all staff with account status ACTIVE
         List<StaffAccountEntity> activeStaff = staffAccountRepository.findAllByAccount_Status(AccountStatus.ACTIVE);
-        log.info("Retrieved {} active staff members.", activeStaff.size());
 
-        // Map the staff entities to the response DTO
         List<StaffResponse> staffResponses = activeStaff.stream()
                 .map(staffMapper::toResponse)
                 .collect(Collectors.toList());
@@ -55,11 +52,8 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public ApiResponse<List<StaffResponse>> getStaffSortedByRole() {
-        // Retrieve all staff and order them by role
         List<StaffAccountEntity> staffSortedByRole = staffAccountRepository.findAllByOrderByRoleAsc();
-        log.info("Retrieved {} staff members sorted by role.", staffSortedByRole.size());
 
-        // Map the staff entities to the response DTO
         List<StaffResponse> staffResponses = staffSortedByRole.stream()
                 .map(staffMapper::toResponse)
                 .collect(Collectors.toList());
@@ -82,7 +76,6 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public ApiResponse<List<StaffResponse>> searchStaffByRole(StaffRole role) {
         List<StaffAccountEntity> staffByRole = staffAccountRepository.findAllByRole(role);
-        log.info("Retrieved {} staff members with role: {}", staffByRole.size(), role);
 
         List<StaffResponse> staffResponses = staffByRole.stream()
                 .map(staffMapper::toResponse)

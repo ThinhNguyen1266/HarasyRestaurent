@@ -1,19 +1,17 @@
 package group5.swp.HarasyProject.entity.menu;
 
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
-import group5.swp.HarasyProject.entity.food.FoodEntity;
 import group5.swp.HarasyProject.enums.MenuType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 
 import java.util.List;
 
 
 
 @Entity
-@Data
+@Getter @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

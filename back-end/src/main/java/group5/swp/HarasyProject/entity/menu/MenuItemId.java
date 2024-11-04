@@ -2,10 +2,14 @@ package group5.swp.HarasyProject.entity.menu;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Data;
+import lombok.*;
 
 @Embeddable
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class MenuItemId {
     @Column(name = "menu_id")
     int menuId;

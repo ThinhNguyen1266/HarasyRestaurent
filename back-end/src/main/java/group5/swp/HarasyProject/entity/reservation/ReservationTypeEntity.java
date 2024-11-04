@@ -7,7 +7,8 @@ import lombok.experimental.FieldDefaults;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,9 +20,9 @@ public class ReservationTypeEntity {
     @Column(name = "reservation_type_id")
     Integer id;
 
-    @Column(name = "reservation_type",nullable = false)
-            @Enumerated(EnumType.STRING)
-    ReservationType reservationType= ReservationType.GENERAL;
+    @Column(name = "reservation_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    ReservationType reservationType = ReservationType.GENERAL;
 
     @Column(name = "min_price", nullable = false)
     long minPrice;

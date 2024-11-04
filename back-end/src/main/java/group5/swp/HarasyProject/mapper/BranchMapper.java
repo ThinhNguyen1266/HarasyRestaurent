@@ -19,6 +19,9 @@ import java.util.List;
 public interface BranchMapper {
 
     List<BranchListResponse> toBranchListResponse(List<BranchEntity> branches);
+
+
+    @Mapping(target = "managerName" ,ignore = true)
     BranchInfoResponse toBranchInfoResponse(BranchEntity branch);
 
     List<BranchInfoResponse> toBranchInfoResponses(List<BranchEntity> branches);

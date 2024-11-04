@@ -3,6 +3,7 @@ package group5.swp.HarasyProject.mapper;
 import group5.swp.HarasyProject.dto.request.food.FoodRequest;
 import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.entity.food.FoodEntity;
+import group5.swp.HarasyProject.entity.menu.MenuItemEntity;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -18,4 +19,13 @@ public interface FoodMapper {
 
     FoodEntity toEntity(FoodRequest foodRequest, @MappingTarget FoodEntity food);
 
+    @Mapping(target = "id", source = "food.id")
+    @Mapping(target = "name", source = "food.name")
+    @Mapping(target = "price", source = "food.price")
+    FoodResponse itemToFoodResponse(MenuItemEntity menuItemEntity);
+
+
+    default List<FoodResponse> itemsToFoodResponseList(List<MenuItemEntity> menuItemEntity){
+        return menuItemEntity.stream().map(this::itemToFoodResponse).toList();
+    };
 }

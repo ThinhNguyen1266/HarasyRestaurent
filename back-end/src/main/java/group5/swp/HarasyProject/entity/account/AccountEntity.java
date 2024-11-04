@@ -8,14 +8,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-
 import java.util.Date;
-import java.util.Set;
 
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-    @Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,17 +49,14 @@ public class AccountEntity extends Auditable {
     AccountStatus status = AccountStatus.PENDING;
 
 
-    @OneToOne(mappedBy = "account",cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+
     CustomerAccountEntity customer;
 
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    StaffAccountEntity staff;
 
+    StaffAccountEntity staff;
 
 
     public void setCustomer(CustomerAccountEntity customerAccount) {

@@ -2,9 +2,7 @@ package group5.swp.HarasyProject.entity.food;
 
 
 import group5.swp.HarasyProject.entity.Auditable;
-import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.entity.menu.MenuItemEntity;
-import group5.swp.HarasyProject.entity.order.OrderEntity;
 import group5.swp.HarasyProject.entity.order.OrderItem;
 import group5.swp.HarasyProject.enums.Status;
 import jakarta.persistence.*;
@@ -15,7 +13,8 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

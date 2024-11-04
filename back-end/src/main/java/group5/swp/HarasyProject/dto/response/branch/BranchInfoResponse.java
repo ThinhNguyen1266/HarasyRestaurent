@@ -7,7 +7,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -22,6 +21,7 @@ public class BranchInfoResponse {
     String image;
     String phone;
     Status status;
+    String managerName;
     List<BranchWorkingHourResponse> workingHours;
     List<TableResponse> tables;
 }
