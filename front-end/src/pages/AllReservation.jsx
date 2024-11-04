@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../assets/styles/AllReservation.css";
-import Sidebar from "../components/Sidebar";
 import ReservationModal from "../components/ReservationModal"; // Import modal component
+import Sidebar from "../components/Sidebar";
 
 const reservations = [
   {
@@ -129,7 +129,7 @@ const ReservationsPage = () => {
     <div className="reservations-page">
       <div className="main-content">
         <Sidebar />
-        <h1>View All Reservations</h1>
+        <h1 className="revervations-title">View All Reservations</h1>
 
         {/* Search and Dropdown Filter */}
         <div className="search-row row justify-content-end mb-3">

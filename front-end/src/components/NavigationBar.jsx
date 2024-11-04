@@ -4,13 +4,12 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/img/logo.png";
 import "../assets/styles/Nav.css";
-import Profile from "./Profile";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import useAuthApi from "../hooks/api/useAuthApi";
+import Profile from "./Profile";
 function NavigationBar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -66,7 +65,6 @@ function NavigationBar() {
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
-            <button onClick={handleLogout}>Logout</button>
           </Container>
         </Navbar>
       ))}
