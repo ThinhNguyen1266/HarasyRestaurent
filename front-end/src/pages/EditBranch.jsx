@@ -24,7 +24,6 @@ const EditBranch = () => {
   });
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  // Fetch managers for dropdown
   const { data: managers = [], isLoading: isLoadingManagers } = useQuery({
     queryKey: ["branchManagers"],
     queryFn: getBranchManagers,
@@ -32,24 +31,29 @@ const EditBranch = () => {
       toast.error(`Failed to fetch managers: ${error.message}`),
   });
 
-  // Fetch branch data by ID and initialize formData with it
   const { data: branchData, isLoading: isBranchLoading } = useQuery({
     queryKey: ["branch", branchId],
     queryFn: () => getBranchbyID(branchId),
-    onSuccess: (data) => {
-      setFormData({
-        ...data,
-        imageFile: null,
-        workingHours: data.workingHours || [
-          { dayOfWeek: "", openingTime: "", closingTime: "" },
-        ],
-        tables: data.tables || [{ number: "", capacity: "" }],
-        menus: data.menus || [{ type: "" }],
-      });
-      setPreviewUrl(data.image);
-    },
     onError: (error) => toast.error(`Failed to fetch branch: ${error.message}`),
   });
+
+  useEffect(() => {
+    if (branchData) {
+      setFormData({
+        ...branchData,
+        manager: branchData.manager || "",
+        imageFile: null,
+        workingHours: branchData.workingHours || [
+          { dayOfWeek: "", openingTime: "", closingTime: "" },
+        ],
+        tables: branchData.tables || [{ number: "", capacity: "" }],
+        menus: branchData.menus?.map((menu) => ({ type: menu.type })) || [
+          { type: "" },
+        ],
+      });
+      setPreviewUrl(branchData.image);
+    }
+  }, [branchData]);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -101,14 +105,20 @@ const EditBranch = () => {
       toast.error(`Failed to update branch: ${error.message}`),
   });
 
-  const addWorkingHour = () =>
-    setFormData((prev) => ({
-      ...prev,
-      workingHours: [
-        ...prev.workingHours,
-        { dayOfWeek: "", openingTime: "", closingTime: "" },
-      ],
-    }));
+  const addWorkingHour = () => {
+    setFormData((prev) => {
+      const previousDay = prev.workingHours[prev.workingHours.length - 1];
+      const newDay = {
+        dayOfWeek: "",
+        openingTime: previousDay ? previousDay.openingTime : "",
+        closingTime: previousDay ? previousDay.closingTime : "",
+      };
+      return {
+        ...prev,
+        workingHours: [...prev.workingHours, newDay],
+      };
+    });
+  };
 
   const addTable = () =>
     setFormData((prev) => ({
@@ -123,6 +133,7 @@ const EditBranch = () => {
     }));
 
   if (isBranchLoading) return <p>Loading branch data...</p>;
+
   return (
     <div className="container my-4">
       <h1 className="text-white">Edit Branch</h1>
@@ -240,13 +251,13 @@ const EditBranch = () => {
                     className="form-select me-2"
                   >
                     <option value="">Select Day</option>
-                    <option value="MONDAY">MONDAY</option>
-                    <option value="TUESDAY">TUESDAY</option>
-                    <option value="WEDNESDAY">WEDNESDAY</option>
-                    <option value="THURSDAY">THURSDAY</option>
-                    <option value="FRIDAY">FRIDAY</option>
-                    <option value="SATURDAY">SATURDAY</option>
-                    <option value="SUNDAY">SUNDAY</option>
+                    <option value="MONDAY">Monday</option>
+                    <option value="TUESDAY">Tuesday</option>
+                    <option value="WEDNESDAY">Wednesday</option>
+                    <option value="THURSDAY">Thursday</option>
+                    <option value="FRIDAY">Friday</option>
+                    <option value="SATURDAY">Saturday</option>
+                    <option value="SUNDAY">Sunday</option>
                   </select>
                   <input
                     type="time"
@@ -351,10 +362,10 @@ const EditBranch = () => {
                     className="form-select me-2"
                   >
                     <option value="">Select Menu Type</option>
-                    <option value="BREAKFAST">BREAKFAST</option>
-                    <option value="LUNCH">LUNCH</option>
-                    <option value="DINNER">DINNER</option>
-                    <option value="DESSERT">DESSERT</option>
+                    <option value="BREAKFAST">Breakfast</option>
+                    <option value="LUNCH">Lunch</option>
+                    <option value="DINNER">Dinner</option>
+                    <option value="DESSERT">Dessert</option>
                   </select>
                 </div>
               ))}
