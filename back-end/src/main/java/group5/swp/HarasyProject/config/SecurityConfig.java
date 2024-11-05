@@ -34,7 +34,7 @@ public class SecurityConfig {
             , "/staff/branches","/customer/branches","/foods"
     };
     String[] GET_PUBLIC_ENDPOINT ={
-            "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
+                "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
             "/menu/{id}","/food/{id}"
     };
     CustomJwtDecoder jwtDecoder;
@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET,GET_PUBLIC_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/","/staff/{role}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/staff", "/sorted", "/staff/{role}").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/branch").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/branch/{id}").hasRole("ADMIN")

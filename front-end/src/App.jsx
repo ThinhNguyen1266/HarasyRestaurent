@@ -19,6 +19,7 @@ import Menu from "./pages/Menu";
 import Register from "./pages/Register";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
+import EditBranch from "./pages/EditBranch";
 import Venues from "./pages/Venues";
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
           <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />
+            <Route path="/branch/:branchId" element={<EditBranch />} />
           </Route>
         </Route>
       </Routes>
