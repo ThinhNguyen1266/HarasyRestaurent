@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, ListGroup, InputGroup } from "react-bootstrap";
-import "../assets/styles/CreateOrder.css";
+import "../assets/styles/UpdateOrder.css";
 
 const UpdateOrder = ({ show, handleClose, initialItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,15 +62,15 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
       show={show}
       onHide={handleClose}
       centered
-      dialogClassName="custom-create-order-modal"
+      dialogClassName="update-order-modal-content"
     >
-      <Modal.Header className="modal-header-custom">
-        <Modal.Title className="modal-title-custom">
-          Create New Order
+      <Modal.Header className="update-order-header">
+        <Modal.Title className="update-order-title">
+          Update Order
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body className="modal-body-custom">
-        <InputGroup className="mb-3 custom-search">
+      <Modal.Body className="update-order-body">
+        <InputGroup className="mb-3 update-order-search">
           <Form.Control
             type="text"
             placeholder="Search items..."
@@ -78,11 +78,11 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
             onChange={handleSearch}
           />
         </InputGroup>
-        <ListGroup className="custom-item-list">
+        <ListGroup className="update-order-item-list">
           {filteredItems.map((item, index) => (
             <ListGroup.Item
               key={index}
-              className="custom-item-list-item"
+              className="update-order-item"
               onClick={() => handleAddItem(item)}
               action
             >
@@ -90,17 +90,17 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
             </ListGroup.Item>
           ))}
         </ListGroup>
-        <h5 className="selected-items-title">
+        <h5 className="update-order-selected-title">
           Selected Items (Total: {totalItemsCount}):
         </h5>
-        <ListGroup className="selected-items-list">
+        <ListGroup className="update-order-selected-list">
           {Object.entries(selectedItems).map(([item, count], index) => (
-            <ListGroup.Item key={index} className="selected-item">
+            <ListGroup.Item key={index} className="update-order-selected-item">
               x{count} {item}
               <Button
                 variant="outline-light"
                 size="sm"
-                className="remove-item-button"
+                className="update-order-remove-button"
                 onClick={() => handleRemoveItem(item)}
               >
                 -
@@ -109,18 +109,18 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
           ))}
         </ListGroup>
       </Modal.Body>
-      <Modal.Footer className="modal-footer-custom">
+      <Modal.Footer className="update-order-footer">
         <Button
           variant="outline-light"
           onClick={handleClose}
-          className="modal-cancel-button"
+          className="update-order-cancel-button"
         >
           Cancel
         </Button>
         <Button
           variant="outline-warning"
           onClick={handleUpdateOrder}
-          className="modal-create-button"
+          className="update-order-confirm-button"
         >
           Save Changes
         </Button>

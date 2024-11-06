@@ -21,7 +21,6 @@ const CreateOrder = ({ show, handleClose }) => {
   const [selectedItems, setSelectedItems] = useState({});
   const [selectedTable, setSelectedTable] = useState("");
 
-  // Constant for table numbers
   const tableNumbers = Array.from({ length: 10 }, (_, i) => `Table ${i + 1}`);
 
   const handleSearch = (e) => setSearchTerm(e.target.value);
@@ -58,13 +57,13 @@ const CreateOrder = ({ show, handleClose }) => {
       show={show}
       onHide={handleClose}
       centered
-      dialogClassName="custom-create-order-modal"
+      dialogClassName="create-order-modal-content"
     >
-      <Modal.Header className="modal-header-custom">
-        <Modal.Title className="modal-title-custom">Create New Order</Modal.Title>
+      <Modal.Header className="create-order-header">
+        <Modal.Title className="create-order-title">Create New Order</Modal.Title>
       </Modal.Header>
-      <Modal.Body className="modal-body-custom">
-        <InputGroup className="mb-3 custom-search">
+      <Modal.Body className="create-order-body">
+        <InputGroup className="mb-3 create-order-search">
           <Form.Control
             type="text"
             placeholder="Search items..."
@@ -72,11 +71,11 @@ const CreateOrder = ({ show, handleClose }) => {
             onChange={handleSearch}
           />
         </InputGroup>
-        <ListGroup className="custom-item-list">
+        <ListGroup className="create-order-item-list">
           {filteredItems.map((item) => (
             <ListGroup.Item
               key={item}
-              className="custom-item-list-item"
+              className="create-order-item"
               onClick={() => handleAddItem(item)}
               action
             >
@@ -84,17 +83,17 @@ const CreateOrder = ({ show, handleClose }) => {
             </ListGroup.Item>
           ))}
         </ListGroup>
-        <h5 className="selected-items-title">
+        <h5 className="create-order-selected-title">
           Selected Items (Total: {totalItemsCount}):
         </h5>
-        <ListGroup className="selected-items-list">
+        <ListGroup className="create-order-selected-list">
           {Object.entries(selectedItems).map(([item, count]) => (
-            <ListGroup.Item key={item} className="selected-item">
+            <ListGroup.Item key={item} className="create-order-selected-item">
               x{count} {item}
               <Button
                 variant="outline-light"
                 size="sm"
-                className="remove-item-button"
+                className="create-order-remove-button"
                 onClick={() => handleRemoveItem(item)}
               >
                 Remove
@@ -102,8 +101,7 @@ const CreateOrder = ({ show, handleClose }) => {
             </ListGroup.Item>
           ))}
         </ListGroup>
-        {/* Dropdown for Table Selection */}
-        <Form.Group className="table-dropdown">
+        <Form.Group className="create-order-table-dropdown">
           <Form.Label>Select Table Number</Form.Label>
           <Form.Select
             value={selectedTable}
@@ -118,18 +116,18 @@ const CreateOrder = ({ show, handleClose }) => {
           </Form.Select>
         </Form.Group>
       </Modal.Body>
-      <Modal.Footer className="modal-footer-custom">
+      <Modal.Footer className="create-order-footer">
         <Button
           variant="outline-light"
           onClick={handleClose}
-          className="modal-cancel-button"
+          className="create-order-cancel-button"
         >
           Cancel
         </Button>
         <Button
           variant="outline-warning"
           onClick={handleCreateOrder}
-          className="modal-create-button"
+          className="create-order-confirm-button"
         >
           Confirm Order
         </Button>
@@ -139,4 +137,3 @@ const CreateOrder = ({ show, handleClose }) => {
 };
 
 export default CreateOrder;
-    
