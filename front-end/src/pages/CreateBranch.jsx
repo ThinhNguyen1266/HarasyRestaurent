@@ -46,7 +46,7 @@ const CreateBranch = () => {
     manager: "",
     status: "INACTIVE",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
-    tables: [{ number: "", capacity: "" }],
+    tables: [{ number: "", capacity: "", status: "AVAILABLE" }],
     menus: [{ type: "" }],
   });
   const [previewUrl, setPreviewUrl] = useState(null);

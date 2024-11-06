@@ -39,6 +39,7 @@ const EditBranch = () => {
 
   useEffect(() => {
     if (branchData) {
+      console.log("Branch data after reload:", branchData);
       setFormData({
         ...branchData,
         manager: branchData.manager || "",
@@ -66,16 +67,35 @@ const EditBranch = () => {
     }
   };
 
-  const handleSaveBranch = (imageUrl) => {
+  const handleEditBranch = (imageUrl) => {
     const payload = {
-      ...formData,
+      name: formData.name,
+      location: formData.location,
       image: imageUrl || formData.image,
-      workingHours: formData.workingHours.filter(
-        (hour) => hour.dayOfWeek && hour.openingTime && hour.closingTime
-      ),
-      tables: formData.tables.filter((table) => table.number && table.capacity),
-      menus: formData.menus.filter((menu) => menu.type),
+      phone: formData.phone,
+      manager: formData.manager,
+      status: formData.status,
+      workingHours: formData.workingHours.map((hour) => ({
+        dayOfWeek: hour.dayOfWeek,
+        openingTime:
+          hour.openingTime.length === 5
+            ? `${hour.openingTime}:00`
+            : hour.openingTime,
+        closingTime:
+          hour.closingTime.length === 5
+            ? `${hour.closingTime}:00`
+            : hour.closingTime,
+      })),
+      tables: formData.tables.map((table) => ({
+        number: table.number,
+        capacity: table.capacity,
+      })),
+      menus: formData.menus.map((menu) => ({
+        type: menu.type,
+      })),
     };
+
+    console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
 
     saveBranchMutate.mutate({ ...payload, id: branchId });
   };
@@ -85,13 +105,13 @@ const EditBranch = () => {
     if (formData.imageFile) {
       uploadImageMutate.mutate(formData.imageFile);
     } else {
-      handleSaveBranch();
+      handleEditBranch();
     }
   };
 
   const uploadImageMutate = useMutation({
     mutationFn: uploadImage,
-    onSuccess: (imageUrl) => handleSaveBranch(imageUrl),
+    onSuccess: (imageUrl) => handleEditBranch(imageUrl),
     onError: (error) => toast.error(`Failed to upload image: ${error.message}`),
   });
 
@@ -99,6 +119,7 @@ const EditBranch = () => {
     mutationFn: updateBranch,
     onSuccess: () => {
       toast.success("Branch updated successfully!");
+
       navigate("/branch");
     },
     onError: (error) =>
@@ -362,10 +383,10 @@ const EditBranch = () => {
                     className="form-select me-2"
                   >
                     <option value="">Select Menu Type</option>
-                    <option value="BREAKFAST">Breakfast</option>
-                    <option value="LUNCH">Lunch</option>
-                    <option value="DINNER">Dinner</option>
-                    <option value="DESSERT">Dessert</option>
+                    <option value="BREAKFAST">BREAKFAST</option>
+                    <option value="LUNCH">LUNCH</option>
+                    <option value="DINNER">DINNER</option>
+                    <option value="DESSERT">DESSERT</option>
                   </select>
                 </div>
               ))}

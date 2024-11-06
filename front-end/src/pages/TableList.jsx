@@ -3,35 +3,72 @@ import { FaCheck, FaTimes, FaChair, FaUsers } from "react-icons/fa";
 import { Card, Row, Col, Badge, Container, Form } from "react-bootstrap";
 import Sidebar from "../components/Sidebar";
 import "../assets/styles/TableList.css";
+import useTableApi from "../hooks/api/useTableApi";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const TableList = () => {
-  const [tables, setTables] = useState([
-    { id: 1, name: "Table 1", capacity: 4, available: true },
-    { id: 2, name: "Table 2", capacity: 2, available: false },
-    { id: 3, name: "Table 3", capacity: 6, available: true },
-    { id: 4, name: "Table 4", capacity: 4, available: true },
-    { id: 5, name: "Table 5", capacity: 8, available: false },
-    { id: 6, name: "Table 6", capacity: 2, available: true },
-    { id: 7, name: "Table 7", capacity: 2, available: true },
-    { id: 8, name: "Table 8", capacity: 2, available: true },
-  ]);
-
+  const queryClient = useQueryClient();
+  const { getTablelist, updateTableStatus } = useTableApi();
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
 
-  const availableTables = tables.filter((table) => table.available).length;
-  const unavailableTables = tables.length - availableTables;
+  // Sử dụng useQuery để gọi API lấy danh sách bàn
+  const {
+    data: tableData,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["tables"],
+    queryFn: getTablelist,
+    onError: (error) => {
+      console.error(`Failed to fetch tables: ${error.message}`);
+    },
+  });
 
-  const handleTableSwitch = (id) => {
-    setTables(
-      tables.map((table) =>
-        table.id === id ? { ...table, available: !table.available } : table
-      )
-    );
+  // Sử dụng useMutation để gọi API cập nhật trạng thái bàn
+  const mutation = useMutation({
+    mutationFn: updateTableStatus,
+    onSuccess: () => {
+      console.log("Table status updated successfully");
+      queryClient.invalidateQueries("tables"); // Làm mới dữ liệu sau khi cập nhật thành công
+    },
+    onError: (error) => {
+      console.error(`Failed to update table status: ${error.message}`);
+    },
+  });
+
+  // Kiểm tra trạng thái loading và lỗi
+  if (isLoading) return <div>Loading tables...</div>;
+  if (error) return <div>Error loading tables: {error.message}</div>;
+
+  // Đảm bảo rằng tableData tồn tại và có cấu trúc đúng
+  const tables =
+    tableData?.map((table) => ({
+      id: table.id,
+      number: table.number,
+      capacity: table.capacity,
+      status: table.status, // Sử dụng status như trong API response
+    })) || [];
+
+  // Lọc bàn dựa vào trạng thái
+  const filteredTables = showAvailableOnly
+    ? tables.filter((table) => table.status === "AVAILABLE")
+    : tables;
+
+  // Xử lý việc chuyển đổi trạng thái bàn
+  const handleTableSwitch = (id, currentStatus) => {
+    // Xác định trạng thái mới
+    const newStatus =
+      currentStatus === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE";
+
+    // Gọi API cập nhật trạng thái bàn
+    mutation.mutate({ tableId: id, status: newStatus });
   };
 
-  const filteredTables = showAvailableOnly
-    ? tables.filter((table) => table.available)
-    : tables;
+  const availableTables = tables.filter(
+    (table) => table.status === "AVAILABLE"
+  ).length;
+  const unavailableTables = tables.length - availableTables;
 
   return (
     <div className="layout">
@@ -57,13 +94,13 @@ const TableList = () => {
                   <Badge pill bg="success" className="fs-5">
                     {availableTables}
                   </Badge>
-                  <p>Available</p>
+                  <p className="text-white">Available</p>
                 </div>
                 <div>
                   <Badge pill bg="danger" className="fs-5">
                     {unavailableTables}
                   </Badge>
-                  <p>Unavailable</p>
+                  <p className="text-white">Unavailable</p>
                 </div>
               </Col>
             </Row>
@@ -71,19 +108,23 @@ const TableList = () => {
               <Col xs={12} sm={6} lg={4} key={table.id}>
                 <Card
                   className={`${
-                    table.available ? "border-success" : "border-danger"
+                    table.status === "AVAILABLE"
+                      ? "border-success"
+                      : "border-danger"
                   } border-top-4 border-4`}
                 >
                   <Card.Body className="card-body">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                      <h5 className="card-title text-white">{table.name}</h5>
+                      <h5 className="card-title text-white">{`Table ${table.number}`}</h5>
                       <Form>
                         <Form.Check
                           type="switch"
                           id={`table-switch-${table.id}`}
-                          checked={table.available}
-                          onChange={() => handleTableSwitch(table.id)}
-                          className=" custom-switch"
+                          checked={table.status === "AVAILABLE"}
+                          onChange={() =>
+                            handleTableSwitch(table.id, table.status)
+                          }
+                          className="custom-switch"
                         />
                       </Form>
                     </div>
@@ -94,11 +135,13 @@ const TableList = () => {
                     <div className="d-flex align-items-center mb-2 text-white">
                       <FaUsers className="me-2 text-white" />
                       <span>
-                        {table.available ? "Available" : "Unavailable"}
+                        {table.status === "AVAILABLE"
+                          ? "Available"
+                          : "Unavailable"}
                       </span>
                     </div>
                     <div className="mt-3">
-                      {table.available ? (
+                      {table.status === "AVAILABLE" ? (
                         <span className="text-success d-flex align-items-center">
                           <FaCheck className="me-1" /> Ready for seating
                         </span>
