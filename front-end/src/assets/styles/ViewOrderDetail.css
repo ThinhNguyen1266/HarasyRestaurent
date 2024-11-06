@@ -1,0 +1,134 @@
+/* Enlarge modal width and content area */
+.large-view-order-modal .modal-dialog {
+  max-width: 800px; /* Increase width */
+}
+
+.custom-view-order-modal .modal-content {
+  background-color: #121212;
+  color: #f5f5f5;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-view-order-modal .modal-content:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.85);
+}
+
+.view-order-header {
+  background-color: #121212;
+  padding: 1.8rem; /* Adjust padding for larger header */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #333;
+}
+
+.view-order-title {
+  color: #ff9500;
+  font-weight: bold;
+  font-size: 1.8rem; /* Increase font size for title */
+  text-align: center;
+  letter-spacing: 1.5px;
+}
+
+.view-order-body {
+  padding: 2rem; /* Increase padding for spacious look */
+  color: #d3d3d3;
+  font-size: 1.1rem;
+}
+
+.view-order-info {
+  margin-bottom: 1.8rem;
+}
+
+.view-order-date-time {
+  color: #ccc;
+  font-size: 1.1rem;
+}
+
+.view-order-item-count {
+  color: #ff9500;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.view-order-items-list {
+  max-height: 300px; /* Increase height of scroll area */
+  overflow-y: auto;
+  background-color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.view-order-item {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.view-order-item:hover {
+  background-color: #ff9500;
+  color: #121212;
+  cursor: pointer;
+}
+
+.view-order-item-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view-order-item-name {
+  color: #ff9500;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.view-order-item-description {
+  color: #ddd;
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+.view-order-footer {
+  background-color: #121212;
+  border-top: 1px solid #333;
+  padding: 1.8rem;
+}
+
+.view-order-close-button {
+  font-weight: bold;
+  color: #ff9500;
+  border-color: #ff9500;
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.view-order-close-button:hover {
+  background-color: #ff9500;
+  color: #121212;
+}
+
+/* Custom scrollbar for item list */
+.view-order-items-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.view-order-items-list::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+
+.view-order-items-list::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}

@@ -17,8 +17,7 @@ const staticMenuData = {
           id: 101,
           name: "Crispy Calamari",
           price: "$12.99",
-          description:
-            "Tender calamari rings, lightly breaded and fried until golden",
+          description: "Tender calamari rings, lightly breaded and fried until golden",
           image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0",
           available: true,
         },
@@ -26,8 +25,7 @@ const staticMenuData = {
           id: 102,
           name: "Bruschetta",
           price: "$8.99",
-          description:
-            "Toasted bread topped with fresh tomatoes, garlic, and basil",
+          description: "Toasted bread topped with fresh tomatoes, garlic, and basil",
           image: "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f",
           available: true,
         },
@@ -41,8 +39,7 @@ const staticMenuData = {
           id: 201,
           name: "Grilled Salmon",
           price: "$24.99",
-          description:
-            "Fresh Atlantic salmon with herbs and lemon butter sauce",
+          description: "Fresh Atlantic salmon with herbs and lemon butter sauce",
           image: "https://images.unsplash.com/photo-1534604973900-c43ab4c2e0ab",
           available: true,
         },
@@ -80,17 +77,16 @@ const staticMenuData = {
     },
   ],
 };
+
 const ChefMenu = () => {
   const [menuData, setMenuData] = useState(staticMenuData);
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Cập nhật các thẻ mở rộng dựa trên từ khóa tìm kiếm
   useEffect(() => {
     if (searchTerm.trim() === "") {
-      setExpandedCategories([]); // Nếu không có từ khóa, đóng tất cả các thẻ
+      setExpandedCategories([]);
     } else {
-      // Tìm các danh mục có ít nhất một item khớp với từ khóa
       const matchingCategories = menuData.categories
         .filter((category) =>
           category.items.some((item) =>
@@ -98,15 +94,13 @@ const ChefMenu = () => {
           )
         )
         .map((category) => category.id);
-      setExpandedCategories(matchingCategories); // Mở các danh mục khớp
+      setExpandedCategories(matchingCategories);
     }
   }, [searchTerm, menuData]);
 
   const toggleCategory = (categoryId) => {
     setExpandedCategories((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
+      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     );
   };
 
@@ -117,9 +111,7 @@ const ChefMenu = () => {
           ? {
               ...category,
               items: category.items.map((item) =>
-                item.id === itemId
-                  ? { ...item, available: !item.available }
-                  : item
+                item.id === itemId ? { ...item, available: !item.available } : item
               ),
             }
           : category
@@ -133,23 +125,9 @@ const ChefMenu = () => {
         .items.find((item) => item.id === itemId);
 
       if (updatedItem && updatedItem.available) {
-        toast.error(`${updatedItem.name} is now Unavailable!`, {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        toast.error(`${updatedItem.name} is now Unavailable!`);
       } else if (updatedItem) {
-        toast.success(`${updatedItem.name} is now Available!`, {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        toast.success(`${updatedItem.name} is now Available!`);
       }
     }, 0);
   };
@@ -165,99 +143,68 @@ const ChefMenu = () => {
   };
 
   return (
-    <div className="main-content">
+    <div className="chef-menu-main">
       <Sidebar />
       <ToastContainer />
-      <div className="container my-4">
-        <div className="text-center mt-4 mb-4">
-          <MdRestaurantMenu className="text-success fs-1 me-2" />
-          <h1 className="text-white">Menu Management</h1>
+      <div className="chef-menu-content">
+        <div className="chef-menu-header text-center">
+          <MdRestaurantMenu className="chef-menu-icon" />
+          <h1>Menu Management</h1>
         </div>
 
-        {/* Thanh tìm kiếm */}
-        <div className="mb-4">
+        <div className="chef-menu-search mb-4">
           <input
             type="text"
-            className="form-control search-bar"
+            className="chef-menu-search-bar"
             placeholder="Search menu items..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        <div className="accordion" id="menuAccordion">
+        <div className="chef-menu-accordion" id="menuAccordion">
           {filteredMenuData.categories.map((category) => (
-            <div key={category.id} className="accordion-item mb-3">
-              <h2 className="accordion-header">
+            <div key={category.id} className="chef-menu-accordion-item">
+              <h2 className="chef-menu-accordion-header">
                 <button
-                  className="accordion-button collapsed"
+                  className="chef-menu-accordion-button"
                   type="button"
                   onClick={() => toggleCategory(category.id)}
-                  aria-expanded={expandedCategories.includes(category.id)}
                 >
                   {category.name}
                 </button>
               </h2>
 
               {expandedCategories.includes(category.id) && (
-                <div className="accordion-collapse show">
-                  <div className="accordion-body">
-                    {category.items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="d-flex align-items-center mb-3"
-                      >
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="rounded me-3"
-                          style={{
-                            width: "64px",
-                            height: "64px",
-                            objectFit: "cover",
-                          }}
-                        />
-                        <div className="flex-grow-1">
-                          <h5 className="fw-semibold">{item.name}</h5>
-                          <p className="text-white small mb-1">
-                            {item.description}
-                          </p>
-                          <p className="text-success fw-bold">{item.price}</p>
-                        </div>
-                        <div className="d-flex align-items-center justify-content-between">
-                          <div className="d-flex align-items-center">
-                            {item.available ? (
-                              <FaCheckCircle className="text-success me-2" />
-                            ) : (
-                              <FaTimesCircle className="text-danger me-2" />
-                            )}
-                            <span
-                              className={`fw-medium ${
-                                item.available ? "text-success" : "text-danger"
-                              }`}
-                            >
-                              {item.available ? "Available" : "Unavailable"}
-                            </span>
-                          </div>
-
-                          <button
-                            onClick={() =>
-                              toggleItemStatus(category.id, item.id)
-                            }
-                            className={`btn ${
-                              item.available
-                                ? "btn-outline-danger"
-                                : "btn-outline-success"
-                            } ms-3`}
-                          >
-                            {item.available
-                              ? "Mark Unavailable"
-                              : "Mark Available"}
-                          </button>
-                        </div>
+                <div className="chef-menu-accordion-body">
+                  {category.items.map((item) => (
+                    <div key={item.id} className="chef-menu-item">
+                      <img src={item.image} alt={item.name} className="chef-menu-item-image" />
+                      <div className="chef-menu-item-details">
+                        <h5>{item.name}</h5>
+                        <p className="chef-menu-item-desc">{item.description}</p>
+                        <p className="chef-menu-item-price">{item.price}</p>
                       </div>
-                    ))}
-                  </div>
+                      <div className="chef-menu-item-status">
+                        {item.available ? (
+                          <FaCheckCircle className="chef-menu-status-icon text-success" />
+                        ) : (
+                          <FaTimesCircle className="chef-menu-status-icon text-danger" />
+                        )}
+                        <span className={item.available ? "text-success" : "text-danger"}>
+                          {item.available ? "Available" : "Unavailable"}
+                        </span>
+                        <button
+                          onClick={() => toggleItemStatus(category.id, item.id)}
+                          className={`chef-menu-toggle-button ${
+                            item.available ? "btn-outline-danger" : "btn-outline-success"
+                          }`}
+                        >
+                          {item.available ? "Mark Unavailable" : "Mark Available"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
