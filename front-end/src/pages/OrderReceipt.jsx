@@ -4,22 +4,30 @@ import Button from "react-bootstrap/Button";
 import Sidebar from "../components/Sidebar";
 import CreateOrder from "../components/CreateOder";
 import UpdateOrder from "../components/UpdateOrder";
+import ViewOrderDetail from "../components/ViewOrderDetail";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../assets/styles/OrderReceipt.css";
 
 function OrderReceipt() {
   const [showCreateOrder, setShowCreateOrder] = useState(false);
   const [showUpdateOrder, setShowUpdateOrder] = useState(false);
+  const [showOrderDetail, setShowOrderDetail] = useState(false);
   const [currentOrderItems, setCurrentOrderItems] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const handleCloseCreateOrder = () => setShowCreateOrder(false);
+  const handleCloseUpdateOrder = () => setShowUpdateOrder(false);
+  const handleCloseOrderDetail = () => setShowOrderDetail(false);
 
   const handleShowUpdateOrder = (items) => {
     setCurrentOrderItems(items);
     setShowUpdateOrder(true);
   };
 
-  const handleCloseUpdateOrder = () => setShowUpdateOrder(false);
+  const handleCardClick = (order) => {
+    setSelectedOrder(order);
+    setShowOrderDetail(true);
+  };
 
   const orders = [
     {
@@ -102,13 +110,7 @@ function OrderReceipt() {
       id: 355,
       date: "07 Feb 2023",
       time: "07:00 PM",
-      items: [
-        "Pasta",
-        "Steak",
-        "Caesar Salad",
-        "Mushroom Soup",
-        "Garlic Bread",
-      ],
+      items: ["Pasta", "Steak", "Caesar Salad", "Mushroom Soup", "Garlic Bread"],
       details: [
         "Fettuccine Alfredo",
         "Sirloin Steak",
@@ -155,10 +157,8 @@ function OrderReceipt() {
           </div>
           <div className="order-list">
             {orders.map((order, index) => (
-              <Card key={index} className="order-card">
-                <Card.Header className="order-header">
-                  Order {order.id}
-                </Card.Header>
+              <Card key={index} className="order-card" onClick={() => handleCardClick(order)}>
+                <Card.Header className="order-header">Order {order.id}</Card.Header>
                 <Card.Body>
                   <Card.Text>
                     {order.date}, {order.time}
@@ -167,21 +167,13 @@ function OrderReceipt() {
                     {order.items.map((item, idx) => (
                       <div key={idx} className="order-item">
                         <span className="item-name">{item}</span>
-                        <span className="item-details">
-                          {order.details[idx]}
-                        </span>
+                        <span className="item-details">{order.details[idx]}</span>
                       </div>
                     ))}
                   </div>
                   <Card.Footer>
-                    <div className="item-count">
-                      x{order.items.length} items
-                    </div>
-                    <Button
-                      variant="warning"
-                      className="update-button"
-                      onClick={() => handleShowUpdateOrder(order.items)}
-                    >
+                    <div className="item-count">x{order.items.length} items</div>
+                    <Button variant="warning" className="update-button" onClick={(e) => { e.stopPropagation(); handleShowUpdateOrder(order.items); }}>
                       Update
                     </Button>
                   </Card.Footer>
@@ -191,15 +183,11 @@ function OrderReceipt() {
           </div>
         </div>
       </div>
-      <CreateOrder
-        show={showCreateOrder}
-        handleClose={handleCloseCreateOrder}
-      />
-      <UpdateOrder
-        show={showUpdateOrder}
-        handleClose={handleCloseUpdateOrder}
-        initialItems={currentOrderItems}
-      />
+      <CreateOrder show={showCreateOrder} handleClose={handleCloseCreateOrder} />
+      <UpdateOrder show={showUpdateOrder} handleClose={handleCloseUpdateOrder} initialItems={currentOrderItems} />
+      {selectedOrder && (
+        <ViewOrderDetail show={showOrderDetail} handleClose={handleCloseOrderDetail} order={selectedOrder} />
+      )}
     </div>
   );
 }
