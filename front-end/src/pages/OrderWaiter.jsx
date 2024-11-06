@@ -4,13 +4,16 @@ import Button from "react-bootstrap/Button";
 import Sidebar from "../components/Sidebar";
 import CreateOrder from "../components/CreateOder";
 import UpdateOrder from "../components/UpdateOrder";
+import ViewOrderDetail from "../components/ViewOrderDetail"; // Import ViewOrderDetail
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../assets/styles/OrderWaiter.css";
 
 function OrderWaiter() {
   const [showCreateOrder, setShowCreateOrder] = useState(false);
   const [showUpdateOrder, setShowUpdateOrder] = useState(false);
+  const [showOrderDetail, setShowOrderDetail] = useState(false);
   const [currentOrderItems, setCurrentOrderItems] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const handleShowCreateOrder = () => setShowCreateOrder(true);
   const handleCloseCreateOrder = () => setShowCreateOrder(false);
@@ -21,6 +24,13 @@ function OrderWaiter() {
   };
 
   const handleCloseUpdateOrder = () => setShowUpdateOrder(false);
+
+  const handleShowOrderDetail = (order) => {
+    setSelectedOrder(order);
+    setShowOrderDetail(true);
+  };
+
+  const handleCloseOrderDetail = () => setShowOrderDetail(false);
 
   const orders = [
     {
@@ -103,13 +113,7 @@ function OrderWaiter() {
       id: 355,
       date: "07 Feb 2023",
       time: "07:00 PM",
-      items: [
-        "Pasta",
-        "Steak",
-        "Caesar Salad",
-        "Mushroom Soup",
-        "Garlic Bread",
-      ],
+      items: ["Pasta", "Steak", "Caesar Salad", "Mushroom Soup", "Garlic Bread"],
       details: [
         "Fettuccine Alfredo",
         "Sirloin Steak",
@@ -164,7 +168,11 @@ function OrderWaiter() {
           </div>
           <div className="order-list">
             {orders.map((order, index) => (
-              <Card key={index} className="order-card">
+              <Card
+                key={index}
+                className="order-card"
+                onClick={() => handleShowOrderDetail(order)}
+              >
                 <Card.Header className="order-header">
                   Order {order.id}
                 </Card.Header>
@@ -189,7 +197,10 @@ function OrderWaiter() {
                     <Button
                       variant="warning"
                       className="update-button"
-                      onClick={() => handleShowUpdateOrder(order.items)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShowUpdateOrder(order.items);
+                      }}
                     >
                       Update
                     </Button>
@@ -208,6 +219,11 @@ function OrderWaiter() {
         show={showUpdateOrder}
         handleClose={handleCloseUpdateOrder}
         initialItems={currentOrderItems}
+      />
+      <ViewOrderDetail
+        show={showOrderDetail}
+        handleClose={handleCloseOrderDetail}
+        order={selectedOrder}
       />
     </div>
   );
