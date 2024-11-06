@@ -6,67 +6,70 @@ html, body {
   font-family: 'Arial', sans-serif;
 }
 
-.main-content {
+.order-waiter-main-content {
   margin-left: 250px;
+  background-color: #1a1a1a; /* Ensure the background color is applied */
+  min-height: 100vh; /* Make sure it covers the full height */
 }
 
-.order-page {
+.order-waiter-page {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
   height: 90vh;
   overflow-y: auto;
+  background-color: #1a1a1a; /* Ensure the background color is applied */
 }
 
-.order-page::-webkit-scrollbar,
-.order-items-container::-webkit-scrollbar {
+.order-waiter-page::-webkit-scrollbar,
+.order-waiter-items-container::-webkit-scrollbar {
   width: 8px;
 }
 
-.order-page::-webkit-scrollbar-thumb,
-.order-items-container::-webkit-scrollbar-thumb {
+.order-waiter-page::-webkit-scrollbar-thumb,
+.order-waiter-items-container::-webkit-scrollbar-thumb {
   background-color: #444;
   border-radius: 10px;
 }
 
-.order-page::-webkit-scrollbar-thumb:hover,
-.order-items-container::-webkit-scrollbar-thumb:hover {
+.order-waiter-page::-webkit-scrollbar-thumb:hover,
+.order-waiter-items-container::-webkit-scrollbar-thumb:hover {
   background-color: #666;
 }
 
-.order-page::-webkit-scrollbar-track,
-.order-items-container::-webkit-scrollbar-track {
+.order-waiter-page::-webkit-scrollbar-track,
+.order-waiter-items-container::-webkit-scrollbar-track {
   background: #222;
   border-radius: 10px;
 }
 
-.header-row {
+.order-waiter-header-row {
   text-align: center;
   margin-bottom: 10px;
 }
 
-.button-row {
+.order-waiter-button-row {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
 }
 
-h1 {
+.order-waiter-title {
   color: #fff;
 }
 
-.create-order-button {
+.order-waiter-create-order-button {
   background-color: #ff6600;
   border: none;
 }
 
-.order-list {
+.order-waiter-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
 }
 
-.order-card {
+.order-waiter-card {
   background-color: #333;
   color: #fff;
   background-size: cover;
@@ -77,7 +80,7 @@ h1 {
   min-height: 300px;
 }
 
-.order-header {
+.order-waiter-header {
   background-color: #222;
   color: #E55B00;
   font-weight: bold;
@@ -85,7 +88,7 @@ h1 {
   border-bottom: 1px solid #444;
 }
 
-.order-items-container {
+.order-waiter-items-container {
   height: 150px;
   overflow-y: auto;
   padding-right: 5px;
@@ -94,7 +97,7 @@ h1 {
   justify-content: flex-start;
 }
 
-.order-item {
+.order-waiter-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -105,24 +108,24 @@ h1 {
   transition: background 0.3s, transform 0.2s;
 }
 
-.order-item:hover {
+.order-waiter-item:hover {
   background-color: #3a3a3a;
   transform: scale(1.02);
 }
 
-.item-name {
+.order-waiter-item-name {
   color: #ff9500;
   font-weight: 500;
   font-size: 0.95rem;
 }
 
-.item-details {
+.order-waiter-item-details {
   color: #ddd;
   font-size: 0.9rem;
   text-align: right;
 }
 
-.update-button {
+.order-waiter-update-button {
   background-color: #ff6600;
   border: none;
   width: 100%;
@@ -133,55 +136,55 @@ h1 {
   transition: background 0.3s ease;
 }
 
-.update-button:hover {
+.order-waiter-update-button:hover {
   background-color: #e07a00;
 }
 
-.item-count {
+.order-waiter-item-count {
   color: #ccc;
   margin-bottom: 10px;
   font-weight: 500;
 }
 
 @media (max-width: 768px) {
-  .main-content {
+  .order-waiter-main-content {
     margin-left: 0;
   }
 
-  .header-row h1 {
+  .order-waiter-header-row h1 {
     font-size: 1.5rem;
   }
 
-  .button-row {
+  .order-waiter-button-row {
     justify-content: center;
     margin-bottom: 15px;
   }
 
-  .order-items-container {
+  .order-waiter-items-container {
     max-height: 120px;
   }
 
-  .order-item {
+  .order-waiter-item {
     padding: 8px 10px;
     font-size: 0.9rem;
   }
 }
 
 @media (max-width: 576px) {
-  .order-list {
+  .order-waiter-list {
     grid-template-columns: 1fr;
   }
 
-  .create-order-button {
+  .order-waiter-create-order-button {
     width: 100%;
     margin-top: 10px;
   }
 
-  .order-card {
+  .order-waiter-card {
     padding: 15px;
   }
 
-  .update-button {
+  .order-waiter-update-button {
     font-size: 0.9rem;
     padding: 6px 0;
   }

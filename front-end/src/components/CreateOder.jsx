@@ -64,6 +64,7 @@ const CreateOrder = ({ show, handleClose, onCreateOrder }) => {
       id: Math.floor(Math.random() * 1000) + 1,
       date: new Date().toLocaleDateString(),
       time: new Date().toLocaleTimeString(),
+      table: selectedTable, // Include table number
       items: Object.keys(selectedItems),
       details: Object.keys(selectedItems).map((item) => `${item} Details`),
     };

@@ -21,6 +21,7 @@ import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import EditBranch from "./pages/EditBranch";
 import Venues from "./pages/Venues";
+import OrderWaiter from "./pages/OrderWaiter";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
+        <Route path="/order" element={<OrderWaiter />} />
         <Route path="/profile/:id" element={<Profile />} />
         <Route element={<StaffLayout />}>
           <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
