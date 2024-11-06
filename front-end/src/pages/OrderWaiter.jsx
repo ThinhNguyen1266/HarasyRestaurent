@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Sidebar from "../components/Sidebar";
-import CreateOrder from "../components/CreateOder";
+import CreateOrder from "../components/CreateOder"; // Make sure the import path is correct
 import UpdateOrder from "../components/UpdateOrder";
 import ViewOrderDetail from "../components/ViewOrderDetail";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -13,13 +13,14 @@ function OrderWaiter() {
   const [showUpdateOrder, setShowUpdateOrder] = useState(false);
   const [showOrderDetail, setShowOrderDetail] = useState(false);
   const [currentOrderItems, setCurrentOrderItems] = useState([]);
+  const [currentTable, setCurrentTable] = useState(""); // Added for table
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orders, setOrders] = useState([
     {
       id: 351,
       date: "05 Feb 2023",
       time: "08:38 PM",
-      table: "Table 1", // Added table information
+      table: "Table 1",
       items: [
         "Vegetable Mixups",
         "Chinese Takeout Dish",
@@ -47,8 +48,9 @@ function OrderWaiter() {
   const handleShowCreateOrder = () => setShowCreateOrder(true);
   const handleCloseCreateOrder = () => setShowCreateOrder(false);
 
-  const handleShowUpdateOrder = (items) => {
+  const handleShowUpdateOrder = (items, table) => {
     setCurrentOrderItems(Array.isArray(items) ? items : []);
+    setCurrentTable(table || ""); // Set the current table
     setShowUpdateOrder(true);
   };
 
@@ -66,54 +68,56 @@ function OrderWaiter() {
     handleCloseCreateOrder();
   };
 
-  const handleUpdateOrder = (updatedItems) => {
+  const handleUpdateOrder = (updatedItems, updatedTable) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
-        order.items === currentOrderItems ? { ...order, items: updatedItems } : order
+        order.items === currentOrderItems
+          ? { ...order, items: updatedItems, table: updatedTable } // Update items and table
+          : order
       )
     );
     handleCloseUpdateOrder();
   };
 
   return (
-    <div className="d-flex">
+    <div className="order-waiter-d-flex">
       <Sidebar />
-      <div className="main-content">
-        <div className="order-page">
-          <div className="header-row">
-            <h1>View Orders</h1>
+      <div className="order-waiter-main-content">
+        <div className="order-waiter-page">
+          <div className="order-waiter-header-row">
+            <h1 className="order-waiter-title">View Orders</h1>
           </div>
-          <div className="button-row">
+          <div className="order-waiter-button-row">
             <Button
-              className="create-order-button"
+              className="order-waiter-create-order-button"
               onClick={handleShowCreateOrder}
             >
               Create Order
             </Button>
           </div>
-          <div className="order-list">
+          <div className="order-waiter-list">
             {orders.map((order, index) => (
               <Card
                 key={index}
-                className="order-card"
+                className="order-waiter-card"
                 onClick={() => handleShowOrderDetail(order)}
               >
-                <Card.Header className="order-header">
+                <Card.Header className="order-waiter-header">
                   Order {order.id}
                 </Card.Header>
                 <Card.Body>
                   <Card.Text>
-                    {order.date}, {order.time}
+                    {order.time}, {order.date}
                   </Card.Text>
-                  <Card.Text className="order-table">
-                    {order.table} {/* Display table number */}
+                  <Card.Text className="order-waiter-table">
+                    {order.table}
                   </Card.Text>
-                  <div className="order-items-container">
+                  <div className="order-waiter-items-container">
                     {(Array.isArray(order.items) ? order.items : []).map(
                       (item, idx) => (
-                        <div key={idx} className="order-item">
-                          <span className="item-name">{item}</span>
-                          <span className="item-details">
+                        <div key={idx} className="order-waiter-item">
+                          <span className="order-waiter-item-name">{item}</span>
+                          <span className="order-waiter-item-details">
                             {order.details[idx]}
                           </span>
                         </div>
@@ -121,15 +125,15 @@ function OrderWaiter() {
                     )}
                   </div>
                   <Card.Footer>
-                    <div className="item-count">
+                    <div className="order-waiter-item-count">
                       x{order.items ? order.items.length : 0} items
                     </div>
                     <Button
                       variant="warning"
-                      className="update-button"
+                      className="order-waiter-update-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleShowUpdateOrder(order.items || []);
+                        handleShowUpdateOrder(order.items || [], order.table);
                       }}
                     >
                       Update
@@ -150,6 +154,7 @@ function OrderWaiter() {
         show={showUpdateOrder}
         handleClose={handleCloseUpdateOrder}
         initialItems={currentOrderItems}
+        initialTable={currentTable} // Pass the current table
         onUpdateOrder={handleUpdateOrder}
       />
       <ViewOrderDetail

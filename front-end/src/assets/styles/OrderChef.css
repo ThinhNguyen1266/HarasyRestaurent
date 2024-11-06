@@ -1,75 +1,64 @@
-/* Order.css */
-
-body {
+html, body {
+  height: 100%;
+  margin: 0;
   background-color: #1a1a1a;
   color: #fff;
   font-family: 'Arial', sans-serif;
 }
 
-.main-content {
+.order-chef-main-content {
   margin-left: 250px;
+  background-color: #1a1a1a; /* Ensure the background color is applied */
+  min-height: 100vh; /* Make sure it covers the full height */
 }
 
-.order-page {
+.order-chef-page {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
   height: 90vh;
   overflow-y: auto;
+  background-color: #1a1a1a;
 }
 
-/* Responsive scrollbar styling */
-.order-page::-webkit-scrollbar,
-.order-items-container::-webkit-scrollbar {
+.order-chef-page::-webkit-scrollbar,
+.order-chef-items-container::-webkit-scrollbar {
   width: 8px;
 }
 
-.order-page::-webkit-scrollbar-thumb,
-.order-items-container::-webkit-scrollbar-thumb {
+.order-chef-page::-webkit-scrollbar-thumb,
+.order-chef-items-container::-webkit-scrollbar-thumb {
   background-color: #444;
   border-radius: 10px;
 }
 
-.order-page::-webkit-scrollbar-thumb:hover,
-.order-items-container::-webkit-scrollbar-thumb:hover {
+.order-chef-page::-webkit-scrollbar-thumb:hover,
+.order-chef-items-container::-webkit-scrollbar-thumb:hover {
   background-color: #666;
 }
 
-.order-page::-webkit-scrollbar-track,
-.order-items-container::-webkit-scrollbar-track {
+.order-chef-page::-webkit-scrollbar-track,
+.order-chef-items-container::-webkit-scrollbar-track {
   background: #222;
   border-radius: 10px;
 }
 
-.header-row {
+.order-chef-header-row {
   text-align: center;
   margin-bottom: 10px;
 }
 
-.button-row {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-}
-
-h1 {
+.order-chef-title {
   color: #fff;
 }
 
-.create-order-button {
-  background-color: #ff6600;
-  border: none;
-}
-
-/* Responsive Grid for Order List */
-.order-list {
+.order-chef-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive min size */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
 }
 
-/* Responsive Order Card Styling */
-.order-card {
+.order-chef-card {
   background-color: #333;
   color: #fff;
   background-size: cover;
@@ -79,8 +68,7 @@ h1 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive Order Header */
-.order-header {
+.order-chef-header {
   background-color: #222;
   color: #E55B00;
   font-weight: bold;
@@ -88,15 +76,13 @@ h1 {
   border-bottom: 1px solid #444;
 }
 
-/* Scrollable Items Container */
-.order-items-container {
+.order-chef-items-container {
   max-height: 150px;
   overflow-y: auto;
   padding-right: 5px;
 }
 
-/* Styling for Each Item */
-.order-item {
+.order-chef-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -107,25 +93,24 @@ h1 {
   transition: background 0.3s, transform 0.2s;
 }
 
-.order-item:hover {
+.order-chef-item:hover {
   background-color: #3a3a3a;
   transform: scale(1.02);
 }
 
-.item-name {
+.order-chef-item-name {
   color: #ff9500;
   font-weight: 500;
   font-size: 0.95rem;
 }
 
-.item-details {
+.order-chef-item-details {
   color: #ddd;
   font-size: 0.9rem;
   text-align: right;
 }
 
-/* Update Button Styling */
-.update-button {
+.order-chef-done-button {
   background-color: #ff6600;
   border: none;
   width: 100%;
@@ -136,56 +121,41 @@ h1 {
   transition: background 0.3s ease;
 }
 
-.update-button:hover {
+.order-chef-done-button:hover {
   background-color: #e07a00;
 }
 
-.item-count {
+.order-chef-item-count {
   color: #ccc;
   margin-bottom: 10px;
   font-weight: 500;
 }
 
-/* Media Queries for Smaller Screens */
 @media (max-width: 768px) {
-  .main-content {
+  .order-chef-main-content {
     margin-left: 0;
   }
 
-  .header-row h1 {
+  .order-chef-header-row h1 {
     font-size: 1.5rem;
   }
 
-  .button-row {
-    justify-content: center;
-    margin-bottom: 15px;
-  }
-
-  .order-items-container {
+  .order-chef-items-container {
     max-height: 120px;
   }
 
-  .order-item {
+  .order-chef-item {
     padding: 8px 10px;
     font-size: 0.9rem;
   }
 }
 
 @media (max-width: 576px) {
-  .order-list {
-    grid-template-columns: 1fr; /* Stacks cards vertically */
+  .order-chef-list {
+    grid-template-columns: 1fr;
   }
 
-  .create-order-button {
-    width: 100%;
-    margin-top: 10px;
-  }
-
-  .order-card {
-    padding: 15px;
-  }
-
-  .update-button {
+  .order-chef-done-button {
     font-size: 0.9rem;
     padding: 6px 0;
   }
