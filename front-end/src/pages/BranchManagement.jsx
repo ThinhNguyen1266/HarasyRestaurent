@@ -95,7 +95,7 @@ const BranchManagement = () => {
                 </div>
                 <div className="card-footer d-flex justify-content-end">
                   <button
-                    onClick={() => navigate(`/branches/edit/${branch.id}`)}
+                    onClick={() => navigate(`/branch/${branch.id}`)}
                     className="btn btn-warning btn-sm"
                   >
                     <FaEdit />

@@ -34,7 +34,7 @@ public class SecurityConfig {
             , "/staff/branches","/customer/branches","/foods","/staff",
     };
     String[] GET_PUBLIC_ENDPOINT ={
-            "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
+                "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
             "/menu/{id}","/food/{id}"
     };
     CustomJwtDecoder jwtDecoder;
