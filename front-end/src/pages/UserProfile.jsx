@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "../assets/styles/UserProfile.css";
-import Sidebar from "../components/Sidebar";
-import ProfileForm from "../components/Profile";
+import ProfileForm from "../components/UserProfileFrom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/BranchManagement.css";
@@ -19,8 +18,7 @@ const Profile = () => {
   });
 
   return (
-    <div className="main-content d-flex align-items-center">
-      <Sidebar />
+    <div className="d-flex align-items-center">
       <div className="profile-page">
         <div className="profile-content">
 

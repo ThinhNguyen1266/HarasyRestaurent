@@ -20,16 +20,19 @@ import Register from "./pages/Register";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
+import WorkforceList from "./pages/StaffList";
 
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route element={<DefaultLayout />}>
-          <Route path="/" element={<Home />} />
           <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}>
             <Route path="/reservation" element={<ReservationsPage />} />
+            
+          <Route path="/" element={<Home />} />
           </Route>
+
           <Route path="/venues" element={<Venues />} />
           <Route path="/venues/hcm" element={<HCMVenues />} />
           <Route path="/venues/hanoi" element={<HNVenues />} />
@@ -43,9 +46,12 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
-        <Route path="/profile/:id" element={<Profile />} />
         <Route element={<StaffLayout />}>
-          <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
+          <Route
+            element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}
+          >
+            <Route path="/workforce" element={<WorkforceList />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />
           </Route>

@@ -12,6 +12,6 @@ public interface StaffMapper {
     @Mapping(target = "fullName", source = "account.fullName")
     @Mapping(target = "phone", source = "account.phone")
     @Mapping(target = "role", source = "role")
-    @Mapping(target = "branch", source = "branch.id")
+    @Mapping(target = "branchName", source = "branch.name")
     StaffResponse toResponse(StaffAccountEntity staff);
 }
