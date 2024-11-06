@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, ListGroup, InputGroup } from "react-bootstrap";
 import "../assets/styles/UpdateOrder.css";
 
-const UpdateOrder = ({ show, handleClose, initialItems }) => {
+const UpdateOrder = ({ show, handleClose, initialItems, onUpdateOrder }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [availableItems] = useState([
     "Vegetable Mixups",
@@ -21,10 +21,12 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
   const [selectedItems, setSelectedItems] = useState({});
 
   useEffect(() => {
-    const initialSelectedItems = initialItems.reduce((acc, item) => {
-      acc[item] = (acc[item] || 0) + 1;
-      return acc;
-    }, {});
+    const initialSelectedItems = Array.isArray(initialItems)
+      ? initialItems.reduce((acc, item) => {
+          acc[item] = (acc[item] || 0) + 1;
+          return acc;
+        }, {})
+      : {};
     setSelectedItems(initialSelectedItems);
   }, [initialItems]);
 
@@ -38,6 +40,12 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
   };
 
   const handleRemoveItem = (item) => {
+    const totalItemCount = Object.keys(selectedItems).length;
+    if (totalItemCount === 1 && selectedItems[item] === 1) {
+      alert("You cannot remove the last item from the order.");
+      return;
+    }
+
     setSelectedItems((prevItems) => {
       const updatedItems = { ...prevItems };
       if (updatedItems[item] > 1) updatedItems[item] -= 1;
@@ -46,7 +54,12 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
     });
   };
 
-  const handleUpdateOrder = () => handleClose();
+  const handleUpdateOrder = () => {
+    const updatedItems = Object.entries(selectedItems).flatMap(([item, count]) =>
+      Array(count).fill(item)
+    );
+    onUpdateOrder(updatedItems);
+  };
 
   const filteredItems = availableItems.filter((item) =>
     item.toLowerCase().includes(searchTerm.toLowerCase())
@@ -65,9 +78,7 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
       dialogClassName="update-order-modal-content"
     >
       <Modal.Header className="update-order-header">
-        <Modal.Title className="update-order-title">
-          Update Order
-        </Modal.Title>
+        <Modal.Title className="update-order-title">Update Order</Modal.Title>
       </Modal.Header>
       <Modal.Body className="update-order-body">
         <InputGroup className="mb-3 update-order-search">
@@ -103,7 +114,7 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
                 className="update-order-remove-button"
                 onClick={() => handleRemoveItem(item)}
               >
-                -
+                Remove
               </Button>
             </ListGroup.Item>
           ))}

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, ListGroup, InputGroup } from "react-bootstrap";
 import "../assets/styles/CreateOrder.css";
 
-const CreateOrder = ({ show, handleClose }) => {
+const CreateOrder = ({ show, handleClose, onCreateOrder }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [availableItems] = useState([
     "Vegetable Mixups",
@@ -20,6 +20,14 @@ const CreateOrder = ({ show, handleClose }) => {
   ]);
   const [selectedItems, setSelectedItems] = useState({});
   const [selectedTable, setSelectedTable] = useState("");
+
+  useEffect(() => {
+    if (!show) {
+      setSelectedItems({});
+      setSelectedTable("");
+      setSearchTerm("");
+    }
+  }, [show]);
 
   const tableNumbers = Array.from({ length: 10 }, (_, i) => `Table ${i + 1}`);
 
@@ -41,7 +49,30 @@ const CreateOrder = ({ show, handleClose }) => {
     });
   };
 
-  const handleCreateOrder = () => handleClose();
+  const handleCreateOrder = () => {
+    if (Object.keys(selectedItems).length === 0) {
+      alert("You cannot create an order with no items.");
+      return;
+    }
+
+    if (!selectedTable) {
+      alert("You must select a table before creating an order.");
+      return;
+    }
+
+    const newOrder = {
+      id: Math.floor(Math.random() * 1000) + 1,
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString(),
+      items: Object.keys(selectedItems),
+      details: Object.keys(selectedItems).map((item) => `${item} Details`),
+    };
+
+    onCreateOrder(newOrder);
+    setSelectedItems({});
+    setSelectedTable("");
+    handleClose();
+  };
 
   const filteredItems = availableItems.filter((item) =>
     item.toLowerCase().includes(searchTerm.toLowerCase())

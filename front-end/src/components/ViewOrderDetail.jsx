@@ -21,6 +21,8 @@ const ViewOrderDetail = ({ show, handleClose, order }) => {
             <strong>Date:</strong> {order.date}
             <br />
             <strong>Time:</strong> {order.time}
+            <br />
+            <strong>Table:</strong> {order.table} {/* Added table number */}
           </p>
           <p className="view-order-item-count">Total Items: {order.items.length}</p>
         </div>
