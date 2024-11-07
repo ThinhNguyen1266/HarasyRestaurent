@@ -20,6 +20,7 @@ public interface AccountMapper {
     @Mapping(target = "bankName",source = "account.staff.bankName")
     @Mapping(target = "salary",source = "account.staff.salary")
     @Mapping(target = "branchName",source = "account.staff.branch.name")
+    @Mapping(target = "branchId" ,source = "account.staff.branch.id")
     StaffProfileResponse toStaffProfileResponse(AccountEntity account);
     @Mapping(target = "vipPoint", source = "account.customer.vipPoint")
     CustomerProfileResponse toCustomerProfileResponse(AccountEntity account);

@@ -1,0 +1,163 @@
+/* UpdateOrder.css */
+
+/* Modal container styling for a sleek, dark look */
+.update-order-modal-content .modal-content {
+    background-color: #121212;
+    border: none;
+    border-radius: 12px;
+    color: #f5f5f5;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .update-order-modal-content .modal-content:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 35px rgba(0, 0, 0, 0.85);
+  }
+  
+  /* Centered header styling */
+  .update-order-header {
+    background-color: #121212;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #333;
+  }
+  
+  .update-order-title {
+    color: #ff9500;
+    font-weight: bold;
+    font-size: 1.6rem;
+    text-align: center;
+    letter-spacing: 1.5px;
+  }
+  
+  .update-order-body {
+    padding: 1.5rem;
+    color: #d3d3d3;
+    font-size: 1rem;
+  }
+  
+  .update-order-footer {
+    background-color: #121212;
+    border-top: 1px solid #333;
+    padding: 1.5rem;
+  }
+  
+  .update-order-search .form-control {
+    background-color: #1f1f1f;
+    border: 1px solid #555;
+    color: #f5f5f5;
+    padding: 0.9rem 1.2rem;
+    border-radius: 10px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .update-order-search .form-control:focus {
+    border-color: #ff9500;
+    box-shadow: 0 0 8px rgba(255, 149, 0, 0.4);
+    color: #fff;
+  }
+  
+  .update-order-item-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #1a1a1a;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
+  .update-order-item {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: none;
+    padding: 0.9rem 1.3rem;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    transition: background 0.3s, color 0.3s;
+  }
+  
+  .update-order-item:hover {
+    background-color: #ff9500;
+    color: #121212;
+    cursor: pointer;
+  }
+  
+  .update-order-selected-title {
+    margin-top: 1.5rem;
+    color: #ff9500;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .update-order-selected-list .update-order-selected-item {
+    background-color: #1f1f1f;
+    color: #ff9500;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .update-order-remove-button {
+    background-color: transparent;
+    border: none;
+    color: #ff4d4d;
+    font-weight: bold;
+    transition: color 0.2s;
+  }
+  
+  .update-order-remove-button:hover {
+    color: #ff3333;
+    cursor: pointer;
+  }
+  
+  .update-order-cancel-button,
+  .update-order-confirm-button {
+    font-weight: bold;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .update-order-cancel-button {
+    background-color: #1f1f1f;
+    border: 1px solid #666;
+    color: #ccc;
+  }
+  
+  .update-order-cancel-button:hover {
+    background-color: #333;
+    color: #f5f5f5;
+  }
+  
+  .update-order-confirm-button {
+    background-color: #ff9500;
+    color: #121212;
+    border: none;
+  }
+  
+  .update-order-confirm-button:hover {
+    background-color: #e07a00;
+    color: #fff;
+  }
+  
+  .update-order-item-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .update-order-item-list::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+  }
+  
+  .update-order-item-list::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  }
+  

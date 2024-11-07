@@ -1,193 +1,162 @@
-/* Order.css */
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+}
 
-body {
-    background-color: #1a1a1a;
-    color: #fff;
-    font-family: 'Arial', sans-serif;
+.order-receipt-main-content {
+  margin-left: 250px;
+  background-color: #1a1a1a; /* Ensure the background color is applied */
+  min-height: 100vh; /* Make sure it covers the full height */
+}
+
+.order-receipt-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 90vh;
+  overflow-y: auto;
+  background-color: #1a1a1a;
+}
+
+.order-receipt-page::-webkit-scrollbar,
+.order-receipt-items-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.order-receipt-page::-webkit-scrollbar-thumb,
+.order-receipt-items-container::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 10px;
+}
+
+.order-receipt-page::-webkit-scrollbar-thumb:hover,
+.order-receipt-items-container::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+.order-receipt-page::-webkit-scrollbar-track,
+.order-receipt-items-container::-webkit-scrollbar-track {
+  background: #222;
+  border-radius: 10px;
+}
+
+.order-receipt-header-row {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.order-receipt-title {
+  color: #fff;
+}
+
+.order-receipt-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.order-receipt-card {
+  background-color: #333;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.order-receipt-header {
+  background-color: #222;
+  color: #28a745;
+  font-weight: bold;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.order-receipt-items-container {
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.order-receipt-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.order-receipt-item:hover {
+  background-color: #3a3a3a;
+  transform: scale(1.02);
+}
+
+.order-receipt-item-name {
+  color: #28a745;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.order-receipt-item-details {
+  color: #ddd;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.order-receipt-complete-button {
+  background-color: #28a745;
+  border: none;
+  width: 100%;
+  margin-top: 10px;
+  font-weight: bold;
+  padding: 8px 0;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.order-receipt-complete-button:hover {
+  background-color: #218838;
+}
+
+.order-receipt-item-count {
+  color: #ccc;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .order-receipt-main-content {
+    margin-left: 0;
   }
-  
-  .main-content {
-    margin-left: 250px;
+
+  .order-receipt-header-row h1 {
+    font-size: 1.5rem;
   }
-  
-  .order-page {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    height: 90vh;
-    overflow-y: auto;
+
+  .order-receipt-items-container {
+    max-height: 120px;
   }
-  
-  /* Responsive scrollbar styling */
-  .order-page::-webkit-scrollbar,
-  .order-items-container::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .order-page::-webkit-scrollbar-thumb,
-  .order-items-container::-webkit-scrollbar-thumb {
-    background-color: #444;
-    border-radius: 10px;
-  }
-  
-  .order-page::-webkit-scrollbar-thumb:hover,
-  .order-items-container::-webkit-scrollbar-thumb:hover {
-    background-color: #666;
-  }
-  
-  .order-page::-webkit-scrollbar-track,
-  .order-items-container::-webkit-scrollbar-track {
-    background: #222;
-    border-radius: 10px;
-  }
-  
-  .header-row {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  
-  .button-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-  }
-  
-  h1 {
-    color: #fff;
-  }
-  
-  .create-order-button {
-    background-color: #ff6600;
-    border: none;
-  }
-  
-  /* Responsive Grid for Order List */
-  .order-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive min size */
-    gap: 20px;
-  }
-  
-  /* Responsive Order Card Styling */
-  .order-card {
-    background-color: #333;
-    color: #fff;
-    background-size: cover;
-    background-position: center;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Responsive Order Header */
-  .order-header {
-    background-color: #222;
-    color: #E55B00;
-    font-weight: bold;
-    padding: 10px;
-    border-bottom: 1px solid #444;
-  }
-  
-  /* Scrollable Items Container */
-  .order-items-container {
-    max-height: 150px;
-    overflow-y: auto;
-    padding-right: 5px;
-  }
-  
-  /* Styling for Each Item */
-  .order-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #2a2a2a;
-    border-radius: 6px;
-    padding: 10px 12px;
-    margin: 6px 0;
-    transition: background 0.3s, transform 0.2s;
-  }
-  
-  .order-item:hover {
-    background-color: #3a3a3a;
-    transform: scale(1.02);
-  }
-  
-  .item-name {
-    color: #ff9500;
-    font-weight: 500;
-    font-size: 0.95rem;
-  }
-  
-  .item-details {
-    color: #ddd;
+
+  .order-receipt-item {
+    padding: 8px 10px;
     font-size: 0.9rem;
-    text-align: right;
   }
-  
-  /* Update Button Styling */
-  .update-button {
-    background-color: #ff6600;
-    border: none;
-    width: 100%;
-    margin-top: 10px;
-    font-weight: bold;
-    padding: 8px 0;
-    border-radius: 6px;
-    transition: background 0.3s ease;
+}
+
+@media (max-width: 576px) {
+  .order-receipt-list {
+    grid-template-columns: 1fr;
   }
-  
-  .update-button:hover {
-    background-color: #e07a00;
+
+  .order-receipt-complete-button {
+    font-size: 0.9rem;
+    padding: 6px 0;
   }
-  
-  .item-count {
-    color: #ccc;
-    margin-bottom: 10px;
-    font-weight: 500;
-  }
-  
-  /* Media Queries for Smaller Screens */
-  @media (max-width: 768px) {
-    .main-content {
-      margin-left: 0;
-    }
-  
-    .header-row h1 {
-      font-size: 1.5rem;
-    }
-  
-    .button-row {
-      justify-content: center;
-      margin-bottom: 15px;
-    }
-  
-    .order-items-container {
-      max-height: 120px;
-    }
-  
-    .order-item {
-      padding: 8px 10px;
-      font-size: 0.9rem;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .order-list {
-      grid-template-columns: 1fr; /* Stacks cards vertically */
-    }
-  
-    .create-order-button {
-      width: 100%;
-      margin-top: 10px;
-    }
-  
-    .order-card {
-      padding: 15px;
-    }
-  
-    .update-button {
-      font-size: 0.9rem;
-      padding: 6px 0;
-    }
-  }
-  
+}
