@@ -12,14 +12,15 @@ import "../assets/styles/Sidebar.css";
 import useAuth from "../hooks/useAuth";
 import useAuthApi from "../hooks/api/useAuthApi";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 
 const Sidebar = () => {
   const { user } = useAuth();
   const { logout } = useAuthApi();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(user);
+  const location = useLocation(); // Get the current location
+
   const [showDashboards, setShowDashboards] = useState(false);
   const [showAccounts, setShowAccounts] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,9 +30,11 @@ const Sidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Helper function to check if a link is active
+  const isActive = (path) => location.pathname === path;
+
   return (
     <>
-      {/* Hamburger icon for mobile */}
       <div className="hamburger-menu" onClick={toggleSidebar}>
         <FaBars size={25} />
       </div>
@@ -59,20 +62,26 @@ const Sidebar = () => {
               </div>
               {showDashboards && (
                 <ul>
-                  {/* <li>
-                    <a href="/table">View table</a>
-                  </li> */}
                   <li>
-                    <a href="/branch">View Branch</a>
+                    <a
+                      href="/branch"
+                      className={isActive("/branch") ? "active" : ""}
+                    >
+                      View Branch
+                    </a>
                   </li>
                   <li>
-                    <a href="/reservation">View Reservation</a>
+                    <a
+                      href="/reservation"
+                      className={isActive("/reservation") ? "active" : ""}
+                    >
+                      View Reservation
+                    </a>
                   </li>
                 </ul>
               )}
             </div>
 
-            {/* Accounts Section */}
             <div className="sidebar-section">
               <div
                 className="sidebar-item"
@@ -84,94 +93,112 @@ const Sidebar = () => {
               {showAccounts && (
                 <ul>
                   <li>
-                    <a href="/">Add Manager</a>
+                    <a href="/" className={isActive("/") ? "active" : ""}>
+                      Add Manager
+                    </a>
                   </li>
                   <li>
-                    <a href="/">Account Manager</a>
+                    <a href="/" className={isActive("/") ? "active" : ""}>
+                      Account Manager
+                    </a>
                   </li>
                   <li>
-                    <a href="/">My profile</a>
+                    <a
+                      href="/profile"
+                      className={isActive("/profile") ? "active" : ""}
+                    >
+                      My profile
+                    </a>
                   </li>
                 </ul>
               )}
             </div>
           </>
         ) : user?.role === "WAITER" ? (
-          <>
-            {/* Dashboards Section for WAITER */}
-            <div className="sidebar-section">
-              {/* <div className="sidebar-item">
-                <BsGrid /> <span>Orders</span>
-              </div> */}
-              <ul>
-                <li>
-                  <a href="/table">View Table</a>
-                </li>
-                <li>
-                  <a href="/order">View Order</a>
-                </li>
-              </ul>
-            </div>
-          </>
+          <div className="sidebar-section">
+            <ul>
+              <li>
+                <a href="/table" className={isActive("/table") ? "active" : ""}>
+                  View Table
+                </a>
+              </li>
+              <li>
+                <a href="/order" className={isActive("/order") ? "active" : ""}>
+                  View Order
+                </a>
+              </li>
+            </ul>
+          </div>
         ) : user?.role === "CHEF" ? (
-          <>
-            {/* Dashboards Section for CHEF */}
-            <div className="sidebar-section">
-              <div className="sidebar-item">
-                <BsGrid /> <span>Orders</span>
-              </div>
-              <ul>
-                <li>
-                  <a href="/table">View Order</a>
-                </li>
-                <li>
-                  <a href="/">View Menu</a>
-                </li>
-              </ul>
+          <div className="sidebar-section">
+            <div className="sidebar-item">
+              <BsGrid /> <span>Orders</span>
             </div>
-          </>
+            <ul>
+              <li>
+                <a href="/table" className={isActive("/table") ? "active" : ""}>
+                  View Order
+                </a>
+              </li>
+              <li>
+                <a href="/" className={isActive("/") ? "active" : ""}>
+                  View Menu
+                </a>
+              </li>
+            </ul>
+          </div>
         ) : user?.role === "BRANCH_MANAGER" ? (
-          <>
-            {/* Dashboards Section for BRANCH_MANAGER */}
-            <div className="sidebar-section">
-              <div className="sidebar-item">
-                <BsGrid /> <span>Orders</span>
-              </div>
-              <ul>
-                <li>
-                  <a href="/workforce">View Workforce</a>
-                </li>
-                {/* <li>
-                  <a href="/">View Table</a>
-                </li> */}
-                <li>
-                  <a href="/profile">View Profile</a>
-                </li>
-              </ul>
+          <div className="sidebar-section">
+            <div className="sidebar-item">
+              <BsGrid /> <span>Orders</span>
             </div>
-          </>
+            <ul>
+              <li>
+                <a
+                  href="/workforce"
+                  className={isActive("/workforce") ? "active" : ""}
+                >
+                  View Workforce
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/profile"
+                  className={isActive("/profile") ? "active" : ""}
+                >
+                  View Profile
+                </a>
+              </li>
+            </ul>
+          </div>
         ) : user?.role === "RECEPTIONIST" ? (
-          <>
-            {/* Dashboards Section for RECEPTIONIST */}
-            <div className="sidebar-section">
-              <div className="sidebar-item">
-                <BsGrid /> <span>Orders</span>
-              </div>
-              <ul>
-                <li>
-                  <a href="/reservation">View Reservation</a>
-                </li>
-                <li>
-                  <a href="/table">View Table</a>
-                </li>
-                <li>
-                  <a href="/">View Revenue</a>
-                </li>
-              </ul>
+          <div className="sidebar-section">
+            <div className="sidebar-item">
+              <BsGrid /> <span>Orders</span>
             </div>
-          </>
+            <ul>
+              <li>
+                <a
+                  href="/reservation"
+                  className={isActive("/reservation") ? "active" : ""}
+                >
+                  View Reservation
+                </a>
+              </li>
+              <li>
+                <a href="/table" className={isActive("/table") ? "active" : ""}>
+                  View Table
+                </a>
+              </li>
+              <li>
+                <a href="/" className={isActive("/") ? "active" : ""}>
+                  View Revenue
+                </a>
+              </li>
+            </ul>
+          </div>
         ) : null}
-        {/* Log out Section */}
+
         <div
           className="sidebar-logout"
           onClick={async () => {

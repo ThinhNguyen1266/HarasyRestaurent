@@ -11,7 +11,6 @@ const TableList = () => {
   const { getTablelist, updateTableStatus } = useTableApi();
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
 
-  // Sử dụng useQuery để gọi API lấy danh sách bàn
   const {
     data: tableData,
     isLoading,
@@ -25,43 +24,42 @@ const TableList = () => {
     },
   });
 
-  // Sử dụng useMutation để gọi API cập nhật trạng thái bàn
   const mutation = useMutation({
     mutationFn: updateTableStatus,
     onSuccess: () => {
       console.log("Table status updated successfully");
-      queryClient.invalidateQueries("tables"); // Làm mới dữ liệu sau khi cập nhật thành công
+      queryClient.invalidateQueries("tables");
     },
     onError: (error) => {
       console.error(`Failed to update table status: ${error.message}`);
     },
   });
 
-  // Kiểm tra trạng thái loading và lỗi
-  if (isLoading) return <div>Loading tables...</div>;
-  if (error) return <div>Error loading tables: {error.message}</div>;
+  if (isLoading)
+    return <h1 className="text-center text-white">Loading tables...</h1>;
+  if (error)
+    return (
+      <h1 className="text-center text-danger">
+        Error loading tables: {error.message}
+      </h1>
+    );
 
-  // Đảm bảo rằng tableData tồn tại và có cấu trúc đúng
   const tables =
     tableData?.map((table) => ({
       id: table.id,
       number: table.number,
       capacity: table.capacity,
-      status: table.status, // Sử dụng status như trong API response
+      status: table.status,
     })) || [];
 
-  // Lọc bàn dựa vào trạng thái
   const filteredTables = showAvailableOnly
     ? tables.filter((table) => table.status === "AVAILABLE")
     : tables;
 
-  // Xử lý việc chuyển đổi trạng thái bàn
   const handleTableSwitch = (id, currentStatus) => {
-    // Xác định trạng thái mới
     const newStatus =
       currentStatus === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE";
 
-    // Gọi API cập nhật trạng thái bàn
     mutation.mutate({ tableId: id, status: newStatus });
   };
 
