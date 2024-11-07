@@ -16,6 +16,7 @@ import HNVenues from "./pages/HNVenues";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Menu from "./pages/Menu";
+import Overview from "./pages/Overview";
 import Register from "./pages/Register";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
@@ -44,10 +45,12 @@ function App() {
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/profile/:id" element={<Profile />} />
+
         <Route element={<StaffLayout />}>
           <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />
+            <Route path="/overview" element={<Overview />} />
           </Route>
         </Route>
       </Routes>
