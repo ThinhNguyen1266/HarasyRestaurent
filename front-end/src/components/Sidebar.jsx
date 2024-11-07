@@ -63,13 +63,13 @@ const Sidebar = () => {
                     <Link to="/overview">Overview</Link>
                   </li>
                   <li>
-                    <Link to="/">View Orders</Link>
+                    <Link to="/order">View Orders</Link>
                     {/* <li>
                     <a href="/table">View table</a>
                   </li> */}
                   </li>
                   <li>
-                    <a href="/branch">View Branch</a>
+                    <Link to="/branch">View Branch</Link>
                   </li>
                   <li>
                     <Link to="/reservation">View Reservation</Link>

@@ -20,20 +20,18 @@ import Menu from "./pages/Menu";
 import OrderWaiter from "./pages/OrderWaiter";
 import Overview from "./pages/Overview";
 import Register from "./pages/Register";
+import WorkforceList from "./pages/StaffList";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
-
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route element={<DefaultLayout />}>
-          <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}>
-            <Route path="/reservation" element={<ReservationsPage />} />
-            
           <Route path="/" element={<Home />} />
-          </Route>
+          <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}></Route>
+          <Route path="/reservation" element={<ReservationsPage />} />
 
           <Route path="/venues" element={<Venues />} />
           <Route path="/venues/hcm" element={<HCMVenues />} />
