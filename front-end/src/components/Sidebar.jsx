@@ -1,18 +1,18 @@
 import React, { useState } from "react";
+import { BsGrid, BsPerson } from "react-icons/bs";
 import {
+  FaBars,
   FaChevronDown,
   FaChevronUp,
-  FaUserCircle,
   FaPowerOff,
-  FaBars,
+  FaUserCircle,
 } from "react-icons/fa";
-import { BsGrid, BsPerson } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import harasylogo from "../assets/img/logo.png";
 import "../assets/styles/Sidebar.css";
-import useAuth from "../hooks/useAuth";
 import useAuthApi from "../hooks/api/useAuthApi";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const Sidebar = () => {
   const { user } = useAuth();
@@ -59,14 +59,20 @@ const Sidebar = () => {
               </div>
               {showDashboards && (
                 <ul>
-                  {/* <li>
+                  <li>
+                    <Link to="/overview">Overview</Link>
+                  </li>
+                  <li>
+                    <Link to="/">View Orders</Link>
+                    {/* <li>
                     <a href="/table">View table</a>
                   </li> */}
+                  </li>
                   <li>
                     <a href="/branch">View Branch</a>
                   </li>
                   <li>
-                    <a href="/reservation">View Reservation</a>
+                    <Link to="/reservation">View Reservation</Link>
                   </li>
                 </ul>
               )}

@@ -9,6 +9,7 @@ import BranchManagement from "./pages/BranchManagement";
 import ChefMenu from "./pages/ChefMenu";
 import Contacts from "./pages/Contacts";
 import CreateBranch from "./pages/CreateBranch";
+import EditBranch from "./pages/EditBranch";
 import HCMMenu from "./pages/HCMMenu";
 import HCMVenues from "./pages/HCMVenues";
 import HNMenu from "./pages/HNMenu";
@@ -16,12 +17,12 @@ import HNVenues from "./pages/HNVenues";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Menu from "./pages/Menu";
+import OrderWaiter from "./pages/OrderWaiter";
+import Overview from "./pages/Overview";
 import Register from "./pages/Register";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
-import EditBranch from "./pages/EditBranch";
 import Venues from "./pages/Venues";
-import OrderWaiter from "./pages/OrderWaiter";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/order" element={<OrderWaiter />} />
         <Route path="/profile/:id" element={<Profile />} />
+
         <Route element={<StaffLayout />}>
           <Route
             element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}
@@ -58,6 +60,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />
+            <Route path="/overview" element={<Overview />} />
             <Route path="/branch/:branchId" element={<EditBranch />} />
           </Route>
         </Route>

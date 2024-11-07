@@ -1,11 +1,3 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  background-color: #1a1a1a;
-  color: #fff;
-  font-family: 'Arial', sans-serif;
-}
-
 .order-waiter-main-content {
   margin-left: 250px;
   background-color: #1a1a1a; /* Ensure the background color is applied */
@@ -82,7 +74,7 @@ html, body {
 
 .order-waiter-header {
   background-color: #222;
-  color: #E55B00;
+  color: #e55b00;
   font-weight: bold;
   padding: 10px;
   border-bottom: 1px solid #444;

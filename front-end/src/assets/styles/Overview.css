@@ -1,0 +1,7 @@
+.chart-container {
+  height: 300px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
