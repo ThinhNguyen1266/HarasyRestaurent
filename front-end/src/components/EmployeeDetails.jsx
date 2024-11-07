@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiX, FiEdit2, FiTrash2, FiMail, FiPhone } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiMail, FiPhone } from "react-icons/fi";
 
 // Employee Details Modal Component
 const EmployeeDetails = ({ employee, onClose, onEdit, isEditing, onSave, onDelete, editedEmployee, setEditedEmployee }) => (
@@ -8,7 +8,7 @@ const EmployeeDetails = ({ employee, onClose, onEdit, isEditing, onSave, onDelet
       <div className="modal-content bg-dark text-white rounded">
         <div className="modal-header">
           <h2 className="modal-title">Employee Details</h2>
-          <button onClick={onClose} className="btn-close btn-close-white" aria-label="Close"><FiX /></button>
+          <button onClick={onClose} className="btn-close btn-close-white" aria-label="Close"></button>
         </div>
         <div className="modal-body">
           {isEditing ? (
@@ -70,7 +70,7 @@ const EmployeeInfo = ({ employee }) => (
   <div>
     <DetailRow icon={<FiMail className="text-muted" />} text={employee.email || "N/A"} />
     <DetailRow icon={<FiPhone className="text-muted" />} text={employee.phone || "N/A"} />
-    <DetailRow label="Branch:" text={employee.branch || "N/A"} />
+    <DetailRow label="Branch:" text={employee.branchName || "N/A"} />
   </div>
 );
 

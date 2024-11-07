@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-// Define fields to display and if they are read-only
 const customerFields = [
-  { label: "Full Name", key: "fullName"},
-  { label: "Phone Number", key: "phone"},
-  { label: "Email Address", key: "email"},
-  { label: "Date Of Birth", key: "dob"},
-  { label: "VIP Points", key: "vipPoint"},
+  { label: "Full Name", key: "fullName" },
+  { label: "Phone Number", key: "phone" },
+  { label: "Email Address", key: "email" },
+  { label: "Date Of Birth", key: "dob" },
+  { label: "VIP Points", key: "vipPoint" },
 ];
 
 const staffFields = [
@@ -20,22 +19,41 @@ const staffFields = [
   { label: "Date Of Birth", key: "dob", readOnly: true },
 ];
 
-const ProfileForm = ({ profile }) => {
-  // Determine if the profile is for staff based on the presence of "role"
+const ProfileForm = ({ profile, onUpdate }) => {
   const isStaffProfile = profile && profile.role !== undefined;
   const fields = isStaffProfile ? staffFields : customerFields;
   const isEditable = !isStaffProfile;
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    if (profile) {
+      setFormData(profile);
+    }
+  }, [profile]);
+
+  const handleInputChange = (key, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [key]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onUpdate(formData); // Call the update function passed as a prop
+  };
 
   return (
     <div className="account-settings">
-      <form className="settings-form">
+      <form className="settings-form" onSubmit={handleSubmit}>
         {fields.map((field) => (
           <div className="form-group" key={field.key}>
             <label>{field.label}</label>
             <input
               type={field.key === "email" ? "email" : "text"}
-              value={profile?.[field.key] || ""} // Use optional chaining with default value
-              readOnly={!isEditable || field.readOnly}
+              value={formData[field.key] || ""}
+              readOnly={field.readOnly || !isEditable}
+              onChange={(e) => handleInputChange(field.key, e.target.value)}
             />
           </div>
         ))}
