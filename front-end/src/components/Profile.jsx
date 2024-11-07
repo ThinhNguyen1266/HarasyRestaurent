@@ -28,7 +28,7 @@ function Profile() {
             className="dropdown-menu"
             style={{ display: isDropdownOpen ? "block" : "none" }}
           >
-            <Link to="/my-profile" className="dropdown-item">
+            <Link to="/userprofile" className="dropdown-item">
               My Profile
             </Link>
             <button onClick={handleLogout} className="dropdown-item logout">

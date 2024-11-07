@@ -20,10 +20,10 @@ import Menu from "./pages/Menu";
 import OrderWaiter from "./pages/OrderWaiter";
 import Overview from "./pages/Overview";
 import Register from "./pages/Register";
+import WorkforceList from "./pages/StaffList";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
-
 function App() {
   return (
     <div className="App">
@@ -32,6 +32,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}></Route>
           <Route path="/reservation" element={<ReservationsPage />} />
+
           <Route path="/venues" element={<Venues />} />
           <Route path="/venues/hcm" element={<HCMVenues />} />
           <Route path="/venues/hanoi" element={<HNVenues />} />
@@ -50,7 +51,11 @@ function App() {
         <Route path="/profile/:id" element={<Profile />} />
 
         <Route element={<StaffLayout />}>
-          <Route element={<AuthRoute allowedRoles={["ADMIN"]} />}>
+          <Route
+            element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}
+          >
+            <Route path="/workforce" element={<WorkforceList />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />
             <Route path="/overview" element={<Overview />} />
