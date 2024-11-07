@@ -64,6 +64,12 @@ const Sidebar = () => {
                   </li>
                   <li>
                     <Link to="/">View Orders</Link>
+                    {/* <li>
+                    <a href="/table">View table</a>
+                  </li> */}
+                  </li>
+                  <li>
+                    <a href="/branch">View Branch</a>
                   </li>
                   <li>
                     <Link to="/reservation">View Reservation</Link>
@@ -100,15 +106,15 @@ const Sidebar = () => {
           <>
             {/* Dashboards Section for WAITER */}
             <div className="sidebar-section">
-              <div className="sidebar-item">
+              {/* <div className="sidebar-item">
                 <BsGrid /> <span>Orders</span>
-              </div>
+              </div> */}
               <ul>
                 <li>
                   <a href="/table">View Table</a>
                 </li>
                 <li>
-                  <a href="/">Create Order</a>
+                  <a href="/order">View Order</a>
                 </li>
               </ul>
             </div>
@@ -141,11 +147,11 @@ const Sidebar = () => {
                 <li>
                   <a href="/workforce">View Workforce</a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="/">View Table</a>
-                </li>
+                </li> */}
                 <li>
-                  <a href="/">View Revenue</a>
+                  <a href="/profile">View Profile</a>
                 </li>
               </ul>
             </div>

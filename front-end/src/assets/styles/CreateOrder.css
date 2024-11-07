@@ -1,9 +1,6 @@
-/* CreateOrder.css */
-
-/* Modal container styling for a sleek, dark look */
-.custom-create-order-modal .modal-content {
+/* Modal styling with unique class names */
+.create-order-modal-content .modal-content {
   background-color: #121212;
-  /* Darker background for modern feel */
   border: none;
   border-radius: 12px;
   color: #f5f5f5;
@@ -11,13 +8,12 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.custom-create-order-modal .modal-content:hover {
+.create-order-modal-content .modal-content:hover {
   transform: scale(1.02);
   box-shadow: 0 0 35px rgba(0, 0, 0, 0.85);
 }
 
-/* Centered header styling */
-.modal-header-custom {
+.create-order-header {
   background-color: #121212;
   padding: 1.5rem;
   display: flex;
@@ -26,29 +22,27 @@
   border-bottom: 1px solid #333;
 }
 
-.modal-title-custom {
+.create-order-title {
   color: #ff9500;
-  /* Distinctive color for modern feel */
   font-weight: bold;
   font-size: 1.6rem;
   text-align: center;
   letter-spacing: 1.5px;
 }
 
-.modal-body-custom {
+.create-order-body {
   padding: 1.5rem;
   color: #d3d3d3;
   font-size: 1rem;
 }
 
-.modal-footer-custom {
+.create-order-footer {
   background-color: #121212;
   border-top: 1px solid #333;
   padding: 1.5rem;
 }
 
-/* Enhanced search bar styling */
-.custom-search .form-control {
+.create-order-search .form-control {
   background-color: #1f1f1f;
   border: 1px solid #555;
   color: #f5f5f5;
@@ -57,14 +51,13 @@
   transition: border-color 0.3s ease;
 }
 
-.custom-search .form-control:focus {
+.create-order-search .form-control:focus {
   border-color: #ff9500;
   box-shadow: 0 0 8px rgba(255, 149, 0, 0.4);
   color: #fff;
 }
 
-/* Item list with modern background and hover effects */
-.custom-item-list {
+.create-order-item-list {
   max-height: 200px;
   overflow-y: auto;
   background-color: #1a1a1a;
@@ -73,7 +66,7 @@
   margin-top: 10px;
 }
 
-.custom-item-list-item {
+.create-order-item {
   background-color: #2a2a2a;
   color: #e0e0e0;
   border: none;
@@ -83,21 +76,20 @@
   transition: background 0.3s, color 0.3s;
 }
 
-.custom-item-list-item:hover {
+.create-order-item:hover {
   background-color: #ff9500;
   color: #121212;
   cursor: pointer;
 }
 
-/* Selected items section with cleaner layout */
-.selected-items-title {
+.create-order-selected-title {
   margin-top: 1.5rem;
   color: #ff9500;
   font-weight: bold;
   font-size: 1.2rem;
 }
 
-.selected-items-list .selected-item {
+.create-order-selected-list .create-order-selected-item {
   background-color: #1f1f1f;
   color: #ff9500;
   border: none;
@@ -109,7 +101,7 @@
   margin-bottom: 5px;
 }
 
-.remove-item-button {
+.create-order-remove-button {
   background-color: transparent;
   border: none;
   color: #ff4d4d;
@@ -117,14 +109,13 @@
   transition: color 0.2s;
 }
 
-.remove-item-button:hover {
+.create-order-remove-button:hover {
   color: #ff3333;
   cursor: pointer;
 }
 
-/* Modern button styles for Cancel and Confirm Order */
-.modal-cancel-button,
-.modal-create-button {
+.create-order-cancel-button,
+.create-order-confirm-button {
   font-weight: bold;
   padding: 0.5rem 1.5rem;
   border-radius: 8px;
@@ -132,54 +123,52 @@
   transition: all 0.3s ease;
 }
 
-.modal-cancel-button {
+.create-order-cancel-button {
   background-color: #1f1f1f;
   border: 1px solid #666;
   color: #ccc;
 }
 
-.modal-cancel-button:hover {
+.create-order-cancel-button:hover {
   background-color: #333;
   color: #f5f5f5;
 }
 
-.modal-create-button {
+.create-order-confirm-button {
   background-color: #ff9500;
   color: #121212;
   border: none;
 }
 
-.modal-create-button:hover {
+.create-order-confirm-button:hover {
   background-color: #e07a00;
   color: #fff;
 }
 
-/* Modern scrollbar styling */
-.custom-item-list::-webkit-scrollbar {
+.create-order-item-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.custom-item-list::-webkit-scrollbar-thumb {
+.create-order-item-list::-webkit-scrollbar-thumb {
   background: #555;
   border-radius: 10px;
 }
 
-.custom-item-list::-webkit-scrollbar-thumb:hover {
+.create-order-item-list::-webkit-scrollbar-thumb:hover {
   background: #888;
 }
 
-/* Table dropdown styling */
-.table-dropdown {
+.create-order-table-dropdown {
   margin-top: 1.5rem;
 }
 
-.table-dropdown label {
+.create-order-table-dropdown label {
   color: #ff9500;
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
 
-.table-dropdown .form-select {
+.create-order-table-dropdown .form-select {
   background-color: #1f1f1f;
   color: #f5f5f5;
   border: 1px solid #555;
@@ -188,7 +177,7 @@
   transition: border-color 0.3s ease;
 }
 
-.table-dropdown .form-select:focus {
+.create-order-table-dropdown .form-select:focus {
   border-color: #ff9500;
   box-shadow: 0 0 5px rgba(255, 149, 0, 0.4);
   color: #fff;

@@ -1,78 +1,77 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useBranchApi from "../hooks/api/useBranchApi";
 import uploadImage from "../services/uploadImage";
 import { toast, ToastContainer } from "react-toastify";
 
-const CreateBranch = () => {
+const EditBranch = () => {
+  const { branchId } = useParams();
   const navigate = useNavigate();
-  const { createBranch, getBranchManagers } = useBranchApi();
-
-  const { data: managers = [], isLoading: isLoadingManagers } = useQuery({
-    queryKey: ["branchManagers"],
-    queryFn: getBranchManagers,
-    onError: (error) => {
-      toast.error(`Failed to fetch managers: ${error.message}`);
-    },
-  });
-  const uploadImageMutate = useMutation({
-    mutationFn: uploadImage,
-    onSuccess: (data) => {
-      toast.success("Image uploaded successfully!");
-      handleCreateBranch(data); // Gọi hàm tạo branch với URL ảnh
-    },
-    onError: (error) => {
-      toast.error(`Failed to upload image: ${error.message}`);
-    },
-  });
-
-  const saveBranchMutate = useMutation({
-    mutationFn: createBranch,
-    onSuccess: () => {
-      toast.success("Branch created successfully!");
-      navigate("/branch");
-    },
-    onError: (error) => {
-      toast.error(`Failed to create branch: ${error.message}`);
-    },
-  });
+  const { getBranchbyID, updateBranch, getBranchManagers } = useBranchApi();
 
   const [formData, setFormData] = useState({
     name: "",
     location: "",
+    image: "",
     imageFile: null,
     phone: "",
     manager: "",
     status: "INACTIVE",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
-    tables: [{ number: "", capacity: "", status: "AVAILABLE" }],
+    tables: [{ number: "", capacity: "" }],
     menus: [{ type: "" }],
   });
   const [previewUrl, setPreviewUrl] = useState(null);
+
+  const { data: managers = [], isLoading: isLoadingManagers } = useQuery({
+    queryKey: ["branchManagers"],
+    queryFn: getBranchManagers,
+    onError: (error) =>
+      toast.error(`Failed to fetch managers: ${error.message}`),
+  });
+
+  const { data: branchData, isLoading: isBranchLoading } = useQuery({
+    queryKey: ["branch", branchId],
+    queryFn: () => getBranchbyID(branchId),
+    onError: (error) => toast.error(`Failed to fetch branch: ${error.message}`),
+  });
+
+  useEffect(() => {
+    if (branchData) {
+      console.log("Branch data after reload:", branchData);
+      setFormData({
+        ...branchData,
+        manager: branchData.manager || "",
+        imageFile: null,
+        workingHours: branchData.workingHours || [
+          { dayOfWeek: "", openingTime: "", closingTime: "" },
+        ],
+        tables: branchData.tables || [{ number: "", capacity: "" }],
+        menus: branchData.menus?.map((menu) => ({ type: menu.type })) || [
+          { type: "" },
+        ],
+      });
+      setPreviewUrl(branchData.image);
+    }
+  }, [branchData]);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "imageFile") {
       const file = files[0];
-      setFormData((prev) => ({
-        ...prev,
-        imageFile: file,
-      }));
+      setFormData((prev) => ({ ...prev, imageFile: file }));
       setPreviewUrl(URL.createObjectURL(file));
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleCreateBranch = (imageUrl) => {
+  const handleEditBranch = (imageUrl) => {
     const payload = {
       name: formData.name,
       location: formData.location,
-      image: imageUrl,
+      image: imageUrl || formData.image,
       phone: formData.phone,
       manager: formData.manager,
       status: formData.status,
@@ -98,7 +97,7 @@ const CreateBranch = () => {
 
     console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
 
-    saveBranchMutate.mutate(payload);
+    saveBranchMutate.mutate({ ...payload, id: branchId });
   };
 
   const handleSubmit = (e) => {
@@ -106,9 +105,26 @@ const CreateBranch = () => {
     if (formData.imageFile) {
       uploadImageMutate.mutate(formData.imageFile);
     } else {
-      handleCreateBranch("");
+      handleEditBranch();
     }
   };
+
+  const uploadImageMutate = useMutation({
+    mutationFn: uploadImage,
+    onSuccess: (imageUrl) => handleEditBranch(imageUrl),
+    onError: (error) => toast.error(`Failed to upload image: ${error.message}`),
+  });
+
+  const saveBranchMutate = useMutation({
+    mutationFn: updateBranch,
+    onSuccess: () => {
+      toast.success("Branch updated successfully!");
+
+      navigate("/branch");
+    },
+    onError: (error) =>
+      toast.error(`Failed to update branch: ${error.message}`),
+  });
 
   const addWorkingHour = () => {
     setFormData((prev) => {
@@ -125,48 +141,27 @@ const CreateBranch = () => {
     });
   };
 
-  const removeWorkingHour = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      workingHours: prev.workingHours.filter((_, i) => i !== index),
-    }));
-  };
-
-  const addTable = () => {
+  const addTable = () =>
     setFormData((prev) => ({
       ...prev,
       tables: [...prev.tables, { number: "", capacity: "" }],
     }));
-  };
 
-  const removeTable = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      tables: prev.tables.filter((_, i) => i !== index),
-    }));
-  };
-
-  const addMenu = () => {
+  const addMenu = () =>
     setFormData((prev) => ({
       ...prev,
       menus: [...prev.menus, { type: "" }],
     }));
-  };
 
-  const removeMenu = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      menus: prev.menus.filter((_, i) => i !== index),
-    }));
-  };
+  if (isBranchLoading) return <p>Loading branch data...</p>;
 
   return (
     <div className="container my-4">
-      <h1 className="text-white">Create New Branch</h1>
+      <h1 className="text-white">Edit Branch</h1>
       <form onSubmit={handleSubmit}>
         <div className="row">
           {/* Column 1 */}
-          <div className="col-12 col-md-6">
+          <div className="col-md-6">
             <div className="mb-3">
               <label className="form-label text-white">Branch Name</label>
               <input
@@ -245,7 +240,7 @@ const CreateBranch = () => {
           </div>
 
           {/* Column 2 */}
-          <div className="col-12 col-md-6">
+          <div className="col-md-6">
             <div className="mb-3">
               <label className="form-label text-white">Status</label>
               <select
@@ -263,7 +258,7 @@ const CreateBranch = () => {
             <div className="mb-3">
               <label className="form-label text-white">Working Hours</label>
               {formData.workingHours.map((hour, index) => (
-                <div key={index} className="d-flex align-items-center  ">
+                <div key={index} className="d-flex align-items-center mb-2">
                   <select
                     value={hour.dayOfWeek}
                     onChange={(e) =>
@@ -277,13 +272,13 @@ const CreateBranch = () => {
                     className="form-select me-2"
                   >
                     <option value="">Select Day</option>
-                    <option value="MONDAY">MONDAY</option>
-                    <option value="TUESDAY">TUESDAY</option>
-                    <option value="WEDNESDAY">WEDNESDAY</option>
-                    <option value="THURSDAY">THURSDAY</option>
-                    <option value="FRIDAY">FRIDAY</option>
-                    <option value="SATURDAY">SATURDAY</option>
-                    <option value="SUNDAY">SUNDAY</option>
+                    <option value="MONDAY">Monday</option>
+                    <option value="TUESDAY">Tuesday</option>
+                    <option value="WEDNESDAY">Wednesday</option>
+                    <option value="THURSDAY">Thursday</option>
+                    <option value="FRIDAY">Friday</option>
+                    <option value="SATURDAY">Saturday</option>
+                    <option value="SUNDAY">Sunday</option>
                   </select>
                   <input
                     type="time"
@@ -315,16 +310,8 @@ const CreateBranch = () => {
                     }
                     className="form-control me-2"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeWorkingHour(index)}
-                    className="btn btn-danger btn-sm  ms-auto "
-                  >
-                    Remove
-                  </button>
                 </div>
               ))}
-
               <button
                 type="button"
                 onClick={addWorkingHour}
@@ -340,7 +327,7 @@ const CreateBranch = () => {
               {formData.tables.map((table, index) => (
                 <div key={index} className="d-flex align-items-center mb-2">
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Table Number"
                     value={table.number}
                     onChange={(e) =>
@@ -354,7 +341,7 @@ const CreateBranch = () => {
                     className="form-control me-2"
                   />
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Capacity"
                     value={table.capacity}
                     onChange={(e) =>
@@ -367,13 +354,6 @@ const CreateBranch = () => {
                     }
                     className="form-control me-2"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeTable(index)}
-                    className="btn btn-danger btn-sm"
-                  >
-                    Remove
-                  </button>
                 </div>
               ))}
               <button
@@ -408,13 +388,6 @@ const CreateBranch = () => {
                     <option value="DINNER">DINNER</option>
                     <option value="DESSERT">DESSERT</option>
                   </select>
-                  <button
-                    type="button"
-                    onClick={() => removeMenu(index)}
-                    className="btn btn-danger btn-sm"
-                  >
-                    Remove
-                  </button>
                 </div>
               ))}
               <button
@@ -428,12 +401,12 @@ const CreateBranch = () => {
           </div>
         </div>
         <button type="submit" className="btn btn-primary mt-4">
-          Create Branch
+          Save Changes
         </button>
-        <ToastContainer position="top-right" autoClose={3000} />
       </form>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
 
-export default CreateBranch;
+export default EditBranch;
