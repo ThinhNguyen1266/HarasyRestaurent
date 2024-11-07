@@ -30,9 +30,8 @@ function App() {
       <Routes>
         <Route element={<DefaultLayout />}>
           <Route path="/" element={<Home />} />
-          <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}>
-            <Route path="/reservation" element={<ReservationsPage />} />
-          </Route>
+          <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}></Route>
+          <Route path="/reservation" element={<ReservationsPage />} />
           <Route path="/venues" element={<Venues />} />
           <Route path="/venues/hcm" element={<HCMVenues />} />
           <Route path="/venues/hanoi" element={<HNVenues />} />
