@@ -1,16 +1,15 @@
 import useAxiosPrivate from "../useAxiosPrivate";
 import axios from "../../services/axios";
-import { useParams } from "react-router-dom";
+import useAuth from "../useAuth";
 
 const useAccountApi = () => {
   const axiosPrivate = useAxiosPrivate();
-  const params = useParams();
-  console.log("param", params.id);
+  const { user } = useAuth();
   const getProfile = async () => {
     try {
-      const response = await axios.get(`/profile/${params.id}`);
+      const response = await axios.get(`/profile/${user.id}`);
       const profileData = response.data; // Access 'data' from the response
-      console.log("data", profileData);
+      console.log("acc data", profileData);
       return profileData;
     } catch (error) {
       throw error;

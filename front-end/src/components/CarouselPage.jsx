@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState } from "react";
 import Carousel from "react-bootstrap/Carousel";
+import { Link } from "react-router-dom"; // Import Link
 import img2 from "../assets/img/beef.jpg";
 import img1 from "../assets/img/HRS.png";
 import img3 from "../assets/img/HRS2.png";
@@ -31,7 +32,9 @@ function CarouselPage() {
             <br />
             Harasy Restaurant is now open in Ha Noi.
           </p>
-          <button className="btn-custom">MAKE A RESERVATION</button>
+          <Link to="/">
+            <button className="btn-custom">MAKE A RESERVATION</button>
+          </Link>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
@@ -51,7 +54,9 @@ function CarouselPage() {
             <br />
             and more
           </p>
-          <button className="btn-custom">SEE THE MENU</button>
+          <Link to="/menu">
+            <button className="btn-custom">SEE THE MENU</button>
+          </Link>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
@@ -70,7 +75,9 @@ function CarouselPage() {
             <br />
             local events, seasonal menu offerings, and more
           </p>
-          <button className="btn-custom">LOG IN</button>
+          <Link to="/login">
+            <button className="btn-custom">LOG IN</button>
+          </Link>
         </Carousel.Caption>
       </Carousel.Item>
     </Carousel>

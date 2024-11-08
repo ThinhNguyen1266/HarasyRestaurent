@@ -10,5 +10,5 @@ public class StaffResponse {
     private String fullName;
     private String phone;
     private StaffRole role;
-    private Integer  branch;
+    private String  branchName;
 }

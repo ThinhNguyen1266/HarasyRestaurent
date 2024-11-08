@@ -8,7 +8,6 @@ function HNVenues() {
         <h1>HA NOI</h1>
       </div>
       <div className="hnvenues-cities">
-        {/* Cột thông tin thành phố */}
         <div className="city-info">
           <h2>HA NOI CITY</h2>
           <p>
@@ -25,7 +24,6 @@ function HNVenues() {
           </p>
         </div>
 
-        {/* Cột giờ mở cửa */}
         <div className="opening-hours">
           <h2>OPENING HOURS</h2>
           <div className="hours-row">
