@@ -1,6 +1,5 @@
-import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { FaFacebookF, FaInstagram } from "react-icons/fa6";
 import "../assets/styles/Footer.css";
 
 function Footer() {
@@ -36,10 +35,10 @@ function Footer() {
           <div className="col-md-6 text-md-right">
             <div className="footer-social">
               <a href="#" className="social-icon">
-                <FontAwesomeIcon icon={faFacebook} />
+                <FaFacebookF />
               </a>
               <a href="#" className="social-icon">
-                <FontAwesomeIcon icon={faInstagram} />
+                <FaInstagram />
               </a>
             </div>
             <div className="footer-copyright">
