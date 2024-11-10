@@ -19,16 +19,6 @@ const BranchManagement = () => {
     },
   });
 
-  const updateBranchMutate = useMutation({
-    mutationFn: updateBranch,
-    onSuccess: () => {
-      queryClient.invalidateQueries("branches");
-    },
-    onError: (error) => {
-      toast.error(`Failed to update branches: ${error.message}`);
-    },
-  });
-
   const deleteBranchMutate = useMutation({
     mutationFn: deleteBranch,
     onSuccess: () => {
@@ -64,7 +54,7 @@ const BranchManagement = () => {
         </button>
       </div>
       {isLoading ? (
-        <h1>Loading...</h1>
+        <h1 className="text-center text-white">Loading...</h1>
       ) : (
         <div className="row g-4">
           {branches?.map((branch) => (

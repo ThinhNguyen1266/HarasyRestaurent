@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 import { FaCheck, FaTimes, FaChair, FaUsers } from "react-icons/fa";
-import { Card, Row, Col, Badge, Container, Form } from "react-bootstrap";
+import {
+  Card,
+  Row,
+  Col,
+  Badge,
+  Container,
+  Form,
+  Button,
+} from "react-bootstrap";
 import Sidebar from "../components/Sidebar";
 import "../assets/styles/TableList.css";
 import useTableApi from "../hooks/api/useTableApi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { useNavigate } from "react-router-dom";
 const TableList = () => {
   const queryClient = useQueryClient();
   const { getTablelist, updateTableStatus } = useTableApi();
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
-
-  // Sử dụng useQuery để gọi API lấy danh sách bàn
+  const [selectedTables, setSelectedTables] = useState([]); // State để lưu danh sách bàn được chọn
+  const navigate = useNavigate();
   const {
     data: tableData,
     isLoading,
@@ -25,43 +33,49 @@ const TableList = () => {
     },
   });
 
-  // Sử dụng useMutation để gọi API cập nhật trạng thái bàn
   const mutation = useMutation({
     mutationFn: updateTableStatus,
     onSuccess: () => {
       console.log("Table status updated successfully");
-      queryClient.invalidateQueries("tables"); // Làm mới dữ liệu sau khi cập nhật thành công
+      queryClient.invalidateQueries("tables");
     },
     onError: (error) => {
       console.error(`Failed to update table status: ${error.message}`);
     },
   });
 
-  // Kiểm tra trạng thái loading và lỗi
-  if (isLoading) return <div>Loading tables...</div>;
-  if (error) return <div>Error loading tables: {error.message}</div>;
+  if (isLoading)
+    return <h1 className="text-center text-white">Loading tables...</h1>;
+  if (error)
+    return (
+      <h1 className="text-center text-danger">
+        Error loading tables: {error.message}
+      </h1>
+    );
 
-  // Đảm bảo rằng tableData tồn tại và có cấu trúc đúng
   const tables =
     tableData?.map((table) => ({
       id: table.id,
       number: table.number,
       capacity: table.capacity,
-      status: table.status, // Sử dụng status như trong API response
+      status: table.status,
     })) || [];
 
-  // Lọc bàn dựa vào trạng thái
   const filteredTables = showAvailableOnly
     ? tables.filter((table) => table.status === "AVAILABLE")
     : tables;
 
-  // Xử lý việc chuyển đổi trạng thái bàn
+  const handleTableSelect = (id) => {
+    if (selectedTables.includes(id)) {
+      setSelectedTables(selectedTables.filter((tableId) => tableId !== id)); // Bỏ chọn bàn
+    } else {
+      setSelectedTables([...selectedTables, id]); // Thêm bàn vào danh sách được chọn
+    }
+  };
+
   const handleTableSwitch = (id, currentStatus) => {
-    // Xác định trạng thái mới
     const newStatus =
       currentStatus === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE";
-
-    // Gọi API cập nhật trạng thái bàn
     mutation.mutate({ tableId: id, status: newStatus });
   };
 
@@ -70,6 +84,10 @@ const TableList = () => {
   ).length;
   const unavailableTables = tables.length - availableTables;
 
+  const handleAddOrder = () => {
+    navigate("/createorder", { state: { tableIds: selectedTables } });
+    console.log("selected: ", selectedTables);
+  };
   return (
     <div className="layout">
       <Sidebar />
@@ -89,6 +107,15 @@ const TableList = () => {
                   onChange={(e) => setShowAvailableOnly(e.target.checked)}
                 />
               </Col>
+              <Col>
+                {selectedTables.length > 0 && (
+                  <div className="text-center ">
+                    <Button variant="primary" onClick={handleAddOrder}>
+                      Create Order
+                    </Button>
+                  </div>
+                )}
+              </Col>
               <Col xs="auto" className="text-center count-table">
                 <div className="count-available">
                   <Badge pill bg="success" className="fs-5">
@@ -107,10 +134,13 @@ const TableList = () => {
             {filteredTables.map((table) => (
               <Col xs={12} sm={6} lg={4} key={table.id}>
                 <Card
+                  onClick={() => handleTableSelect(table.id)}
                   className={`${
                     table.status === "AVAILABLE"
                       ? "border-success"
                       : "border-danger"
+                  } ${
+                    selectedTables.includes(table.id) ? "selected-table" : ""
                   } border-top-4 border-4`}
                 >
                   <Card.Body className="card-body">

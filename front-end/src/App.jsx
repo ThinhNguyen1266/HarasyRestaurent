@@ -24,6 +24,7 @@ import WorkforceList from "./pages/StaffList";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
+import CreateOrder from "./pages/CreateOrder";
 function App() {
   return (
     <div className="App">
@@ -46,10 +47,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
+
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/order" element={<OrderWaiter />} />
         <Route path="/profile/:id" element={<Profile />} />
-
+        <Route path="/createorder" element={<CreateOrder />} />
         <Route element={<StaffLayout />}>
           <Route
             element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}

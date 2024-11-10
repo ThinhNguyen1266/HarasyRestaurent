@@ -68,3 +68,8 @@
   border-color: #dc3545;
   cursor: pointer;
 }
+.selected-table {
+  border-color: #fff !important; /* Màu viền nổi bật khi bàn được chọn */
+
+  transition: background-color 0.3s, border-color 0.3s;
+}
