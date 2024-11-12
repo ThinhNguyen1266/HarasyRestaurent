@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, ListGroup, InputGroup } from "react-bootstrap";
 import "../assets/styles/UpdateOrder.css";
 
-const UpdateOrder = ({ show, handleClose, initialItems, onUpdateOrder }) => {
+const UpdateOrder = ({ show, handleClose, initialItems, initialTable, onUpdateOrder }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [availableItems] = useState([
     "Vegetable Mixups",
@@ -19,6 +19,7 @@ const UpdateOrder = ({ show, handleClose, initialItems, onUpdateOrder }) => {
     "Nachos",
   ]);
   const [selectedItems, setSelectedItems] = useState({});
+  const [selectedTable, setSelectedTable] = useState("");
 
   useEffect(() => {
     const initialSelectedItems = Array.isArray(initialItems)
@@ -28,7 +29,10 @@ const UpdateOrder = ({ show, handleClose, initialItems, onUpdateOrder }) => {
         }, {})
       : {};
     setSelectedItems(initialSelectedItems);
-  }, [initialItems]);
+    setSelectedTable(initialTable || ""); // Set the initial table value
+  }, [initialItems, initialTable]);
+
+  const tableNumbers = Array.from({ length: 10 }, (_, i) => `Table ${i + 1}`);
 
   const handleSearch = (e) => setSearchTerm(e.target.value);
 
@@ -58,7 +62,13 @@ const UpdateOrder = ({ show, handleClose, initialItems, onUpdateOrder }) => {
     const updatedItems = Object.entries(selectedItems).flatMap(([item, count]) =>
       Array(count).fill(item)
     );
-    onUpdateOrder(updatedItems);
+
+    if (!selectedTable) {
+      alert("You must select a table before updating the order.");
+      return;
+    }
+
+    onUpdateOrder(updatedItems, selectedTable); // Pass updated items and table to onUpdateOrder
   };
 
   const filteredItems = availableItems.filter((item) =>
