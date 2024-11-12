@@ -1,6 +1,7 @@
 package group5.swp.HarasyProject.entity.menu;
 
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
+import group5.swp.HarasyProject.enums.BinaryStatus;
 import group5.swp.HarasyProject.enums.MenuType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,9 +10,9 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 
 
-
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,6 +27,10 @@ public class MenuEntity {
     @Column(name = "menu_type", nullable = false)
     @Enumerated(EnumType.STRING)
     MenuType type;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    BinaryStatus status = BinaryStatus.UNAVAILABLE;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")

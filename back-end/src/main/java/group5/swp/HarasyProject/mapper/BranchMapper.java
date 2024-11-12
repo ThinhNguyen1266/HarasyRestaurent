@@ -1,9 +1,9 @@
 package group5.swp.HarasyProject.mapper;
 
-import group5.swp.HarasyProject.dto.request.branch.CreateBranchRequest;
-import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
-import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
-import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
+import group5.swp.HarasyProject.dto.request.branch.BranchInfoRequest;
+import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
+import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
+import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
@@ -18,18 +18,27 @@ import java.util.List;
 )
 public interface BranchMapper {
 
-    List<BranchListResponse> toBranchListResponse(List<BranchEntity> branches);
+    
+    @Mapping(target = "branchInfo.id" ,source = "branch.id")
+    @Mapping(target = "branchInfo.name" ,source = "branch.name")
+    @Mapping(target = "branchInfo.image" ,source = "branch.image")
+    @Mapping(target = "branchInfo.location" ,source = "branch.location")
+    @Mapping(target = "branchInfo.phone" ,source = "branch.phone")
+    @Mapping(target = "branchInfo.status" ,source = "branch.status")
+    @Mapping(target = "branchInfo.workingHours" ,source = "branch.workingHours")
+    BranchResponse toBranchResponse(BranchEntity branch);
+
+    List<BranchResponse> toBranchInfoResponses(List<BranchEntity> branches);
+
+    @Mapping(target = "status", constant = "INACTIVE")
+    BranchEntity toBranchEntity(BranchInfoRequest request);
+    BranchEntity updateEntity(BranchInfoRequest request, @MappingTarget BranchEntity branch);
 
 
-    @Mapping(target = "managerName" ,ignore = true)
-    BranchInfoResponse toBranchInfoResponse(BranchEntity branch);
 
-    List<BranchInfoResponse> toBranchInfoResponses(List<BranchEntity> branches);
+    List<BranchesViewResponse> toBranchesViewResponse(List<BranchEntity> branches);
+    BranchInfoHomeResponse toBranchInfoHomeResponse(BranchEntity branch);
 
-    @Mapping(target = "status", ignore = true)
-    BranchEntity toBranchEntity(CreateBranchRequest request, @MappingTarget BranchEntity branch);
-
-    BranchEntity updateEntity(UpdateBranchRequest request, @MappingTarget BranchEntity branch);
 
     default void addTables(TableEntity table, @MappingTarget BranchEntity branch){
         if (branch.getTables() == null) {

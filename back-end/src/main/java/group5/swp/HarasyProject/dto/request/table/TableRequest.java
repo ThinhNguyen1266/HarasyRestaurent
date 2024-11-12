@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TableRequest {
+    Integer id;
     Integer number;
     TableStatus status;
     Integer capacity;
