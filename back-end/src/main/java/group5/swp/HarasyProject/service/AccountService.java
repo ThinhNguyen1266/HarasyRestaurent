@@ -1,5 +1,6 @@
 package group5.swp.HarasyProject.service;
 
+import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
@@ -18,5 +19,9 @@ public interface AccountService {
 
     ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest);
 
-    ApiResponse<ProfileResponse> viewProfile(Integer id);
+    ApiResponse<ProfileResponse> viewProfile(Integer id) throws IOException, MessagingException;
+
+
+
+    ApiResponse<CustomerProfileResponse> quickcustomerRegis(QuickRegisCustomerRequest request) throws IOException, MessagingException;
 }

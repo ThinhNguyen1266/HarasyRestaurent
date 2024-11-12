@@ -2,31 +2,25 @@ import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Sidebar from "../components/Sidebar";
-import CreateOrder from "../components/CreateOder";
+import CreateOrder from "../components/CreateOder"; // Make sure the import path is correct
 import UpdateOrder from "../components/UpdateOrder";
+import ViewOrderDetail from "../components/ViewOrderDetail";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../assets/styles/OrderWaiter.css";
 
 function OrderWaiter() {
   const [showCreateOrder, setShowCreateOrder] = useState(false);
   const [showUpdateOrder, setShowUpdateOrder] = useState(false);
+  const [showOrderDetail, setShowOrderDetail] = useState(false);
   const [currentOrderItems, setCurrentOrderItems] = useState([]);
-
-  const handleShowCreateOrder = () => setShowCreateOrder(true);
-  const handleCloseCreateOrder = () => setShowCreateOrder(false);
-
-  const handleShowUpdateOrder = (items) => {
-    setCurrentOrderItems(items);
-    setShowUpdateOrder(true);
-  };
-
-  const handleCloseUpdateOrder = () => setShowUpdateOrder(false);
-
-  const orders = [
+  const [currentTable, setCurrentTable] = useState(""); // Added for table
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [orders, setOrders] = useState([
     {
       id: 351,
       date: "05 Feb 2023",
       time: "08:38 PM",
+      table: "Table 1",
       items: [
         "Vegetable Mixups",
         "Chinese Takeout Dish",
@@ -48,148 +42,99 @@ function OrderWaiter() {
         "Traditional Miso Soup",
       ],
     },
-    {
-      id: 352,
-      date: "05 Feb 2023",
-      time: "08:38 PM",
-      items: [
-        "Vegetable Mixups",
-        "Chinese Takeout Dish",
-        "Burger",
-        "Fries",
-        "Tacos",
-        "Nachos",
-        "Steak",
-        "Mashed Potatoes",
-      ],
-      details: [
-        "Vegetable Fritters with Egg",
-        "Fresh Prawn mix salad",
-        "Double Cheeseburger",
-        "Seasoned Fries",
-        "Chicken Tacos",
-        "Loaded Nachos",
-        "Grilled Steak",
-        "Creamy Mashed Potatoes",
-      ],
-    },
-    {
-      id: 353,
-      date: "06 Feb 2023",
-      time: "09:10 AM",
-      items: ["Sandwich", "Salad", "Soup", "Fruit", "Water"],
-      details: [
-        "Chicken Sandwich",
-        "Garden Salad",
-        "Tomato Basil Soup",
-        "Mixed Fruit Bowl",
-        "Mineral Water",
-      ],
-    },
-    {
-      id: 354,
-      date: "06 Feb 2023",
-      time: "12:30 PM",
-      items: ["Pizza", "Burger", "Hot Dog", "French Fries", "Soft Drink"],
-      details: [
-        "Margherita Pizza",
-        "Cheeseburger",
-        "Classic Hot Dog",
-        "Crispy French Fries",
-        "Cola",
-      ],
-    },
-    {
-      id: 355,
-      date: "07 Feb 2023",
-      time: "07:00 PM",
-      items: [
-        "Pasta",
-        "Steak",
-        "Caesar Salad",
-        "Mushroom Soup",
-        "Garlic Bread",
-      ],
-      details: [
-        "Fettuccine Alfredo",
-        "Sirloin Steak",
-        "Caesar Salad with Parmesan",
-        "Creamy Mushroom Soup",
-        "Garlic Bread",
-      ],
-    },
-    {
-      id: 356,
-      date: "08 Feb 2023",
-      time: "05:00 PM",
-      items: ["Sushi Roll", "Sashimi", "Tempura", "Miso Soup", "Green Tea"],
-      details: [
-        "California Roll",
-        "Assorted Sashimi",
-        "Shrimp Tempura",
-        "Miso Soup with Seaweed",
-        "Matcha Green Tea",
-      ],
-    },
-    {
-      id: 357,
-      date: "08 Feb 2023",
-      time: "08:30 PM",
-      items: ["Tacos", "Burrito", "Nachos", "Quesadilla", "Margarita"],
-      details: [
-        "Spicy Chicken Tacos",
-        "Beef Burrito",
-        "Cheese Nachos",
-        "Cheese Quesadilla",
-        "Classic Margarita",
-      ],
-    },
-  ];
+    // Other orders...
+  ]);
+
+  const handleShowCreateOrder = () => setShowCreateOrder(true);
+  const handleCloseCreateOrder = () => setShowCreateOrder(false);
+
+  const handleShowUpdateOrder = (items, table) => {
+    setCurrentOrderItems(Array.isArray(items) ? items : []);
+    setCurrentTable(table || ""); // Set the current table
+    setShowUpdateOrder(true);
+  };
+
+  const handleCloseUpdateOrder = () => setShowUpdateOrder(false);
+
+  const handleShowOrderDetail = (order) => {
+    setSelectedOrder(order);
+    setShowOrderDetail(true);
+  };
+
+  const handleCloseOrderDetail = () => setShowOrderDetail(false);
+
+  const handleCreateOrder = (newOrder) => {
+    setOrders((prevOrders) => [...prevOrders, newOrder]);
+    handleCloseCreateOrder();
+  };
+
+  const handleUpdateOrder = (updatedItems, updatedTable) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.items === currentOrderItems
+          ? { ...order, items: updatedItems, table: updatedTable } // Update items and table
+          : order
+      )
+    );
+    handleCloseUpdateOrder();
+  };
 
   return (
-    <div className="d-flex">
+    <div className="order-waiter-d-flex">
       <Sidebar />
-      <div className="main-content">
-        <div className="order-page">
-          <div className="header-row">
-            <h1>View Orders</h1>
+      <div className="order-waiter-main-content">
+        <div className="order-waiter-page">
+          <div className="order-waiter-header-row">
+            <h1 className="order-waiter-title">View Orders</h1>
           </div>
-          <div className="button-row">
+          <div className="order-waiter-button-row">
             <Button
-              className="create-order-button"
+              className="order-waiter-create-order-button"
               onClick={handleShowCreateOrder}
             >
               Create Order
             </Button>
           </div>
-          <div className="order-list">
+          <div className="order-waiter-list">
             {orders.map((order, index) => (
-              <Card key={index} className="order-card">
-                <Card.Header className="order-header">
+              <Card
+                key={index}
+                className="order-waiter-card"
+                onClick={() => handleShowOrderDetail(order)}
+              >
+                <Card.Header className="order-waiter-header">
                   Order {order.id}
                 </Card.Header>
                 <Card.Body>
                   <Card.Text>
-                    {order.date}, {order.time}
+                    {order.time}, {order.date}
                   </Card.Text>
-                  <div className="order-items-container">
-                    {order.items.map((item, idx) => (
-                      <div key={idx} className="order-item">
-                        <span className="item-name">{item}</span>
-                        <span className="item-details">
-                          {order.details[idx]}
-                        </span>
-                      </div>
-                    ))}
+                  <Card.Text className="order-waiter-table">
+                    {order.table}
+                  </Card.Text>
+                  <div className="order-waiter-items-container">
+                    {(Array.isArray(order.items) ? order.items : []).map(
+                      (item, idx) => (
+                        <div key={idx} className="order-waiter-item">
+                          <span className="order-waiter-item-name">{item}</span>
+                          <span className="order-waiter-item-details">
+                            {order.details[idx]}
+                          </span>
+                        </div>
+                      )
+                    )}
                   </div>
                   <Card.Footer>
-                    <div className="item-count">
-                      x{order.items.length} items
+                    <div className="order-waiter-item-count">
+                      x{order.items ? order.items.length : 0} items
                     </div>
                     <Button
                       variant="warning"
-                      className="update-button"
-                      onClick={() => handleShowUpdateOrder(order.items)}
+                      className="order-waiter-update-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShowUpdateOrder(order.items || [], order.table);
+                      }}
                     >
                       Update
                     </Button>
@@ -203,11 +148,19 @@ function OrderWaiter() {
       <CreateOrder
         show={showCreateOrder}
         handleClose={handleCloseCreateOrder}
+        onCreateOrder={handleCreateOrder}
       />
       <UpdateOrder
         show={showUpdateOrder}
         handleClose={handleCloseUpdateOrder}
         initialItems={currentOrderItems}
+        initialTable={currentTable} // Pass the current table
+        onUpdateOrder={handleUpdateOrder}
+      />
+      <ViewOrderDetail
+        show={showOrderDetail}
+        handleClose={handleCloseOrderDetail}
+        order={selectedOrder}
       />
     </div>
   );

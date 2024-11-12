@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-
 import "../assets/styles/HCMMenu.css";
 
 function HNMenu() {
   const [activeCategory, setActiveCategory] = useState("Dinner Menu");
-  const [hoveredItem, setHoveredItem] = useState(null);
+  const [hoveredItem, setHoveredItem] = useState({ category: "", index: null });
 
   const categories = [
     "Lunch Menu",
@@ -69,6 +68,7 @@ function HNMenu() {
       ],
     },
   };
+
   const handleCategoryClick = (category) => setActiveCategory(category);
 
   return (
@@ -102,23 +102,29 @@ function HNMenu() {
                 <div
                   key={index}
                   className="menu-item"
-                  onMouseEnter={() => setHoveredItem(index)}
-                  onMouseLeave={() => setHoveredItem(null)}
+                  onMouseEnter={() =>
+                    setHoveredItem({ category: subCategory, index })
+                  }
+                  onMouseLeave={() =>
+                    setHoveredItem({ category: "", index: null })
+                  }
                 >
                   <div className="menu-item-content">
                     <p className="item-name">{item.name}</p>
                     <p className="item-price">{item.price}</p>
                   </div>
-                  {hoveredItem === index && item.image && (
-                    <div className="item-hover-content">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="item-image"
-                      />
-                      <p className="item-description">{item.description}</p>
-                    </div>
-                  )}
+                  {hoveredItem.category === subCategory &&
+                    hoveredItem.index === index &&
+                    item.image && (
+                      <div className="item-hover-content">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="item-image"
+                        />
+                        <p className="item-description">{item.description}</p>
+                      </div>
+                    )}
                 </div>
               ))}
             </div>

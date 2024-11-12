@@ -20,7 +20,7 @@ const CreateBranch = () => {
     mutationFn: uploadImage,
     onSuccess: (data) => {
       toast.success("Image uploaded successfully!");
-      handleCreateBranch(data); // Gọi hàm tạo branch với URL ảnh
+      handleCreateBranch(data);
     },
     onError: (error) => {
       toast.error(`Failed to upload image: ${error.message}`);
@@ -46,7 +46,7 @@ const CreateBranch = () => {
     manager: "",
     status: "INACTIVE",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
-    tables: [{ number: "", capacity: "" }],
+    tables: [{ number: "", capacity: "", status: "AVAILABLE" }],
     menus: [{ type: "" }],
   });
   const [previewUrl, setPreviewUrl] = useState(null);

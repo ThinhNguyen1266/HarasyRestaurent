@@ -4,6 +4,7 @@ import img3 from "../assets/img/ittime.jpg";
 import img2 from "../assets/img/loginbg.png";
 import img4 from "../assets/img/smoke.png";
 
+import { Link } from "react-router-dom";
 import "../assets/styles/HomePage.css";
 import CarouselPage from "../components/CarouselPage";
 
@@ -24,9 +25,9 @@ function Home() {
               suscipit euismod, faucibus vestibulum eros quisque hendrerit
               facilisis.
             </p>
-            <a href="/menu" className="hp-btn-custom">
+            <Link to="/menu" className="hp-btn-custom">
               SEE THE MENU
-            </a>
+            </Link>
           </div>
 
           <div className="col-md-6 section-1-column-2">
@@ -43,9 +44,9 @@ function Home() {
               suscipit euismod, faucibus vestibulum eros quisque hendrerit
               facilisis.
             </p>
-            <a href="/about" className="hp-btn-custom">
+            <Link to="/about" className="hp-btn-custom">
               LEARN MORE
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -70,9 +71,9 @@ function Home() {
               <p className="section-2-description">
                 Aliquam sed dui non est mattis rhoncus id eget quam.
               </p>
-              <a href="/openings" className="hp-btn-custom">
+              <Link to="/about" className="hp-btn-custom">
                 LEARN MORE
-              </a>
+              </Link>
 
               <div className="section-2-quote">
                 <p className="quote-description">
@@ -108,9 +109,9 @@ function Home() {
                 local events,
                 <br /> seasonal-menu offerings, and more.
               </p>
-              <a href="/sign-up" className="hp-btn-custom">
+              <Link to="/register" className="hp-btn-custom">
                 SIGN UP
-              </a>
+              </Link>
             </div>
           </div>
         </div>

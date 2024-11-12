@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, ListGroup, InputGroup } from "react-bootstrap";
-import "../assets/styles/CreateOrder.css";
+import "../assets/styles/UpdateOrder.css";
 
-const UpdateOrder = ({ show, handleClose, initialItems }) => {
+const UpdateOrder = ({ show, handleClose, initialItems, initialTable, onUpdateOrder }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [availableItems] = useState([
     "Vegetable Mixups",
@@ -19,14 +19,20 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
     "Nachos",
   ]);
   const [selectedItems, setSelectedItems] = useState({});
+  const [selectedTable, setSelectedTable] = useState("");
 
   useEffect(() => {
-    const initialSelectedItems = initialItems.reduce((acc, item) => {
-      acc[item] = (acc[item] || 0) + 1;
-      return acc;
-    }, {});
+    const initialSelectedItems = Array.isArray(initialItems)
+      ? initialItems.reduce((acc, item) => {
+          acc[item] = (acc[item] || 0) + 1;
+          return acc;
+        }, {})
+      : {};
     setSelectedItems(initialSelectedItems);
-  }, [initialItems]);
+    setSelectedTable(initialTable || ""); // Set the initial table value
+  }, [initialItems, initialTable]);
+
+  const tableNumbers = Array.from({ length: 10 }, (_, i) => `Table ${i + 1}`);
 
   const handleSearch = (e) => setSearchTerm(e.target.value);
 
@@ -38,6 +44,12 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
   };
 
   const handleRemoveItem = (item) => {
+    const totalItemCount = Object.keys(selectedItems).length;
+    if (totalItemCount === 1 && selectedItems[item] === 1) {
+      alert("You cannot remove the last item from the order.");
+      return;
+    }
+
     setSelectedItems((prevItems) => {
       const updatedItems = { ...prevItems };
       if (updatedItems[item] > 1) updatedItems[item] -= 1;
@@ -46,7 +58,18 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
     });
   };
 
-  const handleUpdateOrder = () => handleClose();
+  const handleUpdateOrder = () => {
+    const updatedItems = Object.entries(selectedItems).flatMap(([item, count]) =>
+      Array(count).fill(item)
+    );
+
+    if (!selectedTable) {
+      alert("You must select a table before updating the order.");
+      return;
+    }
+
+    onUpdateOrder(updatedItems, selectedTable); // Pass updated items and table to onUpdateOrder
+  };
 
   const filteredItems = availableItems.filter((item) =>
     item.toLowerCase().includes(searchTerm.toLowerCase())
@@ -62,15 +85,13 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
       show={show}
       onHide={handleClose}
       centered
-      dialogClassName="custom-create-order-modal"
+      dialogClassName="update-order-modal-content"
     >
-      <Modal.Header className="modal-header-custom">
-        <Modal.Title className="modal-title-custom">
-          Create New Order
-        </Modal.Title>
+      <Modal.Header className="update-order-header">
+        <Modal.Title className="update-order-title">Update Order</Modal.Title>
       </Modal.Header>
-      <Modal.Body className="modal-body-custom">
-        <InputGroup className="mb-3 custom-search">
+      <Modal.Body className="update-order-body">
+        <InputGroup className="mb-3 update-order-search">
           <Form.Control
             type="text"
             placeholder="Search items..."
@@ -78,11 +99,11 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
             onChange={handleSearch}
           />
         </InputGroup>
-        <ListGroup className="custom-item-list">
+        <ListGroup className="update-order-item-list">
           {filteredItems.map((item, index) => (
             <ListGroup.Item
               key={index}
-              className="custom-item-list-item"
+              className="update-order-item"
               onClick={() => handleAddItem(item)}
               action
             >
@@ -90,37 +111,37 @@ const UpdateOrder = ({ show, handleClose, initialItems }) => {
             </ListGroup.Item>
           ))}
         </ListGroup>
-        <h5 className="selected-items-title">
+        <h5 className="update-order-selected-title">
           Selected Items (Total: {totalItemsCount}):
         </h5>
-        <ListGroup className="selected-items-list">
+        <ListGroup className="update-order-selected-list">
           {Object.entries(selectedItems).map(([item, count], index) => (
-            <ListGroup.Item key={index} className="selected-item">
+            <ListGroup.Item key={index} className="update-order-selected-item">
               x{count} {item}
               <Button
                 variant="outline-light"
                 size="sm"
-                className="remove-item-button"
+                className="update-order-remove-button"
                 onClick={() => handleRemoveItem(item)}
               >
-                -
+                Remove
               </Button>
             </ListGroup.Item>
           ))}
         </ListGroup>
       </Modal.Body>
-      <Modal.Footer className="modal-footer-custom">
+      <Modal.Footer className="update-order-footer">
         <Button
           variant="outline-light"
           onClick={handleClose}
-          className="modal-cancel-button"
+          className="update-order-cancel-button"
         >
           Cancel
         </Button>
         <Button
           variant="outline-warning"
           onClick={handleUpdateOrder}
-          className="modal-create-button"
+          className="update-order-confirm-button"
         >
           Save Changes
         </Button>

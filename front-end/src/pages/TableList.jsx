@@ -1,38 +1,93 @@
 import React, { useState } from "react";
 import { FaCheck, FaTimes, FaChair, FaUsers } from "react-icons/fa";
-import { Card, Row, Col, Badge, Container, Form } from "react-bootstrap";
+import {
+  Card,
+  Row,
+  Col,
+  Badge,
+  Container,
+  Form,
+  Button,
+} from "react-bootstrap";
 import Sidebar from "../components/Sidebar";
 import "../assets/styles/TableList.css";
-
+import useTableApi from "../hooks/api/useTableApi";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 const TableList = () => {
-  const [tables, setTables] = useState([
-    { id: 1, name: "Table 1", capacity: 4, available: true },
-    { id: 2, name: "Table 2", capacity: 2, available: false },
-    { id: 3, name: "Table 3", capacity: 6, available: true },
-    { id: 4, name: "Table 4", capacity: 4, available: true },
-    { id: 5, name: "Table 5", capacity: 8, available: false },
-    { id: 6, name: "Table 6", capacity: 2, available: true },
-    { id: 7, name: "Table 7", capacity: 2, available: true },
-    { id: 8, name: "Table 8", capacity: 2, available: true },
-  ]);
-
+  const queryClient = useQueryClient();
+  const { getTablelist, updateTableStatus } = useTableApi();
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
+  const [selectedTables, setSelectedTables] = useState([]); // State để lưu danh sách bàn được chọn
+  const navigate = useNavigate();
+  const {
+    data: tableData,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["tables"],
+    queryFn: getTablelist,
+    onError: (error) => {
+      console.error(`Failed to fetch tables: ${error.message}`);
+    },
+  });
 
-  const availableTables = tables.filter((table) => table.available).length;
-  const unavailableTables = tables.length - availableTables;
+  const mutation = useMutation({
+    mutationFn: updateTableStatus,
+    onSuccess: () => {
+      console.log("Table status updated successfully");
+      queryClient.invalidateQueries("tables");
+    },
+    onError: (error) => {
+      console.error(`Failed to update table status: ${error.message}`);
+    },
+  });
 
-  const handleTableSwitch = (id) => {
-    setTables(
-      tables.map((table) =>
-        table.id === id ? { ...table, available: !table.available } : table
-      )
+  if (isLoading)
+    return <h1 className="text-center text-white">Loading tables...</h1>;
+  if (error)
+    return (
+      <h1 className="text-center text-danger">
+        Error loading tables: {error.message}
+      </h1>
     );
-  };
+
+  const tables =
+    tableData?.map((table) => ({
+      id: table.id,
+      number: table.number,
+      capacity: table.capacity,
+      status: table.status,
+    })) || [];
 
   const filteredTables = showAvailableOnly
-    ? tables.filter((table) => table.available)
+    ? tables.filter((table) => table.status === "AVAILABLE")
     : tables;
 
+  const handleTableSelect = (id) => {
+    if (selectedTables.includes(id)) {
+      setSelectedTables(selectedTables.filter((tableId) => tableId !== id)); // Bỏ chọn bàn
+    } else {
+      setSelectedTables([...selectedTables, id]); // Thêm bàn vào danh sách được chọn
+    }
+  };
+
+  const handleTableSwitch = (id, currentStatus) => {
+    const newStatus =
+      currentStatus === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE";
+    mutation.mutate({ tableId: id, status: newStatus });
+  };
+
+  const availableTables = tables.filter(
+    (table) => table.status === "AVAILABLE"
+  ).length;
+  const unavailableTables = tables.length - availableTables;
+
+  const handleAddOrder = () => {
+    navigate("/createorder", { state: { tableIds: selectedTables } });
+    console.log("selected: ", selectedTables);
+  };
   return (
     <div className="layout">
       <Sidebar />
@@ -52,38 +107,54 @@ const TableList = () => {
                   onChange={(e) => setShowAvailableOnly(e.target.checked)}
                 />
               </Col>
+              <Col>
+                {selectedTables.length > 0 && (
+                  <div className="text-center ">
+                    <Button variant="primary" onClick={handleAddOrder}>
+                      Create Order
+                    </Button>
+                  </div>
+                )}
+              </Col>
               <Col xs="auto" className="text-center count-table">
                 <div className="count-available">
                   <Badge pill bg="success" className="fs-5">
                     {availableTables}
                   </Badge>
-                  <p>Available</p>
+                  <p className="text-white">Available</p>
                 </div>
                 <div>
                   <Badge pill bg="danger" className="fs-5">
                     {unavailableTables}
                   </Badge>
-                  <p>Unavailable</p>
+                  <p className="text-white">Unavailable</p>
                 </div>
               </Col>
             </Row>
             {filteredTables.map((table) => (
               <Col xs={12} sm={6} lg={4} key={table.id}>
                 <Card
+                  onClick={() => handleTableSelect(table.id)}
                   className={`${
-                    table.available ? "border-success" : "border-danger"
+                    table.status === "AVAILABLE"
+                      ? "border-success"
+                      : "border-danger"
+                  } ${
+                    selectedTables.includes(table.id) ? "selected-table" : ""
                   } border-top-4 border-4`}
                 >
                   <Card.Body className="card-body">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                      <h5 className="card-title text-white">{table.name}</h5>
+                      <h5 className="card-title text-white">{`Table ${table.number}`}</h5>
                       <Form>
                         <Form.Check
                           type="switch"
                           id={`table-switch-${table.id}`}
-                          checked={table.available}
-                          onChange={() => handleTableSwitch(table.id)}
-                          className=" custom-switch"
+                          checked={table.status === "AVAILABLE"}
+                          onChange={() =>
+                            handleTableSwitch(table.id, table.status)
+                          }
+                          className="custom-switch"
                         />
                       </Form>
                     </div>
@@ -94,11 +165,13 @@ const TableList = () => {
                     <div className="d-flex align-items-center mb-2 text-white">
                       <FaUsers className="me-2 text-white" />
                       <span>
-                        {table.available ? "Available" : "Unavailable"}
+                        {table.status === "AVAILABLE"
+                          ? "Available"
+                          : "Unavailable"}
                       </span>
                     </div>
                     <div className="mt-3">
-                      {table.available ? (
+                      {table.status === "AVAILABLE" ? (
                         <span className="text-success d-flex align-items-center">
                           <FaCheck className="me-1" /> Ready for seating
                         </span>

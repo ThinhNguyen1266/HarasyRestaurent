@@ -1,5 +1,6 @@
 package group5.swp.HarasyProject.service.impl;
 
+import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.auth.EmailRequest;
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @Service
@@ -89,6 +91,33 @@ public class AccountServiceImpl implements AccountService {
             response = accountMapper.toStaffProfileResponse(account);
         }
         return ApiResponse.<ProfileResponse>builder().data(response)
+                .build();
+    }
+
+
+
+    @Override
+    public ApiResponse<CustomerProfileResponse> quickcustomerRegis(QuickRegisCustomerRequest request) throws IOException, MessagingException {
+        if (accountRepository.existsByEmail(request.getEmail()))  throw new AppException(ErrorCode.EMAIL_EXISTED);
+
+
+        AccountEntity accountEntity = accountMapper.quickRegisToAccount(request);
+        accountEntity.setPassword(passwordEncoder.encode("123456"));
+        String username = Arrays
+                .stream(request.getFullName()
+                        .split(" "))
+                .reduce("",String::concat);
+        do {
+            int randomNumber = (int) (Math.random() * 900) + 100; // Tạo số ngẫu nhiên từ 100 đến 999
+            accountEntity.setUsername(username + randomNumber);
+        } while (accountRepository.existsByUsername(accountEntity.getUsername()));
+        CustomerAccountEntity customerAccount = new CustomerAccountEntity();
+        accountEntity.setCustomer(customerAccount);
+        accountEntity = accountRepository.save(accountEntity);
+        CustomerProfileResponse response = accountMapper.toCustomerProfileResponse(accountEntity);
+        return ApiResponse.<CustomerProfileResponse>builder()
+                .code(200)
+                .data(response)
                 .build();
     }
 }
