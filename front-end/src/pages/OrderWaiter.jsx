@@ -18,8 +18,7 @@ function OrderWaiter() {
     {
       id: 351,
       date: "05 Feb 2023",
-      time: "08:38 PM",
-      table: "Table 1", // Added table information
+      time: "08:38 PM", // Added table information
       items: [
         "Vegetable Mixups",
         "Chinese Takeout Dish",
