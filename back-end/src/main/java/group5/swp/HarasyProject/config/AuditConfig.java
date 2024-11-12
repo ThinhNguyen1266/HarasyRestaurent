@@ -1,6 +1,5 @@
 package group5.swp.HarasyProject.config;
 
-import jakarta.annotation.Nullable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -22,7 +21,8 @@ class AuditorAwareImpl implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
+        if (authentication != null && authentication.isAuthenticated()
+                && authentication.getPrincipal() instanceof String) {
             Jwt jwt = (Jwt) authentication.getPrincipal();
             String id = jwt.getClaim("id");
             return Optional.of(id);

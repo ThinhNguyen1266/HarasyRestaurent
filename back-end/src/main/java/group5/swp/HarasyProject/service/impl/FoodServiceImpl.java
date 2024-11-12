@@ -50,7 +50,7 @@ public class FoodServiceImpl implements FoodService {
 
 
     @Override
-    public ApiResponse<FoodResponse> getFoodById(int id) {
+    public ApiResponse<FoodResponse> getFood(int id) {
         FoodEntity food = foodRepository.findById(id)
                 .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
         FoodResponse response = foodMapper.toResponse(food);
@@ -61,7 +61,7 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public ApiResponse<FoodResponse> createFood(FoodRequest request) {
-        FoodEntity foodEntity = foodMapper.toEntity(request,new FoodEntity());
+        FoodEntity foodEntity = foodMapper.toEntity(request);
         return getFoodResponseApiResponse(request, foodEntity);
     }
 
@@ -69,14 +69,14 @@ public class FoodServiceImpl implements FoodService {
     public ApiResponse<FoodResponse> updateFood(int id,FoodRequest request) {
         FoodEntity foodEntity = foodRepository.findById(id)
                 .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
-        foodEntity = foodMapper.toEntity(request,foodEntity);
+        foodEntity = foodMapper.updateFood(request,foodEntity);
         return getFoodResponseApiResponse(request, foodEntity);
     }
 
     private ApiResponse<FoodResponse> getFoodResponseApiResponse(FoodRequest request, FoodEntity foodEntity) {
         if (request.getCategoryId()!=null) {
             CategoryEntity categoryEntity = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
+                    .orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
             foodEntity.setCategory(categoryEntity);
         }
         foodEntity = foodRepository.save(foodEntity);

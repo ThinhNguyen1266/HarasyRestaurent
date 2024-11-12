@@ -7,10 +7,10 @@ import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.BranchWorkingHourEntity;
-import group5.swp.HarasyProject.entity.food.CategoryEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
+import group5.swp.HarasyProject.enums.BinaryStatus;
 import group5.swp.HarasyProject.enums.DayOfWeek;
 import group5.swp.HarasyProject.enums.MenuType;
 import group5.swp.HarasyProject.enums.Status;
@@ -26,10 +26,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Configuration
 @Slf4j
@@ -123,7 +124,7 @@ public class AppConfig {
                                             case 3 -> MenuType.LUNCH;
                                             default -> null;
                                         }
-                                )
+                                ).status(BinaryStatus.UNAVAILABLE)
                                 .build();
                         menus.add(menuEntity);
                     }

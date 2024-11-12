@@ -1,6 +1,7 @@
-package group5.swp.HarasyProject.dto.response.branch;
+package group5.swp.HarasyProject.dto.request.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import group5.swp.HarasyProject.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,8 +11,11 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BranchListResponse {
-    int id;
+public class BranchInfoRequest {
     String name;
+    String location;
     String image;
+    String phone;
+    Status status;
+    Integer managerId;
 }

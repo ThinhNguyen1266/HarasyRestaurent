@@ -4,7 +4,7 @@ import group5.swp.HarasyProject.entity.food.FoodEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.entity.menu.MenuItemEntity;
 import group5.swp.HarasyProject.entity.menu.MenuItemId;
-import group5.swp.HarasyProject.enums.MenuItemStatus;
+import group5.swp.HarasyProject.enums.BinaryStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueMappingStrategy;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -21,7 +21,7 @@ public interface MenuItemMapper {
                 .id(new MenuItemId(menu.getId(), food.getId()))
                 .food(food)
                 .menu(menu)
-                .status(MenuItemStatus.AVAILABLE)
+                .status(BinaryStatus.AVAILABLE)
                 .build();
     };
 

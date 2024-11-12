@@ -1,20 +1,21 @@
 package group5.swp.HarasyProject.dto.response.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BranchInfoResponse extends BranchInfoHomeResponse {
-    String managerId;
-    String managerName;
-    String managerEmail;
-    String managerImage;
+public class BranchResponse {
+    BranchInfoResponse branchInfo;
+    List<TableResponse> tables;
+    List<MenuResponse> menus;
 }

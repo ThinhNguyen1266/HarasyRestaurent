@@ -1,12 +1,11 @@
 package group5.swp.HarasyProject.controller;
 
-import group5.swp.HarasyProject.dto.request.branch.CreateBranchRequest;
-import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
+import group5.swp.HarasyProject.dto.request.branch.BranchRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
-import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
-import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
-import group5.swp.HarasyProject.dto.response.table.TableResponse;
-import group5.swp.HarasyProject.service.BranchService;
+import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
+import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
+import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
+import group5.swp.HarasyProject.service.RestaurantManagementService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,57 +18,42 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BranchController {
 
-    BranchService branchService;
+    RestaurantManagementService restaurantManagementService;
 
-    @GetMapping("/staff/branches")
-    ApiResponse<List<BranchInfoResponse>> getAllBranchStaff() {
-        return branchService.getAllBranches(true);
+    @GetMapping("/branches/home")
+    ApiResponse<List<BranchesViewResponse>> getBranchesHome() {
+        return restaurantManagementService.getBranchesView();
     }
 
-
-    @GetMapping("/customer/branches")
-    ApiResponse<List<BranchInfoResponse>> getAllBranch() {
-        return branchService.getAllBranches(false);
+    @GetMapping("/branch/home/{id}")
+    ApiResponse<BranchInfoHomeResponse> getBranchInfoHome(@PathVariable int id) {
+        return restaurantManagementService.getBranchHome(id);
     }
 
+    @GetMapping("/branches")
+    ApiResponse<List<BranchResponse>> getAllBranchStaff(@RequestParam(defaultValue = "false") boolean includeAll) {
+        return restaurantManagementService.getAllBranches(includeAll);
+    }
 
     @GetMapping("/branch/{id}")
-    ApiResponse<BranchInfoResponse> getBranchById(@PathVariable int id) {
-        return branchService.getBranchInfo(id);
+    ApiResponse<BranchResponse> getBranchById(@PathVariable int id) {
+        return restaurantManagementService.getBranch(id);
     }
 
     @PostMapping("/branch")
-    ApiResponse<BranchInfoResponse> createBranch(@RequestBody CreateBranchRequest request){
-        return branchService.createBranch(request);
+    ApiResponse<BranchResponse> createBranch(@RequestBody BranchRequest request){
+        return restaurantManagementService.createBranch(request);
     }
 
     @PutMapping("/branch/{id}")
-    ApiResponse<BranchInfoResponse> updateBranch(@PathVariable int id, @RequestBody UpdateBranchRequest request){
-        return branchService.updateBranch(id, request);
+    ApiResponse<BranchResponse> updateBranch(@PathVariable int id, @RequestBody BranchRequest request){
+        return restaurantManagementService.updateBranch(id, request);
     }
 
     @DeleteMapping("/branch/{id}")
     ApiResponse<?> deleteBranch(@PathVariable int id) {
-       return branchService.deleteBranch(id);
+       return restaurantManagementService.deleteBranch(id);
     }
 
-    @GetMapping("/branch/{id}/tables")
-    ApiResponse<List<TableResponse>> tablesInBranch(@PathVariable int id) {
-        return branchService.getAllTablesInBranch(id);
-    }
 
-    @PostMapping("/branch/{id}/tables")
-    ApiResponse<BranchInfoResponse> addTables(@PathVariable int id, @RequestBody CreateBranchRequest request){
-        return branchService.addTables(id, request);
-    }
-
-    @GetMapping("/branch/{id}/menus")
-    ApiResponse<List<MenuResponse>> getAllMenus(@PathVariable int id) {
-        return branchService.getAllMenusInBranch(id);
-    }
-
-    @PostMapping("/branch/{id}/menus")
-    ApiResponse<BranchInfoResponse> addMenus(@PathVariable int id, @RequestBody CreateBranchRequest request){
-        return branchService.addMenus(id, request);
-    }
 }
