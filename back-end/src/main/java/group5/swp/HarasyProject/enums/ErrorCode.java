@@ -33,7 +33,7 @@ public enum ErrorCode {
     //ALREADY EXIST
     TABLE_EXISTED(4000, "table already exist", HttpStatus.CONFLICT),
     BRANCH_EXISTED(4001,"branch name is duplicate",HttpStatus.CONFLICT),
-
+    EMAIL_EXISTED(4002,"Email is already existed",HttpStatus.CONFLICT),
     ;
 
     int code;
