@@ -11,7 +11,7 @@ import java.util.List;
 public interface FoodService {
     ApiResponse<List<FoodResponse>> getAllFood(boolean includeAll);
 
-    ApiResponse<FoodResponse> getFoodById(int id);
+    ApiResponse<FoodResponse> getFood(int id);
     ApiResponse<FoodResponse> createFood(FoodRequest request);
     ApiResponse<FoodResponse> updateFood(int id,FoodRequest request);
     ApiResponse<?> deleteFood(int id);

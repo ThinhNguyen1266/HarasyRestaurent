@@ -1,7 +1,7 @@
 package group5.swp.HarasyProject.entity.menu;
 
 import group5.swp.HarasyProject.entity.food.FoodEntity;
-import group5.swp.HarasyProject.enums.MenuItemStatus;
+import group5.swp.HarasyProject.enums.BinaryStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -31,6 +31,6 @@ public class MenuItemEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    MenuItemStatus status;
+    BinaryStatus status;
 
 }

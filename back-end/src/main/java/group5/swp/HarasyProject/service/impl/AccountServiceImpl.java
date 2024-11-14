@@ -5,7 +5,6 @@ import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.auth.EmailRequest;
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
-import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.RegisResponse;
 import group5.swp.HarasyProject.dto.response.auth.OtpResponse;
@@ -29,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -72,7 +70,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest) throws IOException, MessagingException {
+    public ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest){
         if (otpService.validateOtp(otpRequest)) {
             AccountEntity account = accountRepository.findByEmail(otpRequest.getEmail()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
             account.setStatus(AccountStatus.ACTIVE);
@@ -84,7 +82,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ApiResponse<ProfileResponse> viewProfile(Integer id) throws IOException, MessagingException {
+    public ApiResponse<ProfileResponse> viewProfile(Integer id) {
         AccountEntity account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found Account ID: "+id));
         ProfileResponse response;
         if(account.getCustomer()!=null ){
@@ -92,8 +90,6 @@ public class AccountServiceImpl implements AccountService {
         }else {
             response = accountMapper.toStaffProfileResponse(account);
         }
-
-
         return ApiResponse.<ProfileResponse>builder().data(response)
                 .build();
     }

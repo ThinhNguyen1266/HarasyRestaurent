@@ -17,12 +17,15 @@ public interface FoodMapper {
     @Mapping(target = "categoryName" , source = "food.category.name")
     FoodResponse toResponse(FoodEntity food);
 
-    FoodEntity toEntity(FoodRequest foodRequest, @MappingTarget FoodEntity food);
+    @Mapping(target = "status", constant = "INACTIVE")
+    FoodEntity toEntity(FoodRequest foodRequest);
 
     @Mapping(target = "id", source = "food.id")
     @Mapping(target = "name", source = "food.name")
     @Mapping(target = "price", source = "food.price")
     FoodResponse itemToFoodResponse(MenuItemEntity menuItemEntity);
+
+    FoodEntity updateFood( FoodRequest request ,@MappingTarget FoodEntity food);
 
 
     default List<FoodResponse> itemsToFoodResponseList(List<MenuItemEntity> menuItemEntity){
