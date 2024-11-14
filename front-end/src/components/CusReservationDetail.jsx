@@ -2,8 +2,16 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../assets/styles/CusReservationDetail.css";
 
-const CusReservationDetail = ({ reservation, onClose }) => {
+const CusReservationDetail = ({ reservation, onClose, onCancel }) => {
   if (!reservation) return null;
+
+  // Function to handle reservation cancellation
+  const handleCancel = () => {
+    const isConfirmed = window.confirm("Are you sure you want to cancel the reservation?");
+    // if (isConfirmed) {
+    //   onCancel(reservation.id); 
+    // }
+  };
 
   return (
     <div className="cus-reservation-overlay" onClick={onClose}>
@@ -55,7 +63,7 @@ const CusReservationDetail = ({ reservation, onClose }) => {
         </div>
         
         <div className="cus-reservation-footer">
-          <button className="cus-reservation-button">Cancel Reservation</button>
+          <button className="cus-reservation-button" onClick={handleCancel}>Cancel Reservation</button>
         </div>
       </div>
     </div>
