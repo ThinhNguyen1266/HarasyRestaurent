@@ -93,10 +93,11 @@ const CusReservation = () => {
   // Filter reservations based on search and date selection
   const filteredReservations = Object.keys(groupedReservations).reduce(
     (acc, status) => {
-      acc[status] = groupedReservations[status].filter(
-        (res) =>
-          (selectedDate === "" || res.date.includes(selectedDate))
-      );
+      acc[status] = groupedReservations[status].filter((res) => {
+        // Skip date filtering for "Current" status
+        if (status === "Current") return true;
+        return selectedDate === "" || res.date.includes(selectedDate);
+      });
       return acc;
     },
     {}
@@ -127,16 +128,18 @@ const CusReservation = () => {
         </div>
 
         {/* Reservation Groups by Status */}
-        <div className="reservation-group">
-          <h2>Your current reservation</h2>
-          {filteredReservations.Current.map((reservation) => (
-            <ReservationItem
-              key={reservation.id}
-              reservation={reservation}
-              onDetailClick={handleDetailClickCancel}
-            />
-          ))}
-        </div>
+        {filteredReservations.Current.length > 0 && (
+          <div className="reservation-group">
+            <h2>Your current reservation</h2>
+            {filteredReservations.Current.map((reservation) => (
+              <ReservationItem
+                key={reservation.id}
+                reservation={reservation}
+                onDetailClick={handleDetailClickCancel}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="reservation-group">
           <h2>Reservation history</h2>
