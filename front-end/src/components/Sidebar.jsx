@@ -127,6 +127,14 @@ const Sidebar = () => {
                   View Order
                 </a>
               </li>
+              <li>
+                <a
+                  href="/regriscus"
+                  className={isActive("/regriscus") ? "active" : ""}
+                >
+                  Regris customer
+                </a>
+              </li>
             </ul>
           </div>
         ) : user?.role === "CHEF" ? (
