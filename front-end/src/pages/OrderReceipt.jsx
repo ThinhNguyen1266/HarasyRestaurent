@@ -37,9 +37,14 @@ function OrderReceipt() {
         "Salmon Nigiri",
         "Traditional Miso Soup",
       ],
+      price: "3,500,000",
     },
     // Other orders...
   ]);
+
+  const handleConfirm = () => {
+    const isConfirmed = window.confirm("Are you sure you want to confirm the order payment?");
+  };
 
   const handleShowOrderDetail = (order) => {
     setSelectedOrder(order);
@@ -49,37 +54,37 @@ function OrderReceipt() {
   const handleCloseOrderDetail = () => setShowOrderDetail(false);
 
   return (
-    <div className="order-waiter-d-flex">
+    <div className="order-receipt-d-flex">
       <Sidebar />
-      <div className="order-waiter-main-content">
-        <div className="order-waiter-page">
-          <div className="order-waiter-header-row">
-            <h1 className="order-waiter-title">View Orders</h1>
+      <div className="order-receipt-main-content">
+        <div className="order-receipt-page">
+          <div className="order-receipt-header-row">
+            <h1 className="order-receipt-title">View Orders</h1>
           </div>
-          <div className="order-waiter-button-row"></div>
-          <div className="order-waiter-list">
+          <div className="order-receipt-button-row"></div>
+          <div className="order-receipt-list">
             {orders.map((order, index) => (
               <Card
                 key={index}
-                className="order-waiter-card"
+                className="order-receipt-card"
                 onClick={() => handleShowOrderDetail(order)}
               >
-                <Card.Header className="order-waiter-header">
+                <Card.Header className="order-receipt-header">
                   Order {order.id}
                 </Card.Header>
                 <Card.Body>
                   <Card.Text>
                     {order.time}, {order.date}
                   </Card.Text>
-                  <Card.Text className="order-waiter-table">
+                  <Card.Text className="order-receipt-table">
                     {order.table}
                   </Card.Text>
-                  <div className="order-waiter-items-container">
+                  <div className="order-receipt-items-container">
                     {(Array.isArray(order.items) ? order.items : []).map(
                       (item, idx) => (
-                        <div key={idx} className="order-waiter-item">
-                          <span className="order-waiter-item-name">{item}</span>
-                          <span className="order-waiter-item-details">
+                        <div key={idx} className="order-receipt-item">
+                          <span className="order-receipt-item-name">{item}</span>
+                          <span className="order-receipt-item-details">
                             {order.details[idx]}
                           </span>
                         </div>
@@ -87,18 +92,23 @@ function OrderReceipt() {
                     )}
                   </div>
                   <Card.Footer>
-                    <div className="order-waiter-item-count">
-                      x{order.items ? order.items.length : 0} items
+                    <div className="order-receipt-footer-content">
+                      <div className="order-receipt-item-count">
+                        x{order.items ? order.items.length : 0} items
+                      </div>
+                      <div className="order-receipt-total-price">
+                        Total: {order.price}
+                      </div>
                     </div>
                     <Button
                       variant="warning"
-                      className="order-waiter-update-button"
-                      // onClick={(e) => {
-                      //   e.stopPropagation();
-                      //   handleShowUpdateOrder(order.items || [], order.table);
-                      // }}
+                      className="order-receipt-update-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleConfirm();
+                      }}
                     >
-                      Check
+                      Payment Confirm
                     </Button>
                   </Card.Footer>
                 </Card.Body>
