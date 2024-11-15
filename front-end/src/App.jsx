@@ -27,6 +27,8 @@ import Venues from "./pages/Venues";
 import CreateOrder from "./pages/CreateOrder";
 import RegrisCus from "./pages/RegrisCus";
 import ManageFood from "./pages/ManageFood";
+import CreateFood from "./pages/CreateFood";
+import EditFood from "./pages/EditFood";
 function App() {
   return (
     <div className="App">
@@ -59,6 +61,8 @@ function App() {
             element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}
           >
             <Route path="/food" element={<ManageFood />} />
+            <Route path="/food/create" element={<CreateFood />} />
+            <Route path="/food/:foodId" element={<EditFood />} />
             <Route path="/workforce" element={<WorkforceList />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/branch" element={<BranchManagement />} />

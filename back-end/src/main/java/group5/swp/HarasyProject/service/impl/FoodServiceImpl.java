@@ -38,7 +38,7 @@ public class FoodServiceImpl implements FoodService {
         List<FoodEntity> foodList = foodRepository.findAll();
         if (!includeAll)
             foodList = foodList
-                    .stream().filter(foodEntity -> foodEntity.getStatus().equals(Status.ACTIVE))
+                    .stream().filter(foodEntity -> !foodEntity.getStatus().equals(Status.DELETED))
                     .toList();
         List<FoodResponse> responseList = foodList
                 .stream().map(foodMapper::toResponse)

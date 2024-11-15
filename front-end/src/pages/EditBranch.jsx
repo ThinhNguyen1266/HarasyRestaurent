@@ -41,12 +41,12 @@ const EditBranch = () => {
     if (branchData) {
       console.log("Branch data after reload:", branchData);
       setFormData({
-        ...branchData,
+        ...branchData.branchInfo,
         manager: branchData.manager || "",
         imageFile: null,
-        workingHours: branchData.workingHours || [
-          { dayOfWeek: "", openingTime: "", closingTime: "" },
-        ],
+        workingHours: Array.isArray(branchData.branchInfo.workingHours)
+          ? branchData.branchInfo.workingHours
+          : [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
         tables: branchData.tables || [{ number: "", capacity: "" }],
         menus: branchData.menus?.map((menu) => ({ type: menu.type })) || [
           { type: "" },
@@ -69,35 +69,71 @@ const EditBranch = () => {
 
   const handleEditBranch = (imageUrl) => {
     const payload = {
-      name: formData.name,
-      location: formData.location,
-      image: imageUrl || formData.image,
-      phone: formData.phone,
-      manager: formData.manager,
-      status: formData.status,
-      workingHours: formData.workingHours.map((hour) => ({
-        dayOfWeek: hour.dayOfWeek,
-        openingTime:
-          hour.openingTime.length === 5
-            ? `${hour.openingTime}:00`
-            : hour.openingTime,
-        closingTime:
-          hour.closingTime.length === 5
-            ? `${hour.closingTime}:00`
-            : hour.closingTime,
-      })),
-      tables: formData.tables.map((table) => ({
-        number: table.number,
-        capacity: table.capacity,
-      })),
-      menus: formData.menus.map((menu) => ({
-        type: menu.type,
-      })),
+      branchInfo: {
+        id: branchId,
+        name: formData.name,
+        location: formData.location,
+        image: imageUrl || formData.image,
+        phone: formData.phone,
+      },
+      workingHours: {
+        creates: formData.workingHours
+          .filter(
+            (hour) =>
+              hour.dayOfWeek && hour.openingTime && hour.closingTime && !hour.id
+          ) // Chỉ tạo mới nếu không có id
+          .map((hour) => ({
+            dayOfWeek: hour.dayOfWeek,
+            openingTime: `${hour.openingTime}:00`,
+            closingTime: `${hour.closingTime}:00`,
+          })),
+        updates: formData.workingHours
+          .filter(
+            (hour) =>
+              hour.id && hour.dayOfWeek && hour.openingTime && hour.closingTime
+          ) // Chỉ cập nhật nếu có id
+          .map((hour) => ({
+            id: hour.id, // Thêm id để xác định đối tượng cần cập nhật
+            dayOfWeek: hour.dayOfWeek,
+            openingTime: `${hour.openingTime}:00`,
+            closingTime: `${hour.closingTime}:00`,
+          })),
+      },
+      tables: {
+        creates: formData.tables
+          .filter((table) => table.number && table.capacity && !table.id) // Chỉ tạo mới nếu không có id
+          .map((table) => ({
+            number: table.number,
+            capacity: table.capacity.toString(), // Đảm bảo capacity là một chuỗi
+          })),
+        updates: formData.tables
+          .filter((table) => table.id && table.number && table.capacity) // Chỉ cập nhật nếu có id
+          .map((table) => ({
+            id: table.id, // Thêm id để xác định đối tượng cần cập nhật
+            number: table.number,
+            capacity: table.capacity.toString(),
+          })),
+      },
+      menus: {
+        creates: formData.menus
+          .filter((menu) => menu.type && !menu.id) // Menu không có id sẽ được tạo mới
+          .map((menu) => ({
+            type: menu.type,
+          })),
+        updates: formData.menus
+          .filter((menu) => menu.id && menu.type) // Menu có id sẽ được cập nhật
+          .map((menu) => ({
+            id: menu.id, // Chắc chắn rằng mỗi menu có id nếu nó sẽ được cập nhật
+            type: menu.type,
+          })),
+      },
     };
 
+    // Kiểm tra payload
     console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
 
-    saveBranchMutate.mutate({ ...payload, id: branchId });
+    // Gửi payload đến API
+    saveBranchMutate.mutate(payload);
   };
 
   const handleSubmit = (e) => {
@@ -152,6 +188,12 @@ const EditBranch = () => {
       ...prev,
       menus: [...prev.menus, { type: "" }],
     }));
+  const removeMenu = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      menus: prev.menus.filter((_, i) => i !== index),
+    }));
+  };
 
   if (isBranchLoading) return <p>Loading branch data...</p>;
 
@@ -388,6 +430,13 @@ const EditBranch = () => {
                     <option value="DINNER">DINNER</option>
                     <option value="DESSERT">DESSERT</option>
                   </select>
+                  <button
+                    type="button"
+                    onClick={() => removeMenu(index)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    Remove
+                  </button>
                 </div>
               ))}
               <button
