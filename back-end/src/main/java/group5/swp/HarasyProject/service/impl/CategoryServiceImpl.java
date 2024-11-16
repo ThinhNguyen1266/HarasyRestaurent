@@ -3,7 +3,7 @@ package group5.swp.HarasyProject.service.impl;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.category.CategoryResponse;
 import group5.swp.HarasyProject.entity.food.CategoryEntity;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.CategoryMapper;
 import group5.swp.HarasyProject.repository.CategoryRepository;

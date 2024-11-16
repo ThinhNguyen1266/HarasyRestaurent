@@ -3,6 +3,7 @@ package group5.swp.HarasyProject.service;
 import group5.swp.HarasyProject.dto.request.food.FoodRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.food.FoodResponse;
+import group5.swp.HarasyProject.entity.food.FoodEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +12,11 @@ import java.util.List;
 public interface FoodService {
     ApiResponse<List<FoodResponse>> getAllFood(boolean includeAll);
 
-    ApiResponse<FoodResponse> getFoodById(int id);
+    ApiResponse<FoodResponse> getFood(int id);
     ApiResponse<FoodResponse> createFood(FoodRequest request);
     ApiResponse<FoodResponse> updateFood(int id,FoodRequest request);
     ApiResponse<?> deleteFood(int id);
+
+    FoodEntity getFoodEntity(int id);
+
 }
