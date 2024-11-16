@@ -9,7 +9,7 @@ import useBranchApi from "../hooks/api/useBranchApi";
 const BranchManagement = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { getBranchesStaff, updateBranch, deleteBranch } = useBranchApi();
+  const { getBranchesStaff, deleteBranch } = useBranchApi();
 
   const { data: branches = [], isLoading } = useQuery({
     queryKey: ["branches"],
@@ -61,37 +61,37 @@ const BranchManagement = () => {
             <div key={branch.id} className="col-md-4">
               <div className="card h-100">
                 <img
-                  src={branch.image}
+                  src={branch.branchInfo.image}
                   className="card-img-top"
-                  alt={branch.name}
+                  alt={branch.branchInfo.name}
                   style={{ height: "200px", objectFit: "cover" }}
                 />
                 <div className="card-body">
-                  <h5 className="card-title">{branch.name}</h5>
+                  <h5 className="card-title">{branch.branchInfo.name}</h5>
                   <p className="card-text">
-                    <strong>Address:</strong> {branch.location}
+                    <strong>Address:</strong> {branch.branchInfo.location}
                     <br />
-                    <strong>Phone:</strong> {branch.phone}
+                    <strong>Phone:</strong> {branch.branchInfo.phone}
                     <br />
-                    <strong>Manager:</strong> {branch.manager}
+                    <strong>Manager:</strong> {branch.branchInfo.manager}
                   </p>
                   <span
                     className={`badge ${
                       branch.status === "active" ? "bg-success" : "bg-danger"
                     }`}
                   >
-                    {branch.status}
+                    {branch.branchInfo.status}
                   </span>
                 </div>
                 <div className="card-footer d-flex justify-content-end">
                   <button
-                    onClick={() => navigate(`/branch/${branch.id}`)}
+                    onClick={() => navigate(`/branch/${branch.branchInfo.id}`)}
                     className="btn btn-warning btn-sm"
                   >
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => handleDelete(branch.id)}
+                    onClick={() => handleDelete(branch.branchInfo.id)}
                     className="btn btn-danger btn-sm"
                   >
                     <FaTrash />

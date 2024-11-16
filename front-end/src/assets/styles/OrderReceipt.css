@@ -10,7 +10,7 @@
   margin: 0 auto;
   height: 90vh;
   overflow-y: auto;
-  background-color: #1a1a1a;
+  background-color: #1a1a1a; /* Ensure the background color is applied */
 }
 
 .order-receipt-page::-webkit-scrollbar,
@@ -40,8 +40,19 @@
   margin-bottom: 10px;
 }
 
+.order-receipt-button-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
 .order-receipt-title {
   color: #fff;
+}
+
+.order-receipt-create-order-button {
+  background-color: #ff6600;
+  border: none;
 }
 
 .order-receipt-list {
@@ -58,20 +69,24 @@
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-height: 300px;
 }
 
 .order-receipt-header {
   background-color: #222;
-  color: #28a745;
+  color: #e55b00;
   font-weight: bold;
   padding: 10px;
   border-bottom: 1px solid #444;
 }
 
 .order-receipt-items-container {
-  max-height: 150px;
+  height: 150px;
   overflow-y: auto;
   padding-right: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .order-receipt-item {
@@ -91,7 +106,7 @@
 }
 
 .order-receipt-item-name {
-  color: #28a745;
+  color: #ff9500;
   font-weight: 500;
   font-size: 0.95rem;
 }
@@ -102,8 +117,8 @@
   text-align: right;
 }
 
-.order-receipt-complete-button {
-  background-color: #28a745;
+.order-receipt-update-button {
+  background-color: #ff6600;
   border: none;
   width: 100%;
   margin-top: 10px;
@@ -113,8 +128,8 @@
   transition: background 0.3s ease;
 }
 
-.order-receipt-complete-button:hover {
-  background-color: #218838;
+.order-receipt-update-button:hover {
+  background-color: #e07a00;
 }
 
 .order-receipt-item-count {
@@ -132,6 +147,11 @@
     font-size: 1.5rem;
   }
 
+  .order-receipt-button-row {
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
   .order-receipt-items-container {
     max-height: 120px;
   }
@@ -142,12 +162,40 @@
   }
 }
 
+.order-receipt-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.order-receipt-item-count {
+  color: #ccc;
+  font-weight: 500;
+}
+
+.order-receipt-total-price {
+  color: #ccc;
+  font-weight: 500;
+  text-align: right;
+}
+
+
 @media (max-width: 576px) {
   .order-receipt-list {
     grid-template-columns: 1fr;
   }
 
-  .order-receipt-complete-button {
+  .order-receipt-create-order-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .order-receipt-card {
+    padding: 15px;
+  }
+
+  .order-receipt-update-button {
     font-size: 0.9rem;
     padding: 6px 0;
   }
