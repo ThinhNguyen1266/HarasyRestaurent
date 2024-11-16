@@ -3,6 +3,7 @@ package group5.swp.HarasyProject.entity.branch;
 import group5.swp.HarasyProject.entity.Auditable;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
+import group5.swp.HarasyProject.entity.order.OrderEntity;
 import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
 import group5.swp.HarasyProject.enums.Status;
 import jakarta.persistence.*;
@@ -59,6 +60,9 @@ public class BranchEntity extends Auditable {
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
     List<ReservationEntity> reservations;
 
+    @OneToMany(mappedBy = "branch" , cascade = CascadeType.ALL)
+    List<OrderEntity> orders;
+
     public void setWorkingHours(List<BranchWorkingHourEntity> workingHours) {
         if (workingHours != null && !workingHours.isEmpty()) {
             workingHours.forEach(workingHour -> workingHour.setBranch(this));
@@ -79,4 +83,9 @@ public class BranchEntity extends Auditable {
         }
         this.menus = menus;
     }
+
+    public boolean isTableInBranch(int tableId){
+        return this.getTables().stream().anyMatch(table-> table.getId() == tableId);
+    }
+
 }

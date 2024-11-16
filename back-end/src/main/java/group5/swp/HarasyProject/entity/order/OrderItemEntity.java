@@ -17,18 +17,17 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "orders_item")
-public class OrderItem extends Auditable {
+public class OrderItemEntity extends Auditable {
 
     @EmbeddedId
     OrderItemId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("orderId")
-    @JoinColumn(name = "order_id")
+            @JoinColumn(name = "order_id")
     OrderEntity order;
 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("foodId")
     @JoinColumn(name = "food_id")
     FoodEntity food;
@@ -41,12 +40,25 @@ public class OrderItem extends Auditable {
     OrderItemStatus status;
 
     @Column(nullable = false)
-    int price;
+    long price;
 
     @Column(nullable = false)
     long total;
 
-    String note;
+    @Column(nullable = false)
+    int cooked;
 
+    public OrderItemEntity calculatePrice(){
+        if (food != null){
+            if (food.getPrice() > 0) {
+                price = food.getPrice();
+                total = food.getPrice() * quantity;
+            } else {
+                price = 0;
+                total = 0;
+            }
+        }
+        return this;
+    }
 
 }

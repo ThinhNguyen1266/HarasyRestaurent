@@ -33,7 +33,7 @@ public class AccountController  {
 
     @PostMapping("/quickregis/user")
     public ApiResponse<CustomerProfileResponse> quickregisUser(@RequestBody QuickRegisCustomerRequest quickRegisCustomerRequest) throws Exception {
-        return accountService.quickcustomerRegis(quickRegisCustomerRequest);
+        return accountService.quickCustomerRegis(quickRegisCustomerRequest);
     }
 
 }

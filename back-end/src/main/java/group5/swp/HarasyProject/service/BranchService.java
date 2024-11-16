@@ -20,7 +20,6 @@ public interface BranchService {
     ApiResponse<List<BranchesViewResponse>> getBranchesView();
     ApiResponse<BranchInfoHomeResponse> getBranchHomeInfo(int branchId);
 
-
     ApiResponse<List<BranchResponse>> getAllBranches(boolean includeAll);
     ApiResponse<BranchResponse> getBranchResponse(int branchId);
 
@@ -28,9 +27,13 @@ public interface BranchService {
     BranchEntity updateBranch(Integer id , BranchInfoRequest request);
     ApiResponse<?> deleteBranch(Integer branchId);
 
-
     void addTables(List<TableEntity> tables, BranchEntity branch);
     void addMenus(List<MenuEntity> menus, BranchEntity branch);
+
+    BranchEntity getBranchEntity(int branchId);
     BranchEntity saveBranch(BranchEntity branch);
     BranchResponse toBranchResponse(BranchEntity branch);
+
+
+
 }

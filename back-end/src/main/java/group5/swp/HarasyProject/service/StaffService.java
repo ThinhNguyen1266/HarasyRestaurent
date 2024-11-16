@@ -11,4 +11,5 @@ public interface StaffService {
     ApiResponse<List<StaffResponse>> getActiveStaff();
     ApiResponse<List<StaffResponse>> getStaffSortedByRole();
     ApiResponse<List<StaffResponse>> searchStaffByRoleAndStatus(StaffRole role, AccountStatus status);
+
 }

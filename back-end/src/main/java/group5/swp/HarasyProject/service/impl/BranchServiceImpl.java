@@ -8,7 +8,7 @@ import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.enums.Status;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.BranchMapper;
@@ -130,4 +130,11 @@ public class BranchServiceImpl implements BranchService {
     public BranchResponse toBranchResponse(BranchEntity branch) {
         return branchMapper.toBranchResponse(branch);
     }
+
+    @Override
+    public BranchEntity getBranchEntity(int branchId) {
+        return branchRepository.findById(branchId)
+                .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
+    }
+
 }
