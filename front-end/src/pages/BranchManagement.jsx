@@ -14,6 +14,7 @@ const BranchManagement = () => {
   const { data: branches = [], isLoading } = useQuery({
     queryKey: ["branches"],
     queryFn: getBranchesStaff,
+
     onError: (error) => {
       toast.error(`Failed to fetch branches: ${error.message}`);
     },

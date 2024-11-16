@@ -87,21 +87,21 @@ const useBranchApi = () => {
       const payload = {
         branchInfo: {
           id: updateBranch.id,
-          name: updatedBranch.name,
-          location: updatedBranch.location,
-          image: updatedBranch.image,
-          phone: updatedBranch.phone,
-          manager: updatedBranch.manager,
-          status: updatedBranch.status,
+          name: updatedBranch.branchInfo.name,
+          location: updatedBranch.branchInfo.location,
+          image: updatedBranch.branchInfo.image,
+          phone: updatedBranch.branchInfo.phone,
+          manager: updatedBranch.branchInfo.manager,
+          status: updatedBranch.branchInfo.status,
         },
         workingHours: {}, // Assuming this is for another purpose
         tables: {
-          creates: updatedBranch.tables.creates,
-          updates: updatedBranch.tables.updates,
+          creates: updatedBranch.tables.creates || [],
+          updates: updatedBranch.tables.updates || [],
         },
         menus: {
-          creates: updatedBranch.menus.creates,
-          updates: updatedBranch.menus.updates,
+          creates: updatedBranch.menus.creates || [],
+          updates: updatedBranch.menus.updates || [],
         },
       };
 
