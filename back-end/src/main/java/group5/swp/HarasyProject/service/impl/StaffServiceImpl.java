@@ -79,18 +79,20 @@ public class StaffServiceImpl implements StaffService {
                 .build();
     }
 
-    @Override
-    public ApiResponse<List<StaffResponse>> searchStaffByRole(StaffRole role) {
-        List<StaffAccountEntity> staffByRole = staffAccountRepository.findAllByRole(role);
 
-        List<StaffResponse> staffResponses = staffByRole.stream()
+
+    @Override
+    public ApiResponse<List<StaffResponse>> searchStaffByRoleAndStatus(StaffRole role, AccountStatus status) {
+        List<StaffAccountEntity> staffByRoleAndStatus = staffAccountRepository.findStaffByRoleAndStatus(role, status);
+
+        List<StaffResponse> staffResponses = staffByRoleAndStatus.stream()
                 .map(staffMapper::toResponse)
                 .collect(Collectors.toList());
 
         if (staffResponses.isEmpty()) {
             return ApiResponse.<List<StaffResponse>>builder()
                     .success(false)
-                    .message("No staff members found for the specified role.")
+                    .message("No staff members found for the specified role and status.")
                     .code(404)
                     .data(Collections.emptyList())
                     .build();
@@ -98,7 +100,7 @@ public class StaffServiceImpl implements StaffService {
 
         return ApiResponse.<List<StaffResponse>>builder()
                 .data(staffResponses)
-                .message("Staff members with specified role retrieved successfully.")
+                .message("Staff members with specified role and status retrieved successfully.")
                 .build();
     }
 

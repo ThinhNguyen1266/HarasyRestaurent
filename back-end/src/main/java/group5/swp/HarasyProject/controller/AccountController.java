@@ -1,9 +1,11 @@
 package group5.swp.HarasyProject.controller;
 
 
+import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
+import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.RegisResponse;
 import group5.swp.HarasyProject.dto.response.staff.StaffResponse;
@@ -33,6 +35,11 @@ public class AccountController  {
     @GetMapping("/profile/{AccountId}")
     public ApiResponse<ProfileResponse> getProfile(@PathVariable Integer AccountId) throws Exception {
         return accountService.viewProfile(AccountId);
+    }
+
+    @PostMapping("/quickregis/user")
+    public ApiResponse<CustomerProfileResponse> quickregisUser(@RequestBody QuickRegisCustomerRequest quickRegisCustomerRequest) throws Exception {
+        return accountService.quickCustomerRegis(quickRegisCustomerRequest);
     }
 
 }

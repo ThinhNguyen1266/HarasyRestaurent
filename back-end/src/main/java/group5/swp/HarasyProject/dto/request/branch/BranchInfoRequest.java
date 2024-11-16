@@ -1,12 +1,9 @@
 package group5.swp.HarasyProject.dto.request.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.dto.request.menu.MenuRequest;
-import group5.swp.HarasyProject.dto.request.table.TableRequest;
+import group5.swp.HarasyProject.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,12 +11,11 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateBranchRequest {
+public class BranchInfoRequest {
     String name;
     String location;
     String image;
     String phone;
-    List<BranchWorkingHourRequest> workingHours;
-    List<TableRequest> tables;
-    List<MenuRequest> menus;
+    Status status;
+    Integer managerId;
 }

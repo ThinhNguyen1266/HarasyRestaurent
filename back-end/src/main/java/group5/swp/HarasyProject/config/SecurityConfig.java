@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 
 @Configuration
@@ -31,11 +30,11 @@ public class SecurityConfig {
             "/auth/login","/auth/validateOtp","/auth/introspect","/auth/refreshToken"
             ,"/users", "/regis/user", "/uploadImage", "/profile/{AccountId}"
             , "/reservations", "/search", "/reservation/{id}"
-            , "/staff/branches","/customer/branches","/foods","/staff/{id}"
+            ,"/customer/branches","/foods","/staff",
     };
     String[] GET_PUBLIC_ENDPOINT ={
                 "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
-            "/menu/{id}","/food/{id}"
+            "/menu/{id}","/food/{id}","/branches/home/**"
     };
     CustomJwtDecoder jwtDecoder;
 
@@ -57,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/branch/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/branch/{id}/tables").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/table/{id}").hasAnyRole("BRANCH_MANAGER","RECEPTIONIST","WAITER")
+                        .requestMatchers(HttpMethod.POST, "/quickregis/user").hasRole("WAITER")
                         .requestMatchers(HttpMethod.POST,"/branch/{id}/menus","/food").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.PUT,"/menu/{id}","/food/{id}").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.DELETE,"/menu/{id}","/table/{id}","/food/{id}").hasRole("BRANCH_MANAGER")

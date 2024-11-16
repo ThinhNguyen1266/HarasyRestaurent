@@ -103,22 +103,28 @@ const Sidebar = () => {
             </div>
           </>
         ) : user?.role === "WAITER" ? (
-          <>
-            {/* Dashboards Section for WAITER */}
-            <div className="sidebar-section">
-              {/* <div className="sidebar-item">
-                <BsGrid /> <span>Orders</span>
-              </div> */}
-              <ul>
-                <li>
-                  <a href="/table">View Table</a>
-                </li>
-                <li>
-                  <a href="/order">View Order</a>
-                </li>
-              </ul>
-            </div>
-          </>
+          <div className="sidebar-section">
+            <ul>
+              <li>
+                <a href="/table" className={isActive("/table") ? "active" : ""}>
+                  View Table
+                </a>
+              </li>
+              <li>
+                <a href="/order" className={isActive("/order") ? "active" : ""}>
+                  View Order
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/regriscus"
+                  className={isActive("/regriscus") ? "active" : ""}
+                >
+                  Regris customer
+                </a>
+              </li>
+            </ul>
+          </div>
         ) : user?.role === "CHEF" ? (
           <>
             {/* Dashboards Section for CHEF */}

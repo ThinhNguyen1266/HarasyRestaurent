@@ -1,6 +1,7 @@
-package group5.swp.HarasyProject.dto.response.branch;
+package group5.swp.HarasyProject.dto.request.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import group5.swp.HarasyProject.enums.OrderItemStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,8 +11,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BranchListResponse {
-    int id;
-    String name;
-    String image;
+public class OrderItemRequest {
+    Integer foodId;
+    Integer quantity;
+    OrderItemStatus status;
+    Integer cooked;
 }
