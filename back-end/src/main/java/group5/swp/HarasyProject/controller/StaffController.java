@@ -25,15 +25,20 @@ public class StaffController {
         return staffService.getAllStaff();
     }
 
+    @GetMapping("/staff/{id}")
+    public ApiResponse<List<StaffResponse>> getStaffByBranchId(@PathVariable int id) {
+        return staffService.getStaffByBranch(id);
+    }
+
     @GetMapping("/sorted")
     public ApiResponse<List<StaffResponse>> getStaffSortedByRole() {
         return staffService.getStaffSortedByRole();
     }
 
-    @GetMapping("/staff/{role}")
-    public ApiResponse<List<StaffResponse>> searchStaffByRole(@PathVariable StaffRole role) {
-        return  staffService.searchStaffByRole(role);
-    }
+//    @GetMapping("/staff/{role}")
+//    public ApiResponse<List<StaffResponse>> searchStaffByRole(@PathVariable StaffRole role) {
+//        return  staffService.searchStaffByRole(role);
+//    }
 
     @PutMapping("/staff/{id}")
     public ApiResponse<StaffResponse> updateStaff(@PathVariable Integer id, @RequestBody StaffRequest staffRequest) {
@@ -43,5 +48,15 @@ public class StaffController {
     @PutMapping("/staff/deactivate/{id}")
     public ApiResponse<StaffResponse> deactiveStaff(@PathVariable Integer id) {
         return staffService.deactiveStaff(id);
+    }
+
+    @PutMapping("/staff/activate/{id}")
+    public ApiResponse<StaffResponse> activeStaff(@PathVariable Integer id) {
+        return staffService.activateStaff(id);
+    }
+
+    @PutMapping("/staff/delete/{id}")
+    public ApiResponse<StaffResponse> deleteStaff(@PathVariable Integer id) {
+        return staffService.deleteStaff(id);
     }
 }

@@ -156,7 +156,15 @@ const EmployeeTable = ({ user, employees, onSelect }) => (
       </thead>
       <tbody>
         {employees
-          .sort((a, b) => a.branchName.localeCompare(b.branchName))
+          .sort((a, b) => {
+            // If a or b is null, return 0 to leave their order unchanged
+            if (a?.branchName === null && b?.branchName === null) return 0;
+            if (a?.branchName === null) return 1; // Move nulls to the end
+            if (b?.branchName === null) return -1; // Move nulls to the end
+          
+            // Normal sorting by branchName
+            return a.branchName.localeCompare(b.branchName);
+          })
           .map((employee) => (
             <tr key={employee.id} onClick={() => onSelect(employee)}>
               <td>{employee.fullName}</td>

@@ -121,6 +121,29 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
+    public ApiResponse<List<StaffResponse>> getStaffByBranch(int branchId) {
+        List<StaffAccountEntity> activeStaff = staffAccountRepository.findAllByBranchId(branchId);
+
+        List<StaffResponse> staffResponses = activeStaff.stream()
+                .map(staffMapper::toResponse)
+                .collect(Collectors.toList());
+
+        if (staffResponses.isEmpty()) {
+            return ApiResponse.<List<StaffResponse>>builder()
+                    .success(false)
+                    .message("No active staff members found.")
+                    .code(404)
+                    .data(Collections.emptyList())
+                    .build();
+        }
+
+        return ApiResponse.<List<StaffResponse>>builder()
+                .data(staffResponses)
+                .message("Active staff members retrieved successfully.")
+                .build();
+    }
+
+    @Override
     public ApiResponse<StaffResponse> deactiveStaff(int staffId) {
         StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
                 .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
@@ -133,7 +156,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public ApiResponse<StaffResponse> activeStaff(int staffId) {
+    public ApiResponse<StaffResponse> activateStaff(int staffId) {
         StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
                 .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
         staffInformation.getAccount().setStatus(AccountStatus.ACTIVE);

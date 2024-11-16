@@ -5,6 +5,7 @@ import useStaffApi from "../hooks/api/UseStaffApi";
 import uploadImage from "../services/uploadImage";
 import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
+import useBranchApi from "../hooks/api/useBranchApi";
 
 const EmployeeDetails = ({
   employee,
@@ -17,6 +18,16 @@ const EmployeeDetails = ({
   const queryClient = useQueryClient();
   const [editedEmployee, setEditedEmployee] = useState({});
   const [isUploading, setIsUploading] = useState(false);
+
+  // Fetch branches data for preloading
+  const { getBranchesStaff } = useBranchApi();
+  const { data: branches = [], isLoading } = useQuery({
+    queryKey: ["branches"],
+    queryFn: getBranchesStaff,
+    onError: (error) => {
+      toast.error(`Failed to fetch branches: ${error.message}`);
+    },
+  });
 
   useEffect(() => {
     if (employee) {
@@ -48,7 +59,7 @@ const EmployeeDetails = ({
     mutationFn: deactiveStaff,
     onSuccess: () => {
       queryClient.invalidateQueries("staffList");
-      toast.success("Employee deactivate successfully");
+      toast.success("Employee deactivated successfully");
     },
     onError: (error) => {
       toast.error(`Failed to deactivate employee: ${error.message}`);
@@ -66,13 +77,13 @@ const EmployeeDetails = ({
     } else {
       toast.error("No employee data to save");
     }
-    // if ()
   };
 
-  // This is the function that is passed to the `onDelete` prop
   const handleDeactivate = (id) => {
     deactivateStaffMutation.mutate(id); // Deactivate the employee by ID
+    onClose();
   };
+
   return (
     <div
       className="modal fade show"
@@ -96,6 +107,7 @@ const EmployeeDetails = ({
                 onSave={handleSave}
                 isUploading={isUploading}
                 setIsUploading={setIsUploading}
+                branches={branches} // Pass the branches data here
               />
             ) : (
               <ViewDetails
@@ -117,6 +129,7 @@ const EditingForm = ({
   onSave,
   isUploading,
   setIsUploading,
+  branches, // Accept branches as a prop
 }) => {
   const [previewUrl, setPreviewUrl] = useState(editedEmployee.picture || null);
   const { user } = useAuth();
@@ -125,7 +138,6 @@ const EditingForm = ({
     mutationFn: uploadImage,
     onMutate: () => setIsUploading(true),
     onSuccess: (data) => {
-      console.log("Image uploaded successfully!");
       setEditedEmployee((prev) => ({ ...prev, picture: data }));
       setIsUploading(false);
     },
@@ -145,43 +157,61 @@ const EditingForm = ({
 
   return (
     <>
-      {["role", "branchId", "bankName", "bankAccount", "salary"].map(
-        (field) => (
-          <div className="mb-3" key={field}>
-            <label className="form-label text-light">{field}</label>
-            {field === "role" ? (
-              <select
-                value={editedEmployee[field] || ""}
-                onChange={(e) =>
-                  setEditedEmployee({
-                    ...editedEmployee,
-                    [field]: e.target.value,
-                  })
-                }
-                className="form-select bg-secondary text-white border-secondary"
-              >
-                <option value="">Select Role</option>
-                {user.role === "ADMIN" && <option value="BRANCH_MANAGER">Branch Manager</option>}
-                <option value="WAITER">Waiter</option>
-                <option value="CHEF">Chef</option>
-                <option value="RECEPTIONIST">Receptionist</option>
-              </select>
-            ) : (
-              <input
-                type={field === "salary" ? "number" : "text"}
-                value={editedEmployee[field] || ""}
-                onChange={(e) =>
-                  setEditedEmployee({
-                    ...editedEmployee,
-                    [field]: e.target.value,
-                  })
-                }
-                className="form-control bg-secondary text-white border-secondary"
-              />
-            )}
-          </div>
-        )
-      )}
+      {["role", "branchId", "bankName", "bankAccount", "salary"].map((field) => (
+        <div className="mb-3" key={field}>
+          <label className="form-label text-light">{field}</label>
+          {field === "role" ? (
+            <select
+              value={editedEmployee[field] || ""}
+              onChange={(e) =>
+                setEditedEmployee({
+                  ...editedEmployee,
+                  [field]: e.target.value,
+                })
+              }
+              className="form-select bg-secondary text-white border-secondary"
+            >
+              <option value="">Select Role</option>
+              {user.role === "ADMIN" && (
+                <option value="BRANCH_MANAGER">Branch Manager</option>
+              )}
+              <option value="WAITER">Waiter</option>
+              <option value="CHEF">Chef</option>
+              <option value="RECEPTIONIST">Receptionist</option>
+            </select>
+          ) : field === "branchId" ? (
+            <select
+              value={editedEmployee[field] || ""}
+              onChange={(e) =>
+                setEditedEmployee({
+                  ...editedEmployee,
+                  [field]: e.target.value,
+                })
+              }
+              className="form-select bg-secondary text-white border-secondary"
+            >
+              <option value="">Select Branch</option>
+              {branches.map((branch) => (
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type={field === "salary" ? "number" : "text"}
+              value={editedEmployee[field] || ""}
+              onChange={(e) =>
+                setEditedEmployee({
+                  ...editedEmployee,
+                  [field]: e.target.value,
+                })
+              }
+              className="form-control bg-secondary text-white border-secondary"
+            />
+          )}
+        </div>
+      ))}
 
       <div className="mb-3">
         <label className="form-label text-light">Upload Picture</label>
@@ -253,34 +283,35 @@ const ViewDetails = ({ employee, onEdit, onDelete }) => (
         onClick={() => onDelete(employee.id)}
         className="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2"
       >
-        <FiTrash2 /> <span>Deactivate</span>{" "}
-        {/* Change button text to 'Deactivate' */}
+        <FiTrash2 /> <span>Deactivate</span>
       </button>
     </div>
   </div>
 );
 
-const EmployeeInfo = ({ employee }) => (
-  <div className="mx-3">
-    <DetailRow icon={<FiMail />} text={employee.email || "N/A"} />
-    <DetailRow icon={<FiPhone />} text={employee.phone || "N/A"} />
-    <DetailRow label="Branch ID:" text={employee.branchId || "N/A"} />
-    <DetailRow label="Role:" text={employee.role || "N/A"} />
-    <DetailRow label="Bank Name:" text={employee.bankName || "N/A"} />
-    <DetailRow label="Bank Account:" text={employee.bankAccount || "N/A"} />
-    <DetailRow
-      label="Salary:"
-      text={employee.salary ? `$${employee.salary}` : "N/A"}
-    />
-  </div>
-);
-
-const DetailRow = ({ icon, label, text }) => (
-  <div className="d-flex align-items-center mb-2">
-    {icon && <span className="me-2">{icon}</span>}
-    {label && <span className="fw-bold me-1">{label}</span>}
-    <span>{text}</span>
-  </div>
-);
+const EmployeeInfo = ({ employee }) => {
+  return (
+    <ul className="list-unstyled">
+      <li>
+        <strong>Email:</strong> {employee.email}
+      </li>
+      <li>
+        <strong>Phone:</strong> {employee.phone}
+      </li>
+      <li>
+        <strong>Date of Birth:</strong> {new Date(employee.dob).toLocaleDateString()}
+      </li>
+      <li>
+        <strong>Bank Name:</strong> {employee.bankName}
+      </li>
+      <li>
+        <strong>Bank Account:</strong> {employee.bankAccount}
+      </li>
+      <li>
+        <strong>Salary:</strong> ${employee.salary}
+      </li>
+    </ul>
+  );
+};
 
 export default EmployeeDetails;

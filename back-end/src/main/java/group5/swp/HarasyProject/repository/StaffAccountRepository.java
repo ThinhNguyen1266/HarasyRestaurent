@@ -2,6 +2,7 @@ package group5.swp.HarasyProject.repository;
 
 import group5.swp.HarasyProject.entity.account.AccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
+import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
 import group5.swp.HarasyProject.enums.Status;
@@ -20,4 +21,5 @@ public interface StaffAccountRepository extends JpaRepository<StaffAccountEntity
 
     List<StaffAccountEntity> findAllByRole(StaffRole role);
 
+    List<StaffAccountEntity> findAllByBranchId(int branchId);
 }

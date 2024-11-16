@@ -12,7 +12,8 @@ public interface StaffService {
     ApiResponse<List<StaffResponse>> getStaffSortedByRole();
     ApiResponse<List<StaffResponse>> searchStaffByRole(StaffRole role);
     ApiResponse<StaffResponse> updateStaffInfo(int staffId, StaffRequest staffRequest);
+    ApiResponse<List<StaffResponse>> getStaffByBranch(int branchId);
     ApiResponse<StaffResponse> deactiveStaff(int staffId);
-    ApiResponse<StaffResponse> activeStaff(int staffId);
+    ApiResponse<StaffResponse> activateStaff(int staffId);
     ApiResponse<StaffResponse> deleteStaff(int staffId);
 }

@@ -29,7 +29,7 @@ const useStaffApi = () => {
       try {
         const response = await axiosPrivate.put(`/staff/deactivate/${id}`)
         console.log('Response:', response);
-        return response; 
+        return response.data; 
       } catch (error) {
         console.error('Error deactivate staff:', error);
         throw error;
