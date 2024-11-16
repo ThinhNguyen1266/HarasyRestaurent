@@ -24,7 +24,6 @@ const TableList = () => {
     data: tableData,
     isLoading,
     error,
-    refetch,
   } = useQuery({
     queryKey: ["tables"],
     queryFn: getTablelist,

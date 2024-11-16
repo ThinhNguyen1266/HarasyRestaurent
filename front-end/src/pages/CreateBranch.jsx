@@ -96,8 +96,6 @@ const CreateBranch = () => {
       })),
     };
 
-    console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
-
     saveBranchMutate.mutate(payload);
   };
 
