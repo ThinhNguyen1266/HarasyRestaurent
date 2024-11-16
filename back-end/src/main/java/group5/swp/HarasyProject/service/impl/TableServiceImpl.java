@@ -39,6 +39,17 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
+    public ApiResponse<List<TableResponse>> getTablesInBranch(int branchId) {
+        List<TableEntity> tables = tableRepository.getTableByBBranch(branchId);
+        List<TableResponse> responses = tables
+                .stream().map(tableMapper::toResponse)
+                .toList();
+        return ApiResponse.<List<TableResponse>>builder()
+                .data(responses)
+                .build();
+    }
+
+    @Override
     public List<TableEntity> toTableList(List<TableRequest> request) {
         return tableMapper.toTables(request);
     }
