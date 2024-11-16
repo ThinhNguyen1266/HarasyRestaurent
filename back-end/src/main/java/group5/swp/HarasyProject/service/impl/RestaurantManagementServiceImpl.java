@@ -12,6 +12,7 @@ import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
@@ -80,6 +81,10 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
                 .build();
     }
 
+    @Override
+    public ApiResponse<List<TableResponse>> getAllTablesInBranch(int branchId) {
+        return tableService.getTablesInBranch(branchId);
+    }
 
     @Override
     public ApiResponse<List<MenuResponse>> getAllMenusInBranch(int branchId, boolean isIncludeAll) {
