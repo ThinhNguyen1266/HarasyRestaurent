@@ -5,7 +5,7 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.entity.food.CategoryEntity;
 import group5.swp.HarasyProject.entity.food.FoodEntity;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.enums.Status;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.FoodMapper;
@@ -93,5 +93,10 @@ public class FoodServiceImpl implements FoodService {
         foodEntity.setStatus(Status.DELETED);
         foodRepository.save(foodEntity);
         return ApiResponse.builder().build();
+    }
+
+    @Override
+    public FoodEntity getFoodEntity(int id) {
+        return foodRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
     }
 }

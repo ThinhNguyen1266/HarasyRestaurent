@@ -30,7 +30,7 @@ public class SecurityConfig {
             "/auth/login","/auth/validateOtp","/auth/introspect","/auth/refreshToken"
             ,"/users", "/regis/user", "/uploadImage", "/profile/{AccountId}"
             , "/reservations", "/search", "/reservation/{id}"
-            , "/staff/branches","/customer/branches","/foods","/staff",
+            ,"/customer/branches","/foods","/staff",
     };
     String[] GET_PUBLIC_ENDPOINT ={
                 "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET,GET_PUBLIC_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/","/staff/search").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/","/staff/search","/branches").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,  "/sorted", "/staff/search").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/branch").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/branch/{id}").hasRole("ADMIN")

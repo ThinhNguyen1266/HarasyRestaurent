@@ -2,7 +2,7 @@ package group5.swp.HarasyProject.service.impl;
 
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.entity.account.AccountEntity;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.repository.AccountRepository;
 import group5.swp.HarasyProject.service.OtpService;
@@ -27,7 +27,7 @@ public class OtpServiceImpl implements OtpService {
 
     @Override
     public String generateOtp(String email) {
-        AccountEntity account = accountRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        AccountEntity account = accountRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         String otp = String.valueOf(new Random().nextInt(100000, 999999));
         redisService.addOtp(otp,email);
         return otp;

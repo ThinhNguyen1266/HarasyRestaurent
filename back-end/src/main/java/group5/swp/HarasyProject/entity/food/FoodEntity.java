@@ -3,12 +3,13 @@ package group5.swp.HarasyProject.entity.food;
 
 import group5.swp.HarasyProject.entity.Auditable;
 import group5.swp.HarasyProject.entity.menu.MenuItemEntity;
-import group5.swp.HarasyProject.entity.order.OrderItem;
+import group5.swp.HarasyProject.entity.order.OrderItemEntity;
 import group5.swp.HarasyProject.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -44,16 +45,14 @@ public class FoodEntity extends Auditable {
     @Enumerated(EnumType.STRING)
     Status status = Status.INACTIVE;
 
-
     @OneToMany(mappedBy = "food")
     List<MenuItemEntity> menuItems;
-
 
     @ManyToOne
     @JoinColumn(name = "cat_id")
     CategoryEntity category;
 
-    @OneToMany(mappedBy = "food")
-    List<OrderItem> orderItems;
+    @OneToMany(mappedBy = "food", cascade = CascadeType.ALL)
+    List<OrderItemEntity> orderItems = new ArrayList<>();
 
 }

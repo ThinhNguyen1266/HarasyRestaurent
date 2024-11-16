@@ -2,7 +2,7 @@ package group5.swp.HarasyProject.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 

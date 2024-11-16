@@ -22,7 +22,8 @@ class AuditorAwareImpl implements AuditorAware<String> {
     public Optional<String> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
-                && authentication.getPrincipal() instanceof String) {
+                && !(authentication.getPrincipal() instanceof String)) {
+
             Jwt jwt = (Jwt) authentication.getPrincipal();
             String id = jwt.getClaim("id");
             return Optional.of(id);
