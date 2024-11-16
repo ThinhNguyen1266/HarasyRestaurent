@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useBranchApi from "../hooks/api/useBranchApi";
 import uploadImage from "../services/uploadImage";
 import { toast, ToastContainer } from "react-toastify";
 
 const EditBranch = () => {
+  const queryClient = useQueryClient();
   const { branchId } = useParams();
   const navigate = useNavigate();
   const { getBranchbyID, updateBranch, getBranchManagers } = useBranchApi();
@@ -17,7 +18,7 @@ const EditBranch = () => {
     imageFile: null,
     phone: "",
     manager: "",
-    status: "INACTIVE",
+    status: "",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
     tables: [{ number: "", capacity: "" }],
     menus: [{ type: "" }],
@@ -75,6 +76,8 @@ const EditBranch = () => {
         location: formData.location,
         image: imageUrl || formData.image,
         phone: formData.phone,
+        status: formData.status,
+        manager: formData.manager,
       },
       workingHours: {
         creates: formData.workingHours
@@ -155,7 +158,7 @@ const EditBranch = () => {
     mutationFn: updateBranch,
     onSuccess: () => {
       toast.success("Branch updated successfully!");
-
+      queryClient.invalidateQueries(["branches"]);
       navigate("/branch");
     },
     onError: (error) =>

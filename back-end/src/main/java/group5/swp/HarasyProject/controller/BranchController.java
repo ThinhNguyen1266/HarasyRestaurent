@@ -5,6 +5,7 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
+import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.service.RestaurantManagementService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class BranchController {
     ApiResponse<BranchInfoHomeResponse> getBranchInfoHome(@PathVariable int id) {
         return restaurantManagementService.getBranchHome(id);
     }
+
 
     @GetMapping("/branches")
     ApiResponse<List<BranchResponse>> getAllBranchStaff(@RequestParam(defaultValue = "false") boolean includeAll) {

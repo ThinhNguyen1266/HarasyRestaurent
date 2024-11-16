@@ -5,6 +5,7 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
+import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;

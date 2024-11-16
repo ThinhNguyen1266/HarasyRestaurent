@@ -11,17 +11,20 @@ import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.util.List;
 
 @Service
 public interface RestaurantManagementService {
     ApiResponse<List<BranchesViewResponse>> getBranchesView();
     ApiResponse<BranchInfoHomeResponse> getBranchHome(int branchId);
+
     ApiResponse<BranchResponse> getBranch(int branchId);
     ApiResponse<List<BranchResponse>> getAllBranches(boolean includeAll);
     ApiResponse<BranchResponse> createBranch(BranchRequest request);
     ApiResponse<BranchResponse> updateBranch(int branchId, BranchRequest request);
     ApiResponse<MenuResponse> getMenu(int menuId);
+
     ApiResponse<MenuResponse> addFoodsToMenu(int menuId, FoodInMenuRequest request);
     ApiResponse<MenuResponse> deleteFoodsFromMenu(int menuId, FoodInMenuRequest request);
     ApiResponse<List<FoodResponse>> getFoods(boolean includeAll);

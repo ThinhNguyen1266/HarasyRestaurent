@@ -23,7 +23,7 @@ const BranchManagement = () => {
   const deleteBranchMutate = useMutation({
     mutationFn: deleteBranch,
     onSuccess: () => {
-      queryClient.invalidateQueries("branches");
+      queryClient.invalidateQueries(["branches"]);
     },
     onError: (error) => {
       toast.error(`Failed to delete branch: ${error.message}`);

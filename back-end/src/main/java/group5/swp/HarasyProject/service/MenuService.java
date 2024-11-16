@@ -12,6 +12,7 @@ import java.util.List;
 public interface MenuService {
     ApiResponse<?> deleteMenu(int menuId);
     ApiResponse<MenuResponse> getMenu(int menuId);
+
     void saveUpdate(List<MenuEntity> menuEntities);
     void addFood(int menuId, List<Integer> foodIds);
     void deleteFood(int menuId, List<Integer> foodIds);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class MenuController {
     RestaurantManagementService restaurantManagementService;
 
+
     @GetMapping("/menu/{id}")
     public ApiResponse<MenuResponse> getMenu(@PathVariable int id) {
         return restaurantManagementService.getMenu(id);
