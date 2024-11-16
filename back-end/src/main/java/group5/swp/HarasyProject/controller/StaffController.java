@@ -43,20 +43,6 @@ public class StaffController {
         return staffService.updateStaffInfo(id, staffRequest);
     }
 
-    @PutMapping("/staff/deactivate/{id}")
-    public ApiResponse<StaffResponse> deactiveStaff(@PathVariable Integer id) {
-        return staffService.deactiveStaff(id);
-    }
-
-    @PutMapping("/staff/activate/{id}")
-    public ApiResponse<StaffResponse> activeStaff(@PathVariable Integer id) {
-        return staffService.activateStaff(id);
-    }
-
-    @PutMapping("/staff/delete/{id}")
-    public ApiResponse<StaffResponse> deleteStaff(@PathVariable Integer id) {
-        return staffService.deleteStaff(id);
-    }
     @GetMapping("/staff/search")
     public ApiResponse<List<StaffResponse>> searchStaffByRoleAndStatus(
             @RequestParam(required = false) StaffRole role,
