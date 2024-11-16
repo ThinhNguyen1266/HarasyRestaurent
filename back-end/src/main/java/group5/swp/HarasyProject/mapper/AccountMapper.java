@@ -1,6 +1,7 @@
 package group5.swp.HarasyProject.mapper;
 
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
+import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
 import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.StaffProfileResponse;
@@ -13,7 +14,10 @@ import org.mapstruct.*;
 public interface AccountMapper {
     @Mapping(target = "status", constant = "PENDING")
     AccountEntity regisCusToAccount(RegisCustomerRequest regisCustomerRequest);
-
+    @Mapping(target = "status", constant = "ACTIVE")
+    AccountEntity staffRequestToAccount(RegistStaffRequest registStaffRequest);
+//    @Mapping(target = "branchId", ignore = true)
+    StaffAccountEntity staffRequestToStaffAccount(RegistStaffRequest registStaffRequest);
 
     @Mapping(target = "role",source = "account.staff.role")
     @Mapping(target = "bankAccount",source = "account.staff.bankAccount")
@@ -24,7 +28,5 @@ public interface AccountMapper {
     StaffProfileResponse toStaffProfileResponse(AccountEntity account);
     @Mapping(target = "vipPoint", source = "account.customer.vipPoint")
     CustomerProfileResponse toCustomerProfileResponse(AccountEntity account);
-
-    void toStaffProfile(@MappingTarget CustomerProfileResponse response, StaffAccountEntity staffAccount);
 
 }

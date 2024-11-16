@@ -1,6 +1,7 @@
 package group5.swp.HarasyProject.service.impl;
 
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
+import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
 import group5.swp.HarasyProject.dto.request.auth.EmailRequest;
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
@@ -8,14 +9,18 @@ import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.RegisResponse;
 import group5.swp.HarasyProject.dto.response.auth.OtpResponse;
+import group5.swp.HarasyProject.dto.response.staff.StaffResponse;
 import group5.swp.HarasyProject.entity.account.AccountEntity;
 import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
+import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.AccountMapper;
+import group5.swp.HarasyProject.mapper.StaffMapper;
 import group5.swp.HarasyProject.repository.AccountRepository;
+import group5.swp.HarasyProject.repository.BranchRepository;
 import group5.swp.HarasyProject.repository.CustomerAccountRepository;
 import group5.swp.HarasyProject.repository.StaffAccountRepository;
 import group5.swp.HarasyProject.service.AccountService;
@@ -44,9 +49,10 @@ public class AccountServiceImpl implements AccountService {
     AccountRepository accountRepository;
     CustomerAccountRepository customerAccountRepository;
     StaffAccountRepository staffAccountRepository;
-
+    BranchRepository branchRepository;
 
     AccountMapper accountMapper;
+    StaffMapper staffMapper;
 
 
     OtpService otpService;
@@ -54,7 +60,6 @@ public class AccountServiceImpl implements AccountService {
     RedisServiceImpl redisService;
 
     MailService mailService;
-
 
     PasswordEncoder passwordEncoder;
 
@@ -68,6 +73,30 @@ public class AccountServiceImpl implements AccountService {
         EmailRequest emailRequest = EmailRequest.builder().to(request.getEmail()).subject("Your OTP").build();
         mailService.sendOtpMail(emailRequest, otpService.generateOtp(accountEntity.getEmail()));
         return ApiResponse.<RegisResponse>builder().code(200).data(RegisResponse.builder().message("Register successfully, please enter otp to done").build()).build();
+    }
+
+    @Override
+    public ApiResponse<StaffResponse> staffRegis(RegistStaffRequest request) throws IOException, MessagingException {
+        AccountEntity accountEntity = accountMapper.staffRequestToAccount(request);
+        accountEntity.setPassword(passwordEncoder.encode(accountEntity.getPassword()));
+        StaffAccountEntity staffAccountEntity = accountMapper.staffRequestToStaffAccount(request);
+        BranchEntity branch=branchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
+        staffAccountEntity.setBranch(branch);
+
+        accountEntity.setStaff(staffAccountEntity);
+        staffAccountEntity.setAccount(accountEntity);
+        StaffResponse staffResponse=staffMapper.toResponse(staffAccountEntity);
+        System.out.println("staff account"+accountEntity);
+        try {
+            accountRepository.save(accountEntity);
+        } catch (Exception e) {
+            e.printStackTrace(); // This will give you more details on the actual issue
+        }
+        return ApiResponse.<StaffResponse>builder()
+                .data(staffResponse)
+                .build();
+
     }
 
     @Override

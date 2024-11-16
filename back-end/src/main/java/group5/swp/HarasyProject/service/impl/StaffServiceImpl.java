@@ -1,11 +1,17 @@
 package group5.swp.HarasyProject.service.impl;
 
+import group5.swp.HarasyProject.dto.request.staff.StaffRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
+import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.dto.response.staff.StaffResponse;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
+import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
+import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.StaffMapper;
+import group5.swp.HarasyProject.repository.BranchRepository;
 import group5.swp.HarasyProject.repository.StaffAccountRepository;
 import group5.swp.HarasyProject.service.StaffService;
 import lombok.AccessLevel;
@@ -26,10 +32,10 @@ public class StaffServiceImpl implements StaffService {
 
     StaffAccountRepository staffAccountRepository;
     StaffMapper staffMapper;
-
+    BranchRepository branchRepository;
     @Override
-    public ApiResponse<List<StaffResponse>> getActiveStaff() {
-        List<StaffAccountEntity> activeStaff = staffAccountRepository.findAllByAccount_Status(AccountStatus.ACTIVE);
+    public ApiResponse<List<StaffResponse>> getAllStaff() {
+        List<StaffAccountEntity> activeStaff = staffAccountRepository.findAll();
 
         List<StaffResponse> staffResponses = activeStaff.stream()
                 .map(staffMapper::toResponse)
@@ -95,4 +101,59 @@ public class StaffServiceImpl implements StaffService {
                 .message("Staff members with specified role retrieved successfully.")
                 .build();
     }
+
+    @Override
+    public ApiResponse<StaffResponse> updateStaffInfo(int staffId, StaffRequest  staffRequest) {
+        StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
+                .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
+
+        BranchEntity branch=branchRepository.findById(staffRequest.getBranchId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
+        System.out.println("branch "+branch.getName());
+        staffInformation = staffMapper.updateStaffInfo(staffRequest,staffInformation);
+        System.out.println("staffinfo "+staffInformation.getId());
+        staffInformation.setBranch(branch);
+        staffInformation = staffAccountRepository.save(staffInformation);
+        StaffResponse staffResponse = staffMapper.toResponse(staffInformation);
+        return ApiResponse.<StaffResponse>builder()
+                .data(staffResponse)
+                .build();
+    }
+
+    @Override
+    public ApiResponse<StaffResponse> deactiveStaff(int staffId) {
+        StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
+                .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
+        staffInformation.getAccount().setStatus(AccountStatus.INACTIVE);
+        staffInformation = staffAccountRepository.save(staffInformation);
+        StaffResponse staffResponse = staffMapper.toResponse(staffInformation);
+        return ApiResponse.<StaffResponse>builder()
+                .data(staffResponse)
+                .build();
+    }
+
+    @Override
+    public ApiResponse<StaffResponse> activeStaff(int staffId) {
+        StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
+                .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
+        staffInformation.getAccount().setStatus(AccountStatus.ACTIVE);
+        staffInformation = staffAccountRepository.save(staffInformation);
+        StaffResponse staffResponse = staffMapper.toResponse(staffInformation);
+        return ApiResponse.<StaffResponse>builder()
+                .data(staffResponse)
+                .build();
+    }
+
+    @Override
+    public ApiResponse<StaffResponse> deleteStaff(int staffId) {
+        StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
+                .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
+        staffInformation.getAccount().setStatus(AccountStatus.DELETED);
+        staffInformation = staffAccountRepository.save(staffInformation);
+        StaffResponse staffResponse = staffMapper.toResponse(staffInformation);
+        return ApiResponse.<StaffResponse>builder()
+                .data(staffResponse)
+                .build();
+    }
+
 }

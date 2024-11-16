@@ -6,11 +6,13 @@ const useBranchApi = () => {
   const getBranchesStaff = async () => {
     try {
       const branchesData = (await axios.get("/staff/branches")).data;
+      console.log("Full Response:", branchesData);
       return branchesData;
     } catch (error) {
       throw error;
     }
   };
+
   const getBranchManagers = async () => {
     try {
       const response = await axiosPrivate.get("/staff/BRANCH_MANAGER");
@@ -22,6 +24,7 @@ const useBranchApi = () => {
       throw error;
     }
   };
+  
   const getBranchbyID = async (id) => {
     try {
       const response = await axiosPrivate.get(`/branch/${id}`);

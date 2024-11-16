@@ -1,33 +1,31 @@
-package group5.swp.HarasyProject.dto.response.account;
+package group5.swp.HarasyProject.dto.request.account;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StaffProfileResponse implements ProfileResponse{
-    Integer id;
+public class RegistStaffRequest {
     String username;
+    String password;
     String email;
     String fullName;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    Date dob;
     String phone;
-
-
-    StaffRole role;
-    String bankAccount;
-    String bankName;
-    int salary;
+    Date dob;
     int branchId;
-    String branchName;
+    StaffRole role;
+    String bankName;
+    String bankAccount;
+    String picture;
+    int salary;
 }
