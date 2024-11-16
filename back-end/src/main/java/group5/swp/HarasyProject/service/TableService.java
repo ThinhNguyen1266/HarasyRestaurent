@@ -12,5 +12,7 @@ public interface TableService {
     ApiResponse<?> deleteTable(int tableId);
     List<TableEntity> toTableList(List<TableRequest> request);
     void saveUpdate(List<TableEntity> tables);
+
     TableEntity mapUpdateTable(TableRequest updateTable, TableEntity oldTable);
+    List<TableEntity> getTables(List<Integer> tableIds);
 }

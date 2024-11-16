@@ -7,9 +7,8 @@ import group5.swp.HarasyProject.entity.food.FoodEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.entity.menu.MenuItemEntity;
 import group5.swp.HarasyProject.entity.menu.MenuItemId;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
-import group5.swp.HarasyProject.mapper.FoodMapper;
 import group5.swp.HarasyProject.mapper.MenuItemMapper;
 import group5.swp.HarasyProject.mapper.MenuMapper;
 import group5.swp.HarasyProject.repository.FoodRepository;
@@ -36,8 +35,6 @@ public class MenuServiceImpl implements MenuService {
     MenuItemRepository menuItemRepository;
     FoodRepository foodRepository;
     MenuItemMapper menuItemMapper;
-    FoodMapper foodMapper;
-
 
     @Override
     public ApiResponse<?> deleteMenu(int menuId) {
@@ -95,5 +92,15 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public MenuEntity mapUpdateMenu(MenuRequest request, MenuEntity menuEntity) {
         return menuMapper.updateMenu(request, menuEntity);
+    }
+
+    @Override
+    public MenuResponse mapMenuResponse(MenuEntity menu) {
+        return menuMapper.toMenuResponse(menu);
+    }
+
+    @Override
+    public List<MenuEntity> getAllMenusInBranch(int branchId,boolean isIncludeAll) {
+        return menuRepository.findMenusInBranch(branchId,isIncludeAll);
     }
 }

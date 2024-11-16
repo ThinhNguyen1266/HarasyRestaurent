@@ -18,4 +18,6 @@ public interface MenuService {
     void deleteFood(int menuId, List<Integer> foodIds);
     List<MenuEntity> toMenus(List<MenuRequest> menuRequests);
     MenuEntity mapUpdateMenu(MenuRequest request, MenuEntity menuEntity);
+    MenuResponse mapMenuResponse(MenuEntity menu);
+    List<MenuEntity> getAllMenusInBranch(int branchId,boolean isIncludeAll);
 }

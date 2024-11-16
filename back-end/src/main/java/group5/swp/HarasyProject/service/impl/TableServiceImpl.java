@@ -4,7 +4,7 @@ import group5.swp.HarasyProject.dto.request.table.TableRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.enums.TableStatus;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.TableMapper;
@@ -51,5 +51,10 @@ public class TableServiceImpl implements TableService {
     @Override
     public void saveUpdate(List<TableEntity> tables) {
         tableRepository.saveAll(tables);
+    }
+
+    @Override
+    public List<TableEntity> getTables(List<Integer> tableIds) {
+        return tableRepository.findAllById(tableIds);
     }
 }

@@ -11,6 +11,7 @@ import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
+import group5.swp.HarasyProject.dto.response.order.OrderResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
@@ -19,6 +20,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +36,14 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     MenuService menuService;
     FoodService foodService;
     TableService tableService;
+    OrderService orderService;
+
+    @Override
+    public ApiResponse<Page<OrderResponse>> getOrdersInBranch(int branchId, Pageable pageable) {
+        return ApiResponse.<Page<OrderResponse>>builder()
+                .data(orderService.getOrdersByBranchId(branchId,pageable).map(orderService::toResponse))
+                .build();
+    }
 
     @Override
     public ApiResponse<List<BranchesViewResponse>> getBranchesView() {
@@ -67,6 +78,17 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
         branch = branchService.saveBranch(branch);
         return ApiResponse.<BranchResponse>builder()
                 .data(branchService.toBranchResponse(branch))
+                .build();
+    }
+
+
+    @Override
+    public ApiResponse<List<MenuResponse>> getAllMenusInBranch(int branchId, boolean isIncludeAll) {
+        List<MenuEntity> menus = menuService.getAllMenusInBranch(branchId,isIncludeAll);
+        return ApiResponse.<List<MenuResponse>>builder()
+                .data(menus
+                        .stream().map(menuService::mapMenuResponse)
+                        .toList())
                 .build();
     }
 

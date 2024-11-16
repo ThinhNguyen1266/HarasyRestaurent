@@ -1,7 +1,7 @@
 package group5.swp.HarasyProject.dto.response.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

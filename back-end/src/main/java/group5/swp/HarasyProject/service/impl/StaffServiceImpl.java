@@ -77,7 +77,6 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public ApiResponse<List<StaffResponse>> searchStaffByRoleAndStatus(StaffRole role, AccountStatus status) {
-        // Gọi phương thức tìm kiếm với các tham số role và status
         List<StaffAccountEntity> staffByRoleAndStatus = staffAccountRepository.findStaffByRoleAndStatus(role, status);
 
         List<StaffResponse> staffResponses = staffByRoleAndStatus.stream()

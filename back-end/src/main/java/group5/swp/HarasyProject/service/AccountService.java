@@ -8,6 +8,8 @@ import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.RegisResponse;
 import group5.swp.HarasyProject.dto.response.auth.OtpResponse;
+import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
+import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,7 @@ public interface AccountService {
 
     ApiResponse<ProfileResponse> viewProfile(Integer id) throws IOException, MessagingException;
 
-
-
-    ApiResponse<CustomerProfileResponse> quickcustomerRegis(QuickRegisCustomerRequest request) throws IOException, MessagingException;
+    ApiResponse<CustomerProfileResponse> quickCustomerRegis(QuickRegisCustomerRequest request);
+    StaffAccountEntity getStaffAccount(Integer staffId) ;
+    CustomerAccountEntity getCustomerAccount(Integer customerId) ;
 }
