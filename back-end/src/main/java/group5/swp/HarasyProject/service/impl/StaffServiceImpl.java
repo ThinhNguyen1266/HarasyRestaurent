@@ -8,7 +8,7 @@ import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.StaffMapper;
 import group5.swp.HarasyProject.repository.BranchRepository;
@@ -142,42 +142,6 @@ public class StaffServiceImpl implements StaffService {
         return ApiResponse.<List<StaffResponse>>builder()
                 .data(staffResponses)
                 .message("Active staff members retrieved successfully.")
-                .build();
-    }
-
-    @Override
-    public ApiResponse<StaffResponse> deactiveStaff(int staffId) {
-        StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
-                .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
-        staffInformation.getAccount().setStatus(AccountStatus.INACTIVE);
-        staffInformation = staffAccountRepository.save(staffInformation);
-        StaffResponse staffResponse = staffMapper.toResponse(staffInformation);
-        return ApiResponse.<StaffResponse>builder()
-                .data(staffResponse)
-                .build();
-    }
-
-    @Override
-    public ApiResponse<StaffResponse> activateStaff(int staffId) {
-        StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
-                .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
-        staffInformation.getAccount().setStatus(AccountStatus.ACTIVE);
-        staffInformation = staffAccountRepository.save(staffInformation);
-        StaffResponse staffResponse = staffMapper.toResponse(staffInformation);
-        return ApiResponse.<StaffResponse>builder()
-                .data(staffResponse)
-                .build();
-    }
-
-    @Override
-    public ApiResponse<StaffResponse> deleteStaff(int staffId) {
-        StaffAccountEntity staffInformation = staffAccountRepository.findById(staffId)
-                .orElseThrow(()->new AppException(ErrorCode.STAFF_NOT_FOUND));
-        staffInformation.getAccount().setStatus(AccountStatus.DELETED);
-        staffInformation = staffAccountRepository.save(staffInformation);
-        StaffResponse staffResponse = staffMapper.toResponse(staffInformation);
-        return ApiResponse.<StaffResponse>builder()
-                .data(staffResponse)
                 .build();
     }
 

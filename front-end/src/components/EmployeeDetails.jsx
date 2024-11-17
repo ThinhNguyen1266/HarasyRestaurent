@@ -81,7 +81,6 @@ const EmployeeDetails = ({
 
   const handleDeactivate = (id) => {
     deactivateStaffMutation.mutate(id); // Deactivate the employee by ID
-    onClose();
   };
 
   return (

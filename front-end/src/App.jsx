@@ -35,7 +35,6 @@ function App() {
     <div className="App">
       <Routes>
         <Route element={<DefaultLayout />}>
-          
           <Route path="/" element={<Home />} />
           <Route path="/venues" element={<Venues />} />
           <Route path="/venues/hcm" element={<HCMVenues />} />
@@ -62,7 +61,8 @@ function App() {
             <Route path="/food/create" element={<CreateFood />} />
             <Route path="/food/:foodId" element={<EditFood />} />
             <Route path="/workforce" element={<WorkforceList />} />
-            <Route path="/workforce/create" element={<CreateEmployee/>}/>
+            <Route path="/workforce/:branchId" element={<WorkforceList />} />
+            <Route path="/workforce/create" element={<CreateEmployee />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />
