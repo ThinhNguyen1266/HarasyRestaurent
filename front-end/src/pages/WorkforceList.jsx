@@ -21,32 +21,28 @@ const WorkforceList = () => {
   const { branchId: paramBranchId } = useParams();
 
   // Use branchId from URL if available, but override for branch managers
-  const branchId = user.role === "BRANCH_MANAGER" ? user.branchId : paramBranchId || user.branchId;
-
-  const { getStaffByBranchId } = useStaffApi();
-
-  // Fetch staff list
+  const curenUserBranchId = user.role === "BRANCH_MANAGER" ? user.branchId : paramBranchId || user.branchId;
+  
+  const { getStaffByBranchId } = useStaffApi(); 
   const { data: staffList = [] } = useQuery({
-    queryKey: ["staffList", branchId],
-    queryFn: () => getStaffByBranchId(branchId),
+    queryKey: ["staffList", curenUserBranchId],
+    queryFn: () => getStaffByBranchId(curenUserBranchId),
     onError: (error) => toast.error(`Failed to fetch staff: ${error.message}`),
   });
-  const { getBranchesStaff} = useBranchApi();
-  const { data: branches = []} = useQuery({
-    queryKey: ["branches"],
-    queryFn: getBranchesStaff,
-    onError: (error) => {
-      toast.error(`Failed to fetch branches: ${error.message}`);
-    },
-  });
+  
 
-  const handleRefetch = () => queryClient.invalidateQueries(["staffList", branchId]);
+  
 
+  
+  
+
+  const handleRefetch = () => queryClient.invalidateQueries(["staffList", curenUserBranchId]);
+
+  // Filter out the logged-in user from the staff list
   const branchFilteredStaff = staffList.filter((employee) => {
-    if (employee.fullName === user.fullName) return false;
-    if (user.role === "ADMIN" || employee.branchId === branchId) return true;
-    return false;
+    return employee.fullName !== user.fullName; // Only exclude the current user
   });
+  
 
   const filteredStaff = branchFilteredStaff.filter((employee) => {
     const matchesSearchTerm =
@@ -62,7 +58,7 @@ const WorkforceList = () => {
 
   return (
     <div className="workforce-container">
-      <h1 className="workforce-title">Workforce Directory - Branch {branchId}</h1>
+      <h1 className="workforce-title">Workforce Directory - Branch {curenUserBranchId}</h1>
 
       {/* Search and filter inputs */}
       <div className="workforce-search-filters d-flex justify-content-between gap-3">
@@ -88,7 +84,8 @@ const WorkforceList = () => {
       </div>
 
       <button
-        onClick={() => navigate("/workforce/create")}
+        onClick={() => // Thay đổi trong WorkforceList khi gọi navigate
+          navigate("/workforce/create", { state: { userbranchId: curenUserBranchId } })}
         className="btn btn-success my-4"
       >
         Add Employee

@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET,GET_PUBLIC_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/branch").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/staff/{id}").hasAnyRole("ADMIN","BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.PUT,"/staff/{id}").hasAnyRole("ADMIN","BRANCH_MANAGER")

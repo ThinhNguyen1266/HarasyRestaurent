@@ -14,20 +14,23 @@ const EmployeeDetails = ({
   onEdit,
   onDelete,
 }) => {
-  const { updateStaff, deactiveStaff } = useStaffApi();
-  const queryClient = useQueryClient();
-  const [editedEmployee, setEditedEmployee] = useState({});
-  const [isUploading, setIsUploading] = useState(false);
-
-  // Fetch branches data for preloading
   const { getBranchesStaff } = useBranchApi();
-  const { data: branches = [], isLoading } = useQuery({
+  const { data: branches = [] } = useQuery({
     queryKey: ["branches"],
     queryFn: getBranchesStaff,
     onError: (error) => {
       toast.error(`Failed to fetch branches: ${error.message}`);
     },
   });
+  console.log("br",branches);
+  console.log(JSON.stringify(branches, null, 2));
+
+  const { updateStaff, deactiveStaff } = useStaffApi();
+  const queryClient = useQueryClient();
+  const [editedEmployee, setEditedEmployee] = useState({});
+  const [isUploading, setIsUploading] = useState(false);
+
+  
 
   useEffect(() => {
     if (employee) {
@@ -191,8 +194,8 @@ const EditingForm = ({
             >
               <option value="">Select Branch</option>
               {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name}
+                <option key={branch.branchInfo.id} value={branch.branchInfo.id}>
+                  {branch.branchInfo.name}
                 </option>
               ))}
             </select>
