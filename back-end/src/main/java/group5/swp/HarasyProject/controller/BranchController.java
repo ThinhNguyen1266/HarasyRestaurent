@@ -7,6 +7,7 @@ import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.service.RestaurantManagementService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -62,13 +63,18 @@ public class BranchController {
         return restaurantManagementService.deleteBranch(id);
     }
 
+
     @GetMapping("/branch/{id}/menus")
     ApiResponse<List<MenuResponse>> getAllMenus(@PathVariable int id,
                                                 @RequestParam(defaultValue = "false") boolean includeAll) {
         return restaurantManagementService.getAllMenusInBranch(id,includeAll);
     }
 
-
+    @GetMapping("/branch/{id}/tables")
+    ApiResponse<List<TableResponse>> getAllTables(@PathVariable int id){
+        return restaurantManagementService.getAllTablesInBranch(id);
+    }
+    
     @GetMapping("/branch/{id}/orders")
     ApiResponse<Page<OrderResponse>> getBranchOrders(
             @PathVariable int id,

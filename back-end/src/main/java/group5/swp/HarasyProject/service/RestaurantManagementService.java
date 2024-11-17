@@ -10,6 +10,7 @@ import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public interface RestaurantManagementService {
     ApiResponse<List<BranchResponse>> getAllBranches(boolean includeAll);
     ApiResponse<BranchResponse> createBranch(BranchRequest request);
     ApiResponse<BranchResponse> updateBranch(int branchId, BranchRequest request);
+    ApiResponse<List<TableResponse>> getAllTablesInBranch(int branchId);
     ApiResponse<List<MenuResponse>> getAllMenusInBranch(int branchId,boolean isIncludeAll);
     ApiResponse<MenuResponse> getMenu(int menuId);
 
