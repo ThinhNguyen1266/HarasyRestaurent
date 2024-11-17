@@ -6,6 +6,7 @@ import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.order.OrderEntity;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
 import group5.swp.HarasyProject.enums.MenuType;
+import group5.swp.HarasyProject.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,4 +26,5 @@ public class StaffRequest {
         String bankAccount;
         String picture;
         int salary;
+        Status status;
 }

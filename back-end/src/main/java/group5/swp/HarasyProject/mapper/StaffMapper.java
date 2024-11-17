@@ -21,5 +21,6 @@ public interface StaffMapper {
 
     @Mapping(target = "id", ignore = true)  // Ignore the id field during mapping
     @Mapping(target = "branch", ignore = true)
+    @Mapping(target = "account.status", source = "status")
     StaffAccountEntity updateStaffInfo(StaffRequest staff,  @MappingTarget StaffAccountEntity staffAccount);
 }

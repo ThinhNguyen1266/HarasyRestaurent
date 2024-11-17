@@ -6,14 +6,9 @@ import uploadImage from "../services/uploadImage";
 import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
 import useBranchApi from "../hooks/api/useBranchApi";
+import "../assets/styles/EmployeeDetail.css"
 
-const EmployeeDetails = ({
-  employee,
-  onClose,
-  isEditing,
-  onEdit,
-  onDelete,
-}) => {
+const EmployeeDetails = ({ employee, onClose, isEditing, onEdit, onDelete, refetch }) => {
   const { getBranchesStaff } = useBranchApi();
   const { data: branches = [] } = useQuery({
     queryKey: ["branches"],
@@ -22,19 +17,17 @@ const EmployeeDetails = ({
       toast.error(`Failed to fetch branches: ${error.message}`);
     },
   });
-  console.log("br",branches);
-  console.log(JSON.stringify(branches, null, 2));
 
-  const { updateStaff, deactiveStaff } = useStaffApi();
+  const { updateStaff, updateEmployeeStatus } = useStaffApi();
   const queryClient = useQueryClient();
   const [editedEmployee, setEditedEmployee] = useState({});
   const [isUploading, setIsUploading] = useState(false);
-
-  
+  const [newStatus, setNewStatus] = useState("ACTIVE");
 
   useEffect(() => {
     if (employee) {
       setEditedEmployee({ ...employee });
+      setNewStatus(employee.status); // Set initial status
     } else {
       setEditedEmployee({
         role: "",
@@ -43,6 +36,7 @@ const EmployeeDetails = ({
         bankAccount: "",
         picture: "",
         salary: 0,
+        status: "ACTIVE", // default to ACTIVE
       });
     }
   }, [employee]);
@@ -58,16 +52,10 @@ const EmployeeDetails = ({
     },
   });
 
-  const deactivateStaffMutation = useMutation({
-    mutationFn: deactiveStaff,
-    onSuccess: () => {
-      queryClient.invalidateQueries("staffList");
-      toast.success("Employee deactivated successfully");
-    },
-    onError: (error) => {
-      toast.error(`Failed to deactivate employee: ${error.message}`);
-    },
-  });
+  const handleStatusToggle = () => {
+    const toggledStatus = newStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+    setNewStatus(toggledStatus); // Update local state
+  };
 
   const handleSave = () => {
     if (isUploading) {
@@ -75,15 +63,24 @@ const EmployeeDetails = ({
       return;
     }
     if (editedEmployee) {
-      updateStaffMutation.mutate(editedEmployee);
-      onClose();
+      // Update status on save if it was changed
+      const updatedEmployee = { ...editedEmployee, status: newStatus };
+      updateStaffMutation.mutate(updatedEmployee);
+      refetch(); // Call refetch after saving
+      onClose(); // Close the modal
     } else {
       toast.error("No employee data to save");
     }
   };
 
-  const handleDeactivate = (id) => {
-    deactivateStaffMutation.mutate(id); // Deactivate the employee by ID
+  // Update status when the modal closes (or some other trigger)
+  const handleClose = () => {
+    if (newStatus !== editedEmployee.status) {
+      const updatedEmployee = { ...editedEmployee, status: newStatus };
+      updateStaffMutation.mutate(updatedEmployee); // Update status if changed
+      refetch(); // Call refetch when closing
+    }
+    onClose();
   };
 
   return (
@@ -96,7 +93,7 @@ const EmployeeDetails = ({
           <div className="modal-header">
             <h2 className="modal-title text-white">{employee.fullName}</h2>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="btn-close btn-close-white"
               aria-label="Close"
             ></button>
@@ -109,13 +106,14 @@ const EmployeeDetails = ({
                 onSave={handleSave}
                 isUploading={isUploading}
                 setIsUploading={setIsUploading}
-                branches={branches} // Pass the branches data here
+                branches={branches}
               />
             ) : (
               <ViewDetails
                 employee={employee}
                 onEdit={onEdit}
-                onDelete={handleDeactivate}
+                onStatusToggle={handleStatusToggle}
+                currentStatus={newStatus}
               />
             )}
           </div>
@@ -125,13 +123,14 @@ const EmployeeDetails = ({
   );
 };
 
+
 const EditingForm = ({
   editedEmployee,
   setEditedEmployee,
   onSave,
   isUploading,
   setIsUploading,
-  branches, // Accept branches as a prop
+  branches,
 }) => {
   const [previewUrl, setPreviewUrl] = useState(editedEmployee.picture || null);
   const { user } = useAuth();
@@ -159,7 +158,7 @@ const EditingForm = ({
 
   return (
     <>
-      {["role", "branchId", "bankName", "bankAccount", "salary"].map((field) => (
+      {["role", "bankName", "bankAccount", "salary"].map((field) => (
         <div className="mb-3" key={field}>
           <label className="form-label text-light">{field}</label>
           {field === "role" ? (
@@ -181,25 +180,7 @@ const EditingForm = ({
               <option value="CHEF">Chef</option>
               <option value="RECEPTIONIST">Receptionist</option>
             </select>
-          ) : field === "branchId" ? (
-            <select
-              value={editedEmployee[field] || ""}
-              onChange={(e) =>
-                setEditedEmployee({
-                  ...editedEmployee,
-                  [field]: e.target.value,
-                })
-              }
-              className="form-select bg-secondary text-white border-secondary"
-            >
-              <option value="">Select Branch</option>
-              {branches.map((branch) => (
-                <option key={branch.branchInfo.id} value={branch.branchInfo.id}>
-                  {branch.branchInfo.name}
-                </option>
-              ))}
-            </select>
-          ) : (
+          ) : field === "bankName" || field === "bankAccount" || field === "salary" ? (
             <input
               type={field === "salary" ? "number" : "text"}
               value={editedEmployee[field] || ""}
@@ -211,9 +192,33 @@ const EditingForm = ({
               }
               className="form-control bg-secondary text-white border-secondary"
             />
-          )}
+          ) : null}
         </div>
       ))}
+
+      {/* Conditionally render the branch field only for admins */}
+      {user.role === "ADMIN" && (
+        <div className="mb-3">
+          <label className="form-label text-light">Select Branch</label>
+          <select
+            value={editedEmployee.branchId || ""}
+            onChange={(e) =>
+              setEditedEmployee({
+                ...editedEmployee,
+                branchId: e.target.value,
+              })
+            }
+            className="form-control form-select bg-secondary text-white border-secondary"
+          >
+            <option value="">Select Branch</option>
+            {branches.map((branch) => (
+              <option key={branch.branchInfo.id} value={branch.branchInfo.id}>
+                {branch.branchInfo.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="mb-3">
         <label className="form-label text-light">Upload Picture</label>
@@ -243,75 +248,61 @@ const EditingForm = ({
   );
 };
 
-const ViewDetails = ({ employee, onEdit, onDelete }) => (
+
+const ViewDetails = ({ employee, onEdit, onStatusToggle, currentStatus }) => (
   <div className="container">
     <div className="row justify-content-center g-4">
-      <div className="col-12 col-md-5 text-center mb-4">
-        <img
-          src={
-            employee.picture ||
-            "https://images.unsplash.com/photo-1633332755192-727a05c4013d"
-          }
-          alt={employee.fullName}
-          className="rounded-circle mb-3"
-          style={{ width: "128px", height: "128px", objectFit: "cover" }}
-        />
-        <h3
-          className="text-light"
-          style={{
-            wordWrap: "break-word", // Ensure name breaks into a new line if it's too long
-            overflowWrap: "break-word", // A more modern approach to handle long words
-            whiteSpace: "normal", // Ensures text can wrap normally
-          }}
-        >
-          {employee.fullName}
-        </h3>
-        <p className="text-muted">{employee.role}</p>
-      </div>
+    <div className="col-12 col-md-6 d-flex justify-content-center align-items-center flex-column text-center mb-2">
+  <img
+    src={employee.picture || "https://images.unsplash.com/photo-1633332755192-727a05c4013d"}
+    alt={employee.fullName}
+    className="rounded-circle mb-3"
+    style={{ width: "200px", height: "200px", objectFit: "cover" }}
+  />
+  <h3 className="text-light mb-2">{employee.fullName}</h3>
+  <p className="text-light fs-3 fw-bold">{employee.role}</p>
+</div>
 
-      <div className="col-12 col-md-7">
+
+      <div className="col-12 col-md-10">
         <EmployeeInfo employee={employee} />
       </div>
     </div>
 
-    <div className="d-flex gap-3 mt-4 flex-column flex-md-row">
+    <div className="d-flex gap-5 mt-4 flex-column flex-md-row">
       <button
         onClick={onEdit}
         className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
       >
         <FiEdit2 /> <span>Edit</span>
       </button>
-      <button
-        onClick={() => onDelete(employee.id)}
-        className="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2"
-      >
-        <FiTrash2 /> <span>Deactivate</span>
-      </button>
+
+      <div className="d-flex align-items-center gap-2 w-100">
+        <span className="text-light">Status</span>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={currentStatus === "ACTIVE"}
+            onChange={onStatusToggle}
+          />
+          <span className="slider round"></span>
+        </label>
+      </div>
     </div>
   </div>
 );
 
+
+
 const EmployeeInfo = ({ employee }) => {
   return (
-    <ul className="list-unstyled">
-      <li>
-        <strong>Email:</strong> {employee.email}
-      </li>
-      <li>
-        <strong>Phone:</strong> {employee.phone}
-      </li>
-      <li>
-        <strong>Date of Birth:</strong> {new Date(employee.dob).toLocaleDateString()}
-      </li>
-      <li>
-        <strong>Bank Name:</strong> {employee.bankName}
-      </li>
-      <li>
-        <strong>Bank Account:</strong> {employee.bankAccount}
-      </li>
-      <li>
-        <strong>Salary:</strong> ${employee.salary}
-      </li>
+    <ul className="list-unstyled fs-5">
+      <li><strong>Email:</strong> {employee.email}</li>
+      <li><strong>Phone:</strong> {employee.phone}</li>
+      <li><strong>Date of Birth:</strong> {new Date(employee.dob).toLocaleDateString()}</li>
+      <li><strong>Bank Name:</strong> {employee.bankName}</li>
+      <li><strong>Bank Account:</strong> {employee.bankAccount}</li>
+      <li><strong>Salary:</strong> ${employee.salary}</li>
     </ul>
   );
 };

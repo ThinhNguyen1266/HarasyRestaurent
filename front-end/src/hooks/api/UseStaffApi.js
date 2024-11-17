@@ -27,23 +27,18 @@ const useStaffApi = () => {
   const updateStaff = async (employee) => {
     try {
       const response = await axiosPrivate.put(`/staff/${employee.id}`, employee);
-      console.log("Response:", response);
-      return response.data;
+      if (response && response.data) {
+        return response.data; // Assuming your API returns an object
+      } else {
+        throw new Error("No data in response");
+      }
     } catch (error) {
-      console.error("Error updating staff:", error);
-      throw error;
+      throw new Error(`Error updating staff: ${error.message}`);
     }
   };
-  const deactiveStaff = async (id) => {
-    try {
-      const response = await axiosPrivate.put(`/staff/deactivate/${id}`);
-      console.log("Response:", response);
-      return response.data;
-    } catch (error) {
-      console.error("Error deactivate staff:", error);
-      throw error;
-    }
-  };
+  
+  
+  
   const createStaff = async (newStaff) => {
     try {
       // Chỉ lấy các trường có giá trị và không rỗng
@@ -84,7 +79,6 @@ const useStaffApi = () => {
     getStaffByBranchId,
     updateStaff,
     createStaff,
-    deactiveStaff,
   };
 };
 
