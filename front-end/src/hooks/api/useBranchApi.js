@@ -11,6 +11,7 @@ const useBranchApi = () => {
       throw error;
     }
   };
+
   const getBranchManagers = async () => {
     try {
       const params = {
@@ -27,6 +28,7 @@ const useBranchApi = () => {
       throw error;
     }
   };
+  
 
   const getBranchbyID = async (id) => {
     try {
