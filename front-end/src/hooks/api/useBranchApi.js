@@ -86,7 +86,7 @@ const useBranchApi = () => {
 
       const payload = {
         branchInfo: {
-          id: updateBranch.id,
+          id: updatedBranch.branchInfo.id,
           name: updatedBranch.branchInfo.name,
           location: updatedBranch.branchInfo.location,
           image: updatedBranch.branchInfo.image,
@@ -110,7 +110,7 @@ const useBranchApi = () => {
         `/branch/${updatedBranch.branchInfo.id}`,
         payload
       ).data;
-      console.log("Branch data sent:", payload);
+      console.log("Branch data sent:", JSON.stringify(payload, null, 2));
       return branch;
     } catch (error) {
       console.error("Server error details:", error.response?.data);
@@ -127,6 +127,21 @@ const useBranchApi = () => {
     }
   };
 
+  const getMenubyBranchID = async (id, includeAll = true) => {
+    try {
+      // Thêm tham số includeAll vào URL
+      const response = await axiosPrivate.get(`/branch/${id}/menus`, {
+        params: {
+          includeAll: includeAll,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error(`Failed to fetch menus for branch with ID ${id}:`, error);
+      throw error;
+    }
+  };
+
   return {
     getBranchesStaff,
     createBranch,
@@ -134,6 +149,7 @@ const useBranchApi = () => {
     deleteBranch,
     getBranchManagers,
     getBranchbyID,
+    getMenubyBranchID,
   };
 };
 

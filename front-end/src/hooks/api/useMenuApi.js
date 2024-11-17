@@ -1,4 +1,3 @@
-import React from "react";
 import useAxiosPrivate from "../useAxiosPrivate";
 import axios, { axiosPrivate } from "../../services/axios";
 import useAuth from "../useAuth";
@@ -7,9 +6,10 @@ import React from "react";
 const useMenuApi = () => {
   const axiosPrivate = useAxiosPrivate();
 
-  const getMenuByID = async (id) => {
+  const getMenuByID = async (menuId) => {
     try {
-      const response = await axios.get(`/menu/${id}`);
+      const response = await axios.get(`/menu/${menuId}`);
+      console.log("response", response);
       return response.data;
     } catch (error) {
       console.error("Error fetching menu:", error);
