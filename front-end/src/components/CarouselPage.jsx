@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState } from "react";
 import Carousel from "react-bootstrap/Carousel";
-import { Link } from "react-router-dom"; // Import Link
+import { Link } from "react-router-dom";
 import img2 from "../assets/img/beef.jpg";
 import img1 from "../assets/img/HRS.png";
 import img3 from "../assets/img/HRS2.png";

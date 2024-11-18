@@ -1,10 +1,9 @@
-import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/UserProfile.css";
 import ProfileForm from "../components/UserProfileFrom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../assets/styles/BranchManagement.css";
-import useAuth from "../hooks/useAuth";
 import useAccountApi from "../hooks/api/useAccountApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -13,11 +12,16 @@ const Profile = () => {
   const queryClient = useQueryClient();
 
   const { getProfile } = useAccountApi();
-
-  const { data: userprofile = [] } = useQuery({
-    queryKey: ["userprofile"],
-    queryFn: () => getProfile(),
-    onError: (error) => toast.error(`Failed to fetch staff: ${error.message}`),
+  const {
+    data: accountProfile,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["accountProfile"],
+    queryFn: getProfile,
+    onError: (error) => {
+      toast.error(`Failed to fetch profile: ${error.message}`);
+    },
   });
   console.log("profile log", user);
   console.log("api log", userprofile);
@@ -59,7 +63,8 @@ const Profile = () => {
                     </>
                   )}
                   <p className="stat">
-                    Role <span className="stat-value">{userprofile.role}</span>
+                    Branch{" "}
+                    <span className="stat-value">{localData.branchName}</span>
                   </p>
                 </div>
               </div>
