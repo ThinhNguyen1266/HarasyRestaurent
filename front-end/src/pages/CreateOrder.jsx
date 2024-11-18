@@ -24,6 +24,7 @@ function CreateMenu() {
   const [searchTerm, setSearchTerm] = useState("");
   const [cartItems, setCartItems] = useState({});
   const [orderNote, setOrderNote] = useState("");
+  const [customerId, setCustomerId] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -131,7 +132,7 @@ function CreateMenu() {
       tableIds: tableIds,
       staffId: user.id, // Assuming staffId is available from `user`
       customer: {
-        customerId: "8", // Replace with actual customer ID input value
+        customerId: customerId, // Replace with actual customer ID input value
       },
       orderItems,
       note: orderNote,
@@ -223,8 +224,9 @@ function CreateMenu() {
               <label className="form-label text-white">CustomerId: </label>
               <input
                 type="text"
-                name="name"
-                // value={formData.customer.customerId}
+                name="customerId"
+                value={customerId}
+                onChange={(e) => setCustomerId(e.target.value)}
                 className="form-control"
                 required
               />

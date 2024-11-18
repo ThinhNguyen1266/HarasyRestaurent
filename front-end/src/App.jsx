@@ -31,6 +31,7 @@ import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
 import WorkforceList from "./pages/WorkforceList";
+import CreateOrder from "./pages/CreateOrder";
 function App() {
   return (
     <>
