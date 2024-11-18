@@ -51,6 +51,19 @@ public class TableServiceImpl implements TableService {
                 .build();
     }
 
+
+    @Override
+    public ApiResponse<TableResponse> updateTable(int tableId, TableRequest request) {
+        TableEntity tableEntity = tableRepository.findById(tableId)
+                .orElseThrow(()-> new AppException(ErrorCode.TABLE_NOT_FOUND));
+        tableEntity = tableMapper.updateTable(request,tableEntity);
+        tableEntity = tableRepository.save(tableEntity);
+        TableResponse tableResponse = tableMapper.toResponse(tableEntity);
+        return ApiResponse.<TableResponse>builder()
+                .data(tableResponse)
+                .build();
+    }
+
     @Override
     public List<TableEntity> toTableList(List<TableRequest> request) {
         return tableMapper.toTables(request);

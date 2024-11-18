@@ -87,6 +87,11 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     }
 
     @Override
+    public ApiResponse<TableResponse> updateTable(int tableId, TableRequest request) {
+        return tableService.updateTable(tableId, request);
+    }
+
+    @Override
     public ApiResponse<List<MenuResponse>> getAllMenusInBranch(int branchId, boolean isIncludeAll) {
         List<MenuEntity> menus = menuService.getAllMenusInBranch(branchId,isIncludeAll);
         return ApiResponse.<List<MenuResponse>>builder()

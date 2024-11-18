@@ -13,6 +13,7 @@ import java.util.List;
 @Service
 public interface TableService {
     ApiResponse<?> deleteTable(int tableId);
+    ApiResponse<TableResponse> updateTable(int tableId, TableRequest request);
     List<TableEntity> toTableList(List<TableRequest> request);
     void saveUpdate(List<TableEntity> tables);
     ApiResponse<List<TableResponse>> getTablesInBranch(int branchId);
