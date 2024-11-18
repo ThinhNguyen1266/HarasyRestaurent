@@ -2,6 +2,7 @@ package group5.swp.HarasyProject.mapper;
 
 import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
+import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
 import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.StaffProfileResponse;
 import group5.swp.HarasyProject.entity.account.AccountEntity;
@@ -13,6 +14,10 @@ public interface AccountMapper {
 
     @Mapping(target = "status", constant = "PENDING")
     AccountEntity regisCusToAccount(RegisCustomerRequest regisCustomerRequest);
+    @Mapping(target = "status", constant = "ACTIVE")
+    AccountEntity staffRequestToAccount(RegistStaffRequest registStaffRequest);
+//    @Mapping(target = "branchId", ignore = true)
+    StaffAccountEntity staffRequestToStaffAccount(RegistStaffRequest registStaffRequest);
 
     // Mapping cho Quick Registration
 

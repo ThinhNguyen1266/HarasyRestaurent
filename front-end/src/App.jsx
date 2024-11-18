@@ -20,7 +20,8 @@ import Menu from "./pages/Menu";
 import OrderWaiter from "./pages/OrderWaiter";
 import Overview from "./pages/Overview";
 import Register from "./pages/Register";
-import WorkforceList from "./pages/StaffList";
+import WorkforceList from "./pages/WorkforceList";
+import CreateEmployee from "./components/CreateEmployee";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
@@ -35,9 +36,6 @@ function App() {
       <Routes>
         <Route element={<DefaultLayout />}>
           <Route path="/" element={<Home />} />
-          <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}></Route>
-          <Route path="/reservation" element={<ReservationsPage />} />
-
           <Route path="/venues" element={<Venues />} />
           <Route path="/venues/hcm" element={<HCMVenues />} />
           <Route path="/venues/hanoi" element={<HNVenues />} />
@@ -46,16 +44,15 @@ function App() {
           <Route path="/menu/hanoi" element={<HNMenu />} />
           <Route path="/about" element={<About />} />
           <Route path="/contacts" element={<Contacts />} />
+          <Route path="/userprofile" element={<Profile />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/table" element={<TableList />} />
-
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/order" element={<OrderWaiter />} />
-        <Route path="/profile/:id" element={<Profile />} />
-        <Route path="/createorder" element={<CreateOrder />} />
+
         <Route element={<StaffLayout />}>
           <Route
             element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}
@@ -64,6 +61,8 @@ function App() {
             <Route path="/food/create" element={<CreateFood />} />
             <Route path="/food/:foodId" element={<EditFood />} />
             <Route path="/workforce" element={<WorkforceList />} />
+            <Route path="/workforce/:branchId" element={<WorkforceList />} />
+            <Route path="/workforce/create" element={<CreateEmployee />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />

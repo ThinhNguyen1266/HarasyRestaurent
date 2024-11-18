@@ -72,4 +72,16 @@ public class AccountEntity extends Auditable {
             staffAccount.setAccount(this);
         }
     }
+    @Override
+    public String toString() {
+        return "AccountEntity [id=" + id
+                + ", username=" + username
+                + ", password=" + password
+                +", email=" + email
+                + ", fullName=" + fullName
+                + ", dob=" + dob
+                + ", phone=" + phone
+                + ", status=" + status
+                + ", Branch=" + staff.getBranch().getName();
+    }
 }

@@ -29,8 +29,9 @@ public enum ErrorCode {
     MENU_NOT_FOUND(3003, "menu not found", HttpStatus.NOT_FOUND),
     CATEGORY_NOT_FOUND(3004, "categories not found", HttpStatus.NOT_FOUND),
     FOOD_NOT_FOUND(3005, "food not found", HttpStatus.NOT_FOUND),
-    ORDER_NOT_FOUND(3006, "order not found", HttpStatus.NOT_FOUND),
-    ORDER_ITEM_NOT_FOUND(3007, "order item not found", HttpStatus.NOT_FOUND),
+    STAFF_NOT_FOUND(3006, "staff not found", HttpStatus.NOT_FOUND),
+    ORDER_NOT_FOUND(3007, "order not found", HttpStatus.NOT_FOUND),
+    ORDER_ITEM_NOT_FOUND(3008, "order item not found", HttpStatus.NOT_FOUND),
 
 
     //ALREADY EXIST
