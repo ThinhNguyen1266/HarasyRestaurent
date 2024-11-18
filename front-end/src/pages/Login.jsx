@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import "../assets/styles/Login.css";
 import { useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "../assets/styles/Login.css";
 import useAuthApi from "../hooks/api/useAuthApi";
 function Login() {
   const [username, setUsername] = useState("");

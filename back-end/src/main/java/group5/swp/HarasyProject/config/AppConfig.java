@@ -11,7 +11,6 @@ import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
 import group5.swp.HarasyProject.enums.BinaryStatus;
-import group5.swp.HarasyProject.enums.DayOfWeek;
 import group5.swp.HarasyProject.enums.MenuType;
 import group5.swp.HarasyProject.enums.Status;
 import group5.swp.HarasyProject.repository.AccountRepository;
@@ -27,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;

@@ -74,7 +74,7 @@ public class BranchController {
     ApiResponse<List<TableResponse>> getAllTables(@PathVariable int id){
         return restaurantManagementService.getAllTablesInBranch(id);
     }
-    
+
     @GetMapping("/branch/{id}/orders")
     ApiResponse<Page<OrderResponse>> getBranchOrders(
             @PathVariable int id,

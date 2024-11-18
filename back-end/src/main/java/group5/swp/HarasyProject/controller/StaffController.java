@@ -1,5 +1,6 @@
 package group5.swp.HarasyProject.controller;
 
+import group5.swp.HarasyProject.dto.request.staff.StaffRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.staff.StaffResponse;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
@@ -23,12 +24,23 @@ public class StaffController {
 
     @GetMapping("/staff")
     public ApiResponse<List<StaffResponse>> getActiveStaff() {
-        return staffService.getActiveStaff();
+        return staffService.getAllStaff();
+    }
+
+    @GetMapping("/staff/{id}")
+    public ApiResponse<List<StaffResponse>> getStaffByBranchId(@PathVariable int id) {
+        return staffService.getStaffByBranch(id);
     }
 
     @GetMapping("/sorted")
     public ApiResponse<List<StaffResponse>> getStaffSortedByRole() {
         return staffService.getStaffSortedByRole();
+    }
+
+
+    @PutMapping("/staff/{id}")
+    public ApiResponse<StaffResponse> updateStaff(@PathVariable Integer id, @RequestBody StaffRequest staffRequest) {
+        return staffService.updateStaffInfo(id, staffRequest);
     }
 
     @GetMapping("/staff/search")

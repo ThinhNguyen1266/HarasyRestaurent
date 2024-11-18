@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { FiMessageSquare } from "react-icons/fi";
-import useAuth from "../hooks/useAuth";
 import EmployeeDetails from "../components/EmployeeDetails";
-import "../assets/styles/BranchManagement.css";
+import useAuth from "../hooks/useAuth";
 
 // Example constant data for staffList based on your provided information
 const initialStaffList = [
@@ -72,15 +71,19 @@ const WorkforceList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole, setSelectedRole] = useState("All");
 
-  const roles = useMemo(() => ["All", ...new Set(staffList.map((e) => e.role))], [staffList]);
+  const roles = useMemo(
+    () => ["All", ...new Set(staffList.map((e) => e.role))],
+    [staffList]
+  );
 
   const filteredEmployees = useMemo(
     () =>
       staffList.filter(
         (e) =>
-          (e.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) &&
+          (e.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+            false) &&
           (selectedRole === "All" || e.role === selectedRole) &&
-          e.branchName === user.branchName&&
+          e.branchName === user.branchName &&
           e.fullName !== user.fullName
       ),
     [staffList, searchTerm, selectedRole, user.branchName]
@@ -99,15 +102,18 @@ const WorkforceList = () => {
   const handleSave = () => {
     // Update the staffList with the edited employee details
     setStaffList((prevList) =>
-      prevList.map((emp) => (emp.id === editedEmployee.id ? editedEmployee : emp))
+      prevList.map((emp) =>
+        emp.id === editedEmployee.id ? editedEmployee : emp
+      )
     );
     setIsEditing(false); // Exit editing mode
     setSelectedEmployee(null); // Close the modal
   };
-  
 
   const handleDelete = () => {
-    setStaffList((prevList) => prevList.filter((emp) => emp.id !== selectedEmployee.id));
+    setStaffList((prevList) =>
+      prevList.filter((emp) => emp.id !== selectedEmployee.id)
+    );
     setSelectedEmployee(null);
   };
 
@@ -125,7 +131,10 @@ const WorkforceList = () => {
       {filteredEmployees.length === 0 ? (
         <NoResults />
       ) : (
-        <EmployeeTable employees={filteredEmployees} onSelect={handleEmployeeClick} />
+        <EmployeeTable
+          employees={filteredEmployees}
+          onSelect={handleEmployeeClick}
+        />
       )}
 
       {selectedEmployee && (
@@ -145,7 +154,13 @@ const WorkforceList = () => {
 };
 
 // Component for search and filter
-const SearchAndFilter = ({ searchTerm, setSearchTerm, selectedRole, setSelectedRole, roles }) => (
+const SearchAndFilter = ({
+  searchTerm,
+  setSearchTerm,
+  selectedRole,
+  setSelectedRole,
+  roles,
+}) => (
   <div className="row mb-4">
     <div className="col-md-6 mb-3">
       <input
@@ -157,7 +172,11 @@ const SearchAndFilter = ({ searchTerm, setSearchTerm, selectedRole, setSelectedR
       />
     </div>
     <div className="col-md-6">
-      <select className="form-select" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+      <select
+        className="form-select"
+        value={selectedRole}
+        onChange={(e) => setSelectedRole(e.target.value)}
+      >
         {roles.map((role) => (
           <option key={role} value={role}>
             {role}
@@ -183,16 +202,22 @@ const EmployeeTable = ({ employees, onSelect }) => (
     <table className="table table-dark table-striped">
       <thead>
         <tr>
-          {["Employee", "Role", "Branch", "Contact", "Actions"].map((header) => (
-            <th key={header} scope="col" className="text-uppercase small">
-              {header}
-            </th>
-          ))}
+          {["Employee", "Role", "Branch", "Contact", "Actions"].map(
+            (header) => (
+              <th key={header} scope="col" className="text-uppercase small">
+                {header}
+              </th>
+            )
+          )}
         </tr>
       </thead>
       <tbody>
         {employees.map((employee) => (
-          <EmployeeRow key={employee.id} employee={employee} onSelect={onSelect} />
+          <EmployeeRow
+            key={employee.id}
+            employee={employee}
+            onSelect={onSelect}
+          />
         ))}
       </tbody>
     </table>
@@ -204,11 +229,18 @@ const EmployeeRow = ({ employee, onSelect }) => (
   <tr>
     <td className="d-flex align-items-center">
       <img
-        src={employee.avatar ? `https://${employee.avatar}` : "https://images.unsplash.com/photo-1633332755192-727a05c4013d"}
+        src={
+          employee.avatar
+            ? `https://${employee.avatar}`
+            : "https://images.unsplash.com/photo-1633332755192-727a05c4013d"
+        }
         alt={employee.fullName}
         className="rounded-circle me-3"
         style={{ width: "40px", height: "40px", objectFit: "cover" }}
-        onError={(e) => (e.target.src = "https://images.unsplash.com/photo-1633332755192-727a05c4013d")}
+        onError={(e) =>
+          (e.target.src =
+            "https://images.unsplash.com/photo-1633332755192-727a05c4013d")
+        }
       />
       <div>
         <p className="mb-0 text-white">{employee.fullName}</p>
@@ -219,7 +251,10 @@ const EmployeeRow = ({ employee, onSelect }) => (
     <td>{employee.branchName || "N/A"}</td>
     <td>{employee.phone || "N/A"}</td>
     <td className="text-end">
-      <button onClick={() => onSelect(employee)} className="btn btn-link text-info p-0">
+      <button
+        onClick={() => onSelect(employee)}
+        className="btn btn-link text-info p-0"
+      >
         View Details
       </button>
     </td>
