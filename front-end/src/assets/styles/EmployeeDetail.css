@@ -47,4 +47,9 @@
   .slider.round {
     border-radius: 34px;
   }
-  
+  /* CSS for the FiPower icon */
+.power-icon {
+  font-size: 2rem; /* Make the icon larger */
+  font-weight: bold; /* Make the icon bold */
+  color: #fff; /* Optional: Change color */
+}

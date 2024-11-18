@@ -1,5 +1,6 @@
 package group5.swp.HarasyProject.service;
 
+import group5.swp.HarasyProject.dto.request.account.CusUpdateProfileRequest;
 import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
@@ -31,4 +32,7 @@ public interface AccountService {
     ApiResponse<CustomerProfileResponse> quickCustomerRegis(QuickRegisCustomerRequest request);
     StaffAccountEntity getStaffAccount(Integer staffId) ;
     CustomerAccountEntity getCustomerAccount(Integer customerId) ;
+
+    ApiResponse<CustomerProfileResponse> cusUpdateProfile(int id,CusUpdateProfileRequest request);
+
 }

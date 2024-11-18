@@ -58,7 +58,7 @@
 }
 
 .profile-fullname {
-  font-size: 2-large;
+  font-size: 2em; /* or adjust this value to your preference */
   font-weight: bold;
   margin: 10px 0;
   color: white;
@@ -79,8 +79,8 @@
 
 .stat {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 20px;
+  grid-template-columns:1fr 3fr;
+  column-gap: 0px; 
   align-items: center;
   padding: 5px 0;
   font-size: large;
@@ -88,9 +88,10 @@
 }
 
 .stat-value {
-  justify-self: start;
-  color: #4CAF50;
+  justify-self: start; /* Align the value to the left */
+  color: #ff8400;
   font-weight: bold;
+  margin-left: 10px; /* Add a slight margin to make it visually closer to the label */
 }
 
 .view-profile-btn {
@@ -148,7 +149,7 @@
 .form-group {
   font-weight: bold;
   text-align: left;
-  flex: 1;
+  flex: 3;
   min-width: 200px;
 }
 
@@ -162,8 +163,13 @@
 .form-group input {
   width: 100%;
   padding: 8px;
-  border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+.readonly-input {
+  background-color: #b1b1b1; /* Light gray background */
+  cursor: not-allowed; /* Disable cursor interaction */
+  border: 1px solid #9c4600; /* Light border for read-only fields */
 }
 
 .update-btn {
@@ -215,7 +221,7 @@
   }
 
   .profile-fullname {
-      font-size: 1em;
+      font-size: 2em;
   }
 
   .stat-value {
