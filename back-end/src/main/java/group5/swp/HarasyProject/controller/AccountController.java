@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -36,6 +38,11 @@ public class AccountController  {
     @GetMapping("/profile/{id}")
     public ApiResponse<ProfileResponse> getProfile(@PathVariable Integer id) throws Exception {
         return accountService.viewProfile(id);
+    }
+
+    @GetMapping("/accounts")
+    public ApiResponse<List<ProfileResponse>> getCustomerProfile(@RequestParam(required = false) String phone)  {
+        return accountService.getAccounts(phone);
     }
 
     @PostMapping("/quickregis/user")

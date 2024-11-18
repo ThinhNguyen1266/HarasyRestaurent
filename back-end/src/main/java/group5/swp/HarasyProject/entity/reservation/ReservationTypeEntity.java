@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -23,6 +25,9 @@ public class ReservationTypeEntity {
     @Column(name = "reservation_type", nullable = false)
     @Enumerated(EnumType.STRING)
     ReservationType reservationType = ReservationType.GENERAL;
+
+    @OneToMany(mappedBy = "type")
+    List<ReservationEntity> reservations;
 
     @Column(name = "min_price", nullable = false)
     long minPrice;

@@ -25,6 +25,5 @@ public class CategoryEntity {
     String name;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-
     List<FoodEntity> foods;
 }

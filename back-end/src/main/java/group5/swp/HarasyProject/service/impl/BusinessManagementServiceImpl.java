@@ -4,17 +4,24 @@ package group5.swp.HarasyProject.service.impl;
 import group5.swp.HarasyProject.dto.request.order.CustomerOrderRequest;
 import group5.swp.HarasyProject.dto.request.order.OrderItemRequest;
 import group5.swp.HarasyProject.dto.request.order.OrderRequest;
+import group5.swp.HarasyProject.dto.request.reservation.CheckReserveTimeRequest;
+import group5.swp.HarasyProject.dto.request.reservation.CustomerReserveRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
+import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
+import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
 import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
+import group5.swp.HarasyProject.entity.branch.BranchWorkingHourEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.order.OrderEntity;
 import group5.swp.HarasyProject.entity.order.OrderItemEntity;
 import group5.swp.HarasyProject.entity.order.OrderItemId;
+import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
 import group5.swp.HarasyProject.enums.OrderItemStatus;
 import group5.swp.HarasyProject.enums.PaymentStatus;
+import group5.swp.HarasyProject.enums.ReservationStatus;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.service.*;
@@ -27,6 +34,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,7 +52,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     FoodService foodService;
     OrderService orderService;
     OrderItemService orderItemService;
-
+    ReservationService reservationService;
 
     @Override
     public ApiResponse<Page<OrderResponse>> getAllOrders(Pageable pageable) {
@@ -101,42 +112,140 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
     @Override
     @Transactional
-    public ApiResponse<OrderResponse> updateOrder(int orderId,OrderRequest request) {
+    public ApiResponse<OrderResponse> updateOrder(int orderId, OrderRequest request) {
         OrderEntity order = orderService.getOrderById(orderId);
-        if(order.getPaymentStatus().equals(PaymentStatus.PAYED))
+        if (order.getPaymentStatus().equals(PaymentStatus.PAYED))
             throw new AppException(ErrorCode.ORDER_WAS_CLOSED);
-        updateOrderItemInOrder(request,order);
-        createOrderItem(request,order);
-        if(request.getNote()!=null) order.setNote(request.getNote());
+        updateOrderItemInOrder(request, order);
+        createOrderItem(request, order);
+        if (request.getNote() != null) order.setNote(request.getNote());
         orderService.save(order.calculateTotal());
-        return  ApiResponse.<OrderResponse>builder()
+        return ApiResponse.<OrderResponse>builder()
                 .data(toResponse(order.getId()))
                 .build();
     }
 
 
-    private  List<OrderItemEntity> createOrderItem(OrderRequest request, OrderEntity order){
-        if(request.getOrderItems().getCreates()!=null){
-            return toOrderItems(request.getOrderItems().getCreates(),order);
+    private List<OrderItemEntity> createOrderItem(OrderRequest request, OrderEntity order) {
+        if (request.getOrderItems().getCreates() != null) {
+            return toOrderItems(request.getOrderItems().getCreates(), order);
         }
         return null;
     }
 
     private void updateOrderItemInOrder(OrderRequest request, OrderEntity order) {
-        if(request.getOrderItems().getUpdates()!=null){
+        if (request.getOrderItems().getUpdates() != null) {
             for (OrderItemRequest orderItemRequest : request.getOrderItems().getUpdates()) {
                 OrderItemEntity item = orderItemService
-                        .findByOrderIdAndFoodId(order.getId(),orderItemRequest.getFoodId());
+                        .findByOrderIdAndFoodId(order.getId(), orderItemRequest.getFoodId());
                 if (!item.getStatus().equals(OrderItemStatus.PENDING)) {
                     if (orderItemRequest.getQuantity() != null) {
                         if (orderItemRequest.getQuantity() <= item.getQuantity()) continue;
                     }
                 }
-                item = orderItemService.mapUpdateOrderItem(orderItemRequest,item);
+                item = orderItemService.mapUpdateOrderItem(orderItemRequest, item);
                 orderItemService.save(item.calculatePrice());
             }
         }
     }
+
+    @Override
+    public ApiResponse<ReservationResponse> customerReservation(CustomerReserveRequest request) {
+        BranchEntity branch = branchService.getBranchEntity(request.getBranchId());
+        CustomerAccountEntity customer = getCustomerAccount(request.getCustomer());
+        List<TableEntity> tables = calculateCustomerReserveTable(request.getBranchId(),request.getDate()
+        ,request.getTime(),request.getAmountGuest());
+        ReservationEntity reservation = ReservationEntity.builder()
+                .amountGuest(request.getAmountGuest())
+                .branch(branch)
+                .customer(customer)
+                .reservationTime(request.getTime())
+                .reservationDate(request.getDate())
+                .status(ReservationStatus.PENDING)
+                .order(OrderEntity.builder()
+                        .tables(tables)
+                        .paymentStatus(PaymentStatus.PENDING)
+                        .customer(customer)
+                        .branch(branch)
+                        .build())
+                .build();
+        reservation = reservationService.saveReservation(reservation);
+        return null;
+    }
+
+
+    private List<TableEntity> calculateCustomerReserveTable(int branchId, LocalDate date, LocalTime time,int amountGuest){
+        List<TableEntity> tables = tableService.getAllTablesAvailableToReserve(branchId, date, time);
+        List<TableEntity> res = new ArrayList<>();
+        int total = 0;
+        for (TableEntity table : tables) {
+            if(total>=amountGuest)break;
+            total+= table.getCapacity();
+            res.add(table);
+        }
+        return res;
+    }
+
+    @Override
+    public ApiResponse<AvailableReserveTimeResponse> getAvailableReserveTime(CheckReserveTimeRequest request) {
+        BranchEntity branch = branchService.getBranchEntity(request.getBranchId());
+        List<BranchWorkingHourEntity> workingHours = branch.getWorkingHours();
+        if (!isValidReserveDate(request.getTime(), request.getDate(), workingHours))
+            throw new AppException(ErrorCode.INVALID_RESERVE_DATE);
+        LocalTime start = request.getTime().minusHours(2);
+        LocalTime end = request.getTime().plusHours(2);
+        List<LocalTime> timeSlots  = generateReserveTime(start,end);
+        String timeSlotsQuery = convertTimeToQuery(timeSlots);
+        log.info("timeslot: {}", timeSlotsQuery);
+        List<String> availableTimes = reservationService.getAvailableTime(request.getBranchId(), timeSlotsQuery
+                ,request.getDate(), request.getAmountGuest());
+        log.info("res: {}", availableTimes);
+        return ApiResponse.<AvailableReserveTimeResponse>builder()
+                .data(AvailableReserveTimeResponse.builder()
+                        .availableReservations(availableTimes)
+                        .build())
+                .build();
+    }
+
+    private List<LocalTime> generateReserveTime(LocalTime start, LocalTime end) {
+        List<LocalTime> slots = new ArrayList<>();
+        while (!start.isAfter(end)) {
+            slots.add(start);
+            start = start.plusMinutes(30);
+        }
+        return slots;
+    }
+
+    private String convertTimeToQuery(List<LocalTime> timeSlots) {
+        List<String> query  = new ArrayList<>(timeSlots.stream()
+                .map(time -> String.format("SELECT '%s' ", time.toString()))
+                .toList());
+        query.set(0, query.getFirst()+"AS slot_time ");
+        return String.join(" UNION ALL ", query);
+    }
+
+
+
+
+    private boolean isValidReserveDate(LocalTime reserveTime,
+                                       LocalDate reserveDate, List<BranchWorkingHourEntity> workingHours) {
+        boolean validDate = false;
+        BranchWorkingHourEntity tmpHour = null;
+        for (BranchWorkingHourEntity workingHour : workingHours) {
+            DayOfWeek reserveDayOfWeek = reserveDate.getDayOfWeek();
+            DayOfWeek workingDayOfWeek = workingHour.getDayOfWeek();
+            if (reserveDayOfWeek.equals(workingDayOfWeek)) {
+                validDate = true;
+                tmpHour = workingHour;
+                break;
+            }
+        }
+        if (!validDate) return false;
+        boolean VALID_TIME = (reserveTime.plusHours(2).isAfter(tmpHour.getOpeningTime())
+                && reserveTime.minusHours(2).isBefore(tmpHour.getClosingTime()));
+        return VALID_TIME;
+    }
+
 
 
 
@@ -152,11 +261,11 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
     private List<OrderItemEntity> toOrderItems(List<OrderItemRequest> request, OrderEntity order) {
         return request
-                .stream().map(item -> toOrderItem(item,order))
+                .stream().map(item -> toOrderItem(item, order))
                 .toList();
     }
 
-    private OrderItemEntity toOrderItem(OrderItemRequest request,OrderEntity order) {
+    private OrderItemEntity toOrderItem(OrderItemRequest request, OrderEntity order) {
         return OrderItemEntity.builder()
                 .id(OrderItemId.builder()
                         .foodId(request.getFoodId())
