@@ -43,9 +43,18 @@ const useMenuApi = () => {
         branchId: orderData.branchId,
         tableIds: orderData.tableIds,
         staffId: orderData.staffId,
-        customer: {
-          customerId: orderData.customer.customerId,
-        },
+        customer: orderData.customer.customerId
+          ? {
+              customerId: orderData.customer.customerId, // If customerId exists, use it
+            }
+          : orderData.customer.newCustomer // If no customerId, send newCustomer details
+          ? {
+              newCustomer: {
+                email: orderData.customer.newCustomer.email,
+                fullName: orderData.customer.newCustomer.fullName,
+              },
+            }
+          : {}, // If no customer or newCustomer, send empty object (optional)
         orderItems: {
           creates: orderData.orderItems.creates.filter(
             (item) => item.foodId && item.quantity
@@ -54,6 +63,7 @@ const useMenuApi = () => {
         },
         note: orderData.note || "",
       };
+
       console.log("payload", payload);
 
       const order = await axiosPrivate.post("/order", payload);
@@ -65,7 +75,25 @@ const useMenuApi = () => {
     }
   };
 
-  return { addFoodToMenu, getMenuByID, getMenubyBranchID, createOrder };
+  const getCustomerProfileByPhone = async (phone) => {
+    try {
+      const response = await axiosPrivate.get("/accounts", {
+        params: { phone },
+      });
+      return response;
+    } catch (error) {
+      console.error("Error fetching customer by phone:", error);
+      throw error;
+    }
+  };
+
+  return {
+    addFoodToMenu,
+    getMenuByID,
+    getMenubyBranchID,
+    createOrder,
+    getCustomerProfileByPhone,
+  };
 };
 
 export default useMenuApi;

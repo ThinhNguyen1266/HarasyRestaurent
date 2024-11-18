@@ -15,16 +15,21 @@ import useMenuApi from "../hooks/api/useMenuApi";
 import "../assets/styles/MenuOrder.css";
 import useAuth from "../hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 function CreateMenu() {
   const { user } = useAuth();
-  const { getMenubyBranchID, createOrder } = useMenuApi();
+  const { getMenubyBranchID, createOrder, getCustomerProfileByPhone } =
+    useMenuApi();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [cartItems, setCartItems] = useState({});
   const [orderNote, setOrderNote] = useState("");
   const [customerId, setCustomerId] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [email, setEmail] = useState(""); // State for email input
+  const [fullName, setFullName] = useState(""); // State for fullName input
+  const [isNewCustomer, setIsNewCustomer] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -42,6 +47,32 @@ function CreateMenu() {
       console.error(`Failed to fetch menus: ${error.message}`);
     },
   });
+  const handleCustomerSearch = async () => {
+    if (!customerPhone) {
+      toast.error("Please enter a phone number to search.");
+      return;
+    }
+
+    try {
+      // Fetch customer profile by phone
+      const response = await getCustomerProfileByPhone(customerPhone);
+
+      if (response && response.length > 0) {
+        const customer = response[0]; // Assuming the first result is the desired customer
+        setCustomerId(customer.customerId);
+        setIsNewCustomer(false);
+        toast.success(`Customer found: ${customer.fullName}`);
+      } else {
+        toast.warning("No customer found with the given phone number.");
+        setIsNewCustomer(true);
+        console.log("isnewcus: ", isNewCustomer);
+      }
+    } catch (error) {
+      toast.error("Error fetching customer profile.");
+
+      console.error(error);
+    }
+  };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -119,6 +150,17 @@ function CreateMenu() {
       return;
     }
 
+    const customerData = isNewCustomer
+      ? {
+          newCustomer: {
+            email: email,
+            fullName: fullName,
+          },
+        }
+      : {
+          customerId: customerId,
+        };
+
     const orderItems = {
       creates: Object.entries(cartItems).map(([foodId, quantity]) => ({
         foodId: parseInt(foodId, 10),
@@ -131,9 +173,7 @@ function CreateMenu() {
       branchId: user.branchId,
       tableIds: tableIds,
       staffId: user.id, // Assuming staffId is available from `user`
-      customer: {
-        customerId: customerId, // Replace with actual customer ID input value
-      },
+      customer: customerData,
       orderItems,
       note: orderNote,
     };
@@ -221,16 +261,46 @@ function CreateMenu() {
           <div className="bg-dark text-white p-4 rounded">
             <h4 className="mb-3">Confirm Order</h4>
             <div className="mb-3">
-              <label className="form-label text-white">CustomerId: </label>
+              <label className="form-label text-white">Customer Phone: </label>
               <input
                 type="text"
-                name="customerId"
-                value={customerId}
-                onChange={(e) => setCustomerId(e.target.value)}
+                name="customerPhone"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
                 className="form-control"
                 required
               />
+              <Button
+                variant="outline-primary"
+                className="mt-2"
+                onClick={handleCustomerSearch}
+              >
+                <FaSearch /> Search
+              </Button>
             </div>
+            {isNewCustomer && (
+              <div className="mb-3">
+                <label className="form-label text-white">Email: </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="form-control"
+                  required
+                />
+                <label className="form-label text-white">Full Name: </label>
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="form-control"
+                  required
+                />
+              </div>
+            )}
+            {!isNewCustomer && (
+              <p className="text-white">Customer ID: {customerId}</p>
+            )}
             <p className="text-white">Selected Tables: {tableIds.join(", ")}</p>
             {totalItems > 0 ? (
               <ListGroup variant="flush">
@@ -282,6 +352,7 @@ function CreateMenu() {
           </div>
         </Col>
       </Row>
+      <ToastContainer position="top-right" autoClose={3000} />
     </Container>
   );
 }

@@ -15,7 +15,8 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerProfileResponse implements ProfileResponse{
     Integer accountId;
-    Integer id;
+    Integer customerId;
+
     String username;
     String email;
     String fullName;

@@ -29,7 +29,7 @@ public interface AccountMapper {
     AccountEntity quickRegisToAccount(QuickRegisCustomerRequest request);
 
     @Mapping(target = "vipPoint", source = "customer.vipPoint")
-    @Mapping(target = "id", source = "customer.id")
+    @Mapping(target = "customerId", source = "customer.id")
     @Mapping(target = "accountId", source = "account.id")
     CustomerProfileResponse toCustomerProfileResponse(AccountEntity account);
 
