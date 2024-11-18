@@ -2,14 +2,17 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import AuthRoute from "./components/AuthRoute";
 import DefaultLayout from "./components/DefaultLayout";
+import ScrollToTop from "./components/ScrollToTop";
 import StaffLayout from "./components/StaffLayout";
 import About from "./pages/About";
 import ReservationsPage from "./pages/AllReservation";
 import BranchManagement from "./pages/BranchManagement";
 import ChefMenu from "./pages/ChefMenu";
+import ConfirmReservation from "./pages/ConfirmReservation";
 import Contacts from "./pages/Contacts";
 import CreateBranch from "./pages/CreateBranch";
 import EditBranch from "./pages/EditBranch";
+import FindTable from "./pages/FindTable";
 import HCMMenu from "./pages/HCMMenu";
 import HCMVenues from "./pages/HCMVenues";
 import HNMenu from "./pages/HNMenu";
@@ -26,13 +29,13 @@ import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
 function App() {
   return (
-    <div className="App">
+    <>
+      <ScrollToTop />
       <Routes>
         <Route element={<DefaultLayout />}>
           <Route path="/" element={<Home />} />
           <Route element={<AuthRoute allowedRoles={["CUSTOMER"]} />}></Route>
           <Route path="/reservation" element={<ReservationsPage />} />
-
           <Route path="/venues" element={<Venues />} />
           <Route path="/venues/hcm" element={<HCMVenues />} />
           <Route path="/venues/hanoi" element={<HNVenues />} />
@@ -45,6 +48,8 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/findtable" element={<FindTable />} />
+        <Route path="/reservationdetails" element={<ConfirmReservation />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/order" element={<OrderWaiter />} />
@@ -63,7 +68,7 @@ function App() {
           </Route>
         </Route>
       </Routes>
-    </div>
+    </>
   );
 }
 

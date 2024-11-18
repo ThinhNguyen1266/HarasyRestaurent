@@ -1,5 +1,6 @@
 import React from "react";
 import { FaFacebookF, FaInstagram } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 import "../assets/styles/Footer.css";
 
 function Footer() {
@@ -10,25 +11,26 @@ function Footer() {
           <div className="col-md-6">
             <ul className="footer-nav">
               <li>
-                <a href="#">SIGN UP</a>
+                <Link to="/register">SIGN UP</Link>
               </li>
               <li>
-                <a href="#">CAREERS</a>
+                <Link to="#">CAREERS</Link>
               </li>
               <li>
-                <a href="#">FAQS</a>
+                <Link to="#">FAQS</Link>
               </li>
               <li>
-                <a href="#">ABOUT</a>
+                <Link to="#">ABOUT</Link>
               </li>
               <li>
-                <a href="#">CONTACT</a>
+                <Link to="#">CONTACT</Link>
               </li>
             </ul>
             <div className="footer-policies">
-              <a href="#">Accessibility</a> |<a href="#"> Privacy Policy</a> |
-              <a href="#"> Cookie Policy</a> |
-              <a href="#"> Terms & Conditions</a>
+              <Link to="#">Accessibility</Link> |
+              <Link to="#"> Privacy Policy</Link> |
+              <Link to="#"> Cookie Policy</Link> |
+              <Link to="#"> Terms & Conditions</Link>
             </div>
           </div>
 

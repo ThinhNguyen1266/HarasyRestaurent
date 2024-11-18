@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../assets/styles/UserProfile.css";
 import ProfileForm from "../components/UserProfileFrom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../assets/styles/BranchManagement.css";
-import { useQuery } from "@tanstack/react-query";
 import useAccountApi from "../hooks/api/useAccountApi";
 
 const Profile = () => {
   const { getProfile } = useAccountApi();
-  const { data: accountProfile, isLoading, error } = useQuery({
+  const {
+    data: accountProfile,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["accountProfile"],
     queryFn: getProfile,
     onError: (error) => {
@@ -64,7 +67,8 @@ const Profile = () => {
                     Role <span className="stat-value">{localData.role}</span>
                   </p>
                   <p className="stat">
-                    Branch <span className="stat-value">{localData.branchName}</span>
+                    Branch{" "}
+                    <span className="stat-value">{localData.branchName}</span>
                   </p>
                 </div>
               </div>

@@ -1,4 +1,11 @@
 import React from "react";
+import {
+  FaEnvelope,
+  FaLocationCrosshairs,
+  FaLocationDot,
+  FaPhone,
+} from "react-icons/fa6";
+import { Link } from "react-router-dom";
 import "../assets/styles/HNVenues.css";
 
 function HNVenues() {
@@ -6,21 +13,33 @@ function HNVenues() {
     <div className="hnvenues-container">
       <div className="hnvenues-header">
         <h1>HA NOI</h1>
+        <div className="hnvenues-buttons">
+          <Link to="/findtable?branch=ha-noi" className="btn">
+            BOOK A TABLE
+          </Link>
+          <Link to="/menu/hanoi" className="btn">
+            VIEW THE MENU
+          </Link>
+        </div>
       </div>
       <div className="hnvenues-cities">
         <div className="city-info">
           <h2>HA NOI CITY</h2>
           <p>
-            <span className="icon">📍</span> Ha noi
+            <FaLocationDot className="icon" />
+            Ha Noi
           </p>
           <p>
-            <span className="icon">📞</span> 1234567890
+            <FaPhone className="icon" />
+            1234567890
           </p>
           <p>
-            <span className="icon">📧</span> Email Ha Noi City
+            <FaEnvelope className="icon" />
+            Email Ha Noi City
           </p>
           <p>
-            <span className="icon">🗺️</span> Get directions
+            <FaLocationCrosshairs className="icon" />
+            Get directions
           </p>
         </div>
 
