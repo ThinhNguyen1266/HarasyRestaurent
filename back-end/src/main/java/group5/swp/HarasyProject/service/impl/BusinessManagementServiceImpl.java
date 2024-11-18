@@ -79,7 +79,6 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     }
 
     @Override
-    @Transactional
     public ApiResponse<OrderResponse> createOrder(OrderRequest orderRequest) {
         BranchEntity branch = branchService.getBranchEntity(orderRequest.getBranchId());
         List<Integer> tableIds = orderRequest.getTableIds()
@@ -254,7 +253,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         if (request.getCustomerId() != null) {
             id = request.getCustomerId();
         } else {
-            id = accountService.quickCustomerRegis(request.getNewCustomer()).getData().getId();
+            id = accountService.quickCustomerRegis(request.getNewCustomer()).getData().getCustomerId();
         }
         return accountService.getCustomerAccount(id);
     }

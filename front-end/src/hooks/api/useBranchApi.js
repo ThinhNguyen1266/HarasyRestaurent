@@ -88,22 +88,22 @@ const useBranchApi = () => {
 
       const payload = {
         branchInfo: {
-          id: updateBranch.id,
-          name: updatedBranch.name,
-          location: updatedBranch.location,
-          image: updatedBranch.image,
-          phone: updatedBranch.phone,
-          manager: updatedBranch.manager,
-          status: updatedBranch.status,
+          id: updatedBranch.branchInfo.id,
+          name: updatedBranch.branchInfo.name,
+          location: updatedBranch.branchInfo.location,
+          image: updatedBranch.branchInfo.image,
+          phone: updatedBranch.branchInfo.phone,
+          manager: updatedBranch.branchInfo.manager,
+          status: updatedBranch.branchInfo.status,
         },
         workingHours: {}, // Assuming this is for another purpose
         tables: {
-          creates: updatedBranch.tables.creates,
-          updates: updatedBranch.tables.updates,
+          creates: updatedBranch.tables.creates || [],
+          updates: updatedBranch.tables.updates || [],
         },
         menus: {
-          creates: updatedBranch.menus.creates,
-          updates: updatedBranch.menus.updates,
+          creates: updatedBranch.menus.creates || [],
+          updates: updatedBranch.menus.updates || [],
         },
       };
 
@@ -112,7 +112,7 @@ const useBranchApi = () => {
         `/branch/${updatedBranch.branchInfo.id}`,
         payload
       ).data;
-      console.log("Branch data sent:", payload);
+      console.log("Branch data sent:", JSON.stringify(payload, null, 2));
       return branch;
     } catch (error) {
       console.error("Server error details:", error.response?.data);
@@ -129,6 +129,21 @@ const useBranchApi = () => {
     }
   };
 
+  const getMenubyBranchID = async (id, includeAll = true) => {
+    try {
+      // Thêm tham số includeAll vào URL
+      const response = await axiosPrivate.get(`/branch/${id}/menus`, {
+        params: {
+          includeAll: includeAll,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error(`Failed to fetch menus for branch with ID ${id}:`, error);
+      throw error;
+    }
+  };
+
   return {
     getBranchesStaff,
     createBranch,
@@ -136,6 +151,7 @@ const useBranchApi = () => {
     deleteBranch,
     getBranchManagers,
     getBranchbyID,
+    getMenubyBranchID,
   };
 };
 

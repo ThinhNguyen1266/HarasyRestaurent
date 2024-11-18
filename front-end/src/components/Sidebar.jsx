@@ -22,6 +22,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation(); // Get the current location
 
+  console.log(user);
   const [showDashboards, setShowDashboards] = useState(false);
   const [showAccounts, setShowAccounts] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

@@ -31,6 +31,7 @@ import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
 import WorkforceList from "./pages/WorkforceList";
+import CreateOrder from "./pages/CreateOrder";
 function App() {
   return (
     <>
@@ -56,6 +57,7 @@ function App() {
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/order" element={<OrderWaiter />} />
+        <Route path="/profile/:id" element={<Profile />} />
 
         <Route element={<StaffLayout />}>
           <Route
@@ -75,6 +77,7 @@ function App() {
           </Route>
           <Route element={<AuthRoute allowedRoles={["WAITER"]} />}>
             <Route path="/regriscus" element={<RegrisCus />} />
+            <Route path="/createorder" element={<CreateOrder />} />
           </Route>
         </Route>
       </Routes>
