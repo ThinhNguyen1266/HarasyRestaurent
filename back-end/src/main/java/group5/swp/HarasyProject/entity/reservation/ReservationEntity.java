@@ -1,5 +1,6 @@
 package group5.swp.HarasyProject.entity.reservation;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import group5.swp.HarasyProject.entity.Auditable;
 import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
@@ -10,7 +11,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -29,7 +31,12 @@ public class ReservationEntity extends Auditable {
     Integer id;
 
     @Column(name = "reservation_date", nullable = false)
-    Timestamp reservationDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    LocalDate reservationDate;
+
+    @Column(name = "reservation_time", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    LocalTime reservationTime;
 
     @Column(name = "amount_guest", nullable = false)
     int amountGuest;
@@ -57,4 +64,8 @@ public class ReservationEntity extends Auditable {
 
     @ManyToMany(mappedBy = "reservations", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     List<TableEntity> tables;
+
+    @ManyToOne
+    @JoinColumn(name = "reservation_type_id")
+    ReservationTypeEntity type;
 }

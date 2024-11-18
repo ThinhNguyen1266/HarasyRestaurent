@@ -18,7 +18,7 @@ const BranchManagement = () => {
       toast.error(`Failed to fetch branches: ${error.message}`);
     },
   });
-
+  console.log(branches);
   const deleteBranchMutate = useMutation({
     mutationFn: deleteBranch,
     onSuccess: () => {

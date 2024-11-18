@@ -14,6 +14,7 @@ import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public interface AccountService {
@@ -25,6 +26,10 @@ public interface AccountService {
     ApiResponse<ProfileResponse> viewProfile(Integer id) throws IOException, MessagingException;
 
     ApiResponse<CustomerProfileResponse> quickCustomerRegis(QuickRegisCustomerRequest request);
+
+    ApiResponse<List<ProfileResponse>> getAccounts(String phone);
+
+
     StaffAccountEntity getStaffAccount(Integer staffId) ;
     CustomerAccountEntity getCustomerAccount(Integer customerId) ;
 }

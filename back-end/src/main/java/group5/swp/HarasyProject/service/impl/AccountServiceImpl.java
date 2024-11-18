@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 
 @Service
@@ -76,24 +77,23 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest){
+    public ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest) {
         if (otpService.validateOtp(otpRequest)) {
             AccountEntity account = accountRepository.findByEmail(otpRequest.getEmail()).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
             account.setStatus(AccountStatus.ACTIVE);
             redisService.deleteOtp(otpRequest.getEmail());
             accountRepository.save(account);
             return ApiResponse.<OtpResponse>builder().data(OtpResponse.builder().message("Successfully verified OTP, you can sign in now!").username(account.getUsername()).build()).build();
-        }
-        else throw new AppException(ErrorCode.INVALID_OTP);
+        } else throw new AppException(ErrorCode.INVALID_OTP);
     }
 
     @Override
     public ApiResponse<ProfileResponse> viewProfile(Integer id) {
         AccountEntity account = accountRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         ProfileResponse response;
-        if(account.getCustomer()!=null ){
+        if (account.getCustomer() != null) {
             response = accountMapper.toCustomerProfileResponse(account);
-        }else {
+        } else {
             response = accountMapper.toStaffProfileResponse(account);
         }
         return ApiResponse.<ProfileResponse>builder().data(response)
@@ -101,10 +101,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
-
     @Override
     public ApiResponse<CustomerProfileResponse> quickCustomerRegis(QuickRegisCustomerRequest request) {
-        if (accountRepository.existsByEmail(request.getEmail()))  throw new AppException(ErrorCode.EMAIL_EXISTED);
+        if (accountRepository.existsByEmail(request.getEmail())) throw new AppException(ErrorCode.EMAIL_EXISTED);
 
 
         AccountEntity accountEntity = accountMapper.quickRegisToAccount(request);
@@ -112,7 +111,7 @@ public class AccountServiceImpl implements AccountService {
         String username = Arrays
                 .stream(request.getFullName()
                         .split(" "))
-                .reduce("",String::concat);
+                .reduce("", String::concat);
         do {
             int randomNumber = (int) (Math.random() * 900) + 100;
             accountEntity.setUsername(username + randomNumber);
@@ -127,6 +126,23 @@ public class AccountServiceImpl implements AccountService {
                 .build();
     }
 
+
+    @Override
+    public ApiResponse<List<ProfileResponse>> getAccounts(String phone) {
+        List<AccountEntity> acc = accountRepository.findAllAcc(phone);
+        List<ProfileResponse> responses = acc
+                .stream().map(a->{
+                    if (a.getCustomer() != null) {
+                        return accountMapper.toCustomerProfileResponse(a);
+                    } else {
+                        return accountMapper.toStaffProfileResponse(a);
+                    }
+                })
+                .toList();
+        return ApiResponse.<List<ProfileResponse>>builder()
+                .data(responses)
+                .build();
+    }
 
     @Override
     public StaffAccountEntity getStaffAccount(Integer staffId) {
