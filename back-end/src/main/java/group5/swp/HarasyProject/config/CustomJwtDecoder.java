@@ -4,7 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import group5.swp.HarasyProject.dto.request.auth.IntrospectRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.auth.IntrospectResponse;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.exception.JwtAuthenticationException;
 import group5.swp.HarasyProject.service.AuthenticationService;

@@ -31,9 +31,11 @@ public class CustomerAccountEntity {
     @JoinColumn(name = "account_id", nullable = false)
     AccountEntity account;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-    OrderEntity order;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    List<OrderEntity> orders;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<ReservationEntity> reservations;
+
+
 }

@@ -16,9 +16,13 @@ public interface MenuMapper {
     @Mapping(target = "foods", source = "menu.menuItems")
     MenuResponse toMenuResponse(MenuEntity menu);
 
-    MenuEntity toMenuEntity(MenuRequest menuRequest);
 
-    MenuEntity updateMenu(MenuRequest menuRequest, @MappingTarget MenuEntity menuEntity);
-    List<MenuEntity> toMenuEntities(List<MenuRequest> menuRequests);
+    @Mapping(target = "status", constant = "UNAVAILABLE")
+    MenuEntity toMenuEntity(MenuRequest requests);
+
+    MenuEntity updateMenu(MenuRequest requests, @MappingTarget MenuEntity menuEntity);
+
+    @Mapping(target = "status", constant = "UNAVAILABLE")
+    List<MenuEntity> toMenuEntities(List<MenuRequest> requests);
 
 }

@@ -28,6 +28,6 @@ public class StaffProfileResponse implements ProfileResponse{
     String bankAccount;
     String bankName;
     int salary;
-    String branchId;
+    int branchId;
     String branchName;
 }

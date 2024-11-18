@@ -15,7 +15,7 @@ import group5.swp.HarasyProject.dto.response.auth.LogoutResponse;
 import group5.swp.HarasyProject.dto.response.auth.RefreshResponse;
 import group5.swp.HarasyProject.entity.account.AccountEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.AccountMapper;
 import group5.swp.HarasyProject.repository.AccountRepository;
@@ -88,7 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ApiResponse<AuthenticationResponse> login(AuthenticationRequest authenticationRequest, HttpServletResponse response) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         AccountEntity accountEntity = accountRepository.findByUsername(authenticationRequest.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         if (accountEntity.getStatus() != AccountStatus.DELETED) {
             boolean authenticated = passwordEncoder.matches(authenticationRequest.getPassword(), accountEntity.getPassword());
             ProfileResponse profileResponse = null;
@@ -159,7 +159,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SignedJWT jwt = verifyToken(refreshToken);
         String jit = jwt.getJWTClaimsSet().getJWTID();
         String username = jwt.getJWTClaimsSet().getSubject();
-        AccountEntity account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        AccountEntity account = accountRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         String token = "";
         if (redisService.isRefreshToken(username, jit))
             token = generateToken(account, false);

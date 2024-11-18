@@ -20,7 +20,7 @@ const CreateBranch = () => {
     mutationFn: uploadImage,
     onSuccess: (data) => {
       toast.success("Image uploaded successfully!");
-      handleCreateBranch(data); // Gọi hàm tạo branch với URL ảnh
+      handleCreateBranch(data);
     },
     onError: (error) => {
       toast.error(`Failed to upload image: ${error.message}`);
@@ -95,8 +95,6 @@ const CreateBranch = () => {
         type: menu.type,
       })),
     };
-
-    console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
 
     saveBranchMutate.mutate(payload);
   };

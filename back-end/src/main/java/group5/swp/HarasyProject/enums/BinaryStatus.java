@@ -1,5 +1,5 @@
 package group5.swp.HarasyProject.enums;
 
-public enum MenuItemStatus {
+public enum BinaryStatus {
     AVAILABLE,UNAVAILABLE
 }

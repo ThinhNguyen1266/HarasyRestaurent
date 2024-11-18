@@ -5,7 +5,7 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.entity.food.CategoryEntity;
 import group5.swp.HarasyProject.entity.food.FoodEntity;
-import group5.swp.HarasyProject.enums.ErrorCode;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.enums.Status;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.FoodMapper;
@@ -38,7 +38,7 @@ public class FoodServiceImpl implements FoodService {
         List<FoodEntity> foodList = foodRepository.findAll();
         if (!includeAll)
             foodList = foodList
-                    .stream().filter(foodEntity -> foodEntity.getStatus().equals(Status.ACTIVE))
+                    .stream().filter(foodEntity -> !foodEntity.getStatus().equals(Status.DELETED))
                     .toList();
         List<FoodResponse> responseList = foodList
                 .stream().map(foodMapper::toResponse)
@@ -50,7 +50,7 @@ public class FoodServiceImpl implements FoodService {
 
 
     @Override
-    public ApiResponse<FoodResponse> getFoodById(int id) {
+    public ApiResponse<FoodResponse> getFood(int id) {
         FoodEntity food = foodRepository.findById(id)
                 .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
         FoodResponse response = foodMapper.toResponse(food);
@@ -61,7 +61,7 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public ApiResponse<FoodResponse> createFood(FoodRequest request) {
-        FoodEntity foodEntity = foodMapper.toEntity(request,new FoodEntity());
+        FoodEntity foodEntity = foodMapper.toEntity(request);
         return getFoodResponseApiResponse(request, foodEntity);
     }
 
@@ -69,14 +69,14 @@ public class FoodServiceImpl implements FoodService {
     public ApiResponse<FoodResponse> updateFood(int id,FoodRequest request) {
         FoodEntity foodEntity = foodRepository.findById(id)
                 .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
-        foodEntity = foodMapper.toEntity(request,foodEntity);
+        foodEntity = foodMapper.updateFood(request,foodEntity);
         return getFoodResponseApiResponse(request, foodEntity);
     }
 
     private ApiResponse<FoodResponse> getFoodResponseApiResponse(FoodRequest request, FoodEntity foodEntity) {
         if (request.getCategoryId()!=null) {
             CategoryEntity categoryEntity = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
+                    .orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
             foodEntity.setCategory(categoryEntity);
         }
         foodEntity = foodRepository.save(foodEntity);
@@ -93,5 +93,10 @@ public class FoodServiceImpl implements FoodService {
         foodEntity.setStatus(Status.DELETED);
         foodRepository.save(foodEntity);
         return ApiResponse.builder().build();
+    }
+
+    @Override
+    public FoodEntity getFoodEntity(int id) {
+        return foodRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.FOOD_NOT_FOUND));
     }
 }

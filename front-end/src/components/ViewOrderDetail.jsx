@@ -22,9 +22,14 @@ const ViewOrderDetail = ({ show, handleClose, order }) => {
             <br />
             <strong>Time:</strong> {order.time}
             <br />
-            <strong>Table:</strong> {order.table} {/* Added table number */}
+            <strong>Table:</strong> {order.table}
           </p>
-          <p className="view-order-item-count">Total Items: {order.items.length}</p>
+          <p className="view-order-item-count">
+            Total Items: {order.items.length}
+          </p>
+          <p className="view-order-total-price">
+            <strong>Total Price:</strong> {order.price}
+          </p>
         </div>
         <ListGroup variant="flush" className="view-order-items-list">
           {order.items.map((item, idx) => (

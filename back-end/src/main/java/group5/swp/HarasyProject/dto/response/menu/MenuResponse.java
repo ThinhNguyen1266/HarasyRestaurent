@@ -2,6 +2,7 @@ package group5.swp.HarasyProject.dto.response.menu;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import group5.swp.HarasyProject.dto.response.food.FoodResponse;
+import group5.swp.HarasyProject.enums.BinaryStatus;
 import group5.swp.HarasyProject.enums.MenuType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,6 +18,7 @@ import java.util.List;
 public class MenuResponse {
     Integer id;
     MenuType type;
+    BinaryStatus status;
     int branchId;
     List<FoodResponse> foods;
 }

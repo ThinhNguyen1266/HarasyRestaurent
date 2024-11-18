@@ -1,14 +1,14 @@
 package group5.swp.HarasyProject.service;
 
-import group5.swp.HarasyProject.dto.request.branch.CreateBranchRequest;
-import group5.swp.HarasyProject.dto.request.branch.UpdateBranchRequest;
+import group5.swp.HarasyProject.dto.request.branch.BranchInfoRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
-import group5.swp.HarasyProject.dto.response.branch.BranchInfoResponse;
-import group5.swp.HarasyProject.dto.response.branch.BranchListResponse;
-import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
-import group5.swp.HarasyProject.dto.response.table.TableResponse;
+import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
+import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
+import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
+import group5.swp.HarasyProject.entity.branch.BranchEntity;
+import group5.swp.HarasyProject.entity.branch.TableEntity;
+import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 
@@ -16,21 +16,24 @@ import java.util.List;
 
 @Service
 public interface BranchService {
-    ApiResponse<List<BranchInfoResponse>> getAllBranches(boolean includeAll);
 
-    ApiResponse<BranchInfoResponse> getBranchInfo(int branchId);
+    ApiResponse<List<BranchesViewResponse>> getBranchesView();
+    ApiResponse<BranchInfoHomeResponse> getBranchHomeInfo(int branchId);
 
-    ApiResponse<BranchInfoResponse> createBranch(CreateBranchRequest request);
+    ApiResponse<List<BranchResponse>> getAllBranches(boolean includeAll);
+    ApiResponse<BranchResponse> getBranchResponse(int branchId);
 
-    ApiResponse<BranchInfoResponse> updateBranch(Integer id , UpdateBranchRequest request);
+    BranchEntity createBranch(BranchInfoRequest request);
+    BranchEntity updateBranch(Integer id , BranchInfoRequest request);
+    ApiResponse<?> deleteBranch(Integer branchId);
 
-    ApiResponse<?> deleteBranch(Integer BranchId);
+    void addTables(List<TableEntity> tables, BranchEntity branch);
+    void addMenus(List<MenuEntity> menus, BranchEntity branch);
 
-    ApiResponse<List<TableResponse>> getAllTablesInBranch(int branchId);
+    BranchEntity getBranchEntity(int branchId);
+    BranchEntity saveBranch(BranchEntity branch);
+    BranchResponse toBranchResponse(BranchEntity branch);
 
-    ApiResponse<BranchInfoResponse> addTables(Integer branchId, CreateBranchRequest request );
 
-    ApiResponse<List<MenuResponse>> getAllMenusInBranch(int branchId);
 
-    ApiResponse<BranchInfoResponse> addMenus(Integer branchId, CreateBranchRequest request);
 }

@@ -1,4 +1,4 @@
-package group5.swp.HarasyProject.enums;
+package group5.swp.HarasyProject.exception;
 
 
 import lombok.AccessLevel;
@@ -23,17 +23,25 @@ public enum ErrorCode {
     ACCOUNT_NOT_ACTIVE(5005, "account not active", HttpStatus.UNAUTHORIZED),
 
     //NOT FOUND
-    USER_NOT_FOUND(3000, "user not found", HttpStatus.NOT_FOUND),
+    ACCOUNT_NOT_FOUND(3000, "account not found", HttpStatus.NOT_FOUND),
     BRANCH_NOT_FOUND(3001, "branch not found", HttpStatus.NOT_FOUND),
     TABLE_NOT_FOUND(3002, "table not found", HttpStatus.UNAUTHORIZED),
     MENU_NOT_FOUND(3003, "menu not found", HttpStatus.NOT_FOUND),
     CATEGORY_NOT_FOUND(3004, "categories not found", HttpStatus.NOT_FOUND),
     FOOD_NOT_FOUND(3005, "food not found", HttpStatus.NOT_FOUND),
+    STAFF_NOT_FOUND(3006, "staff not found", HttpStatus.NOT_FOUND),
+    ORDER_NOT_FOUND(3007, "order not found", HttpStatus.NOT_FOUND),
+    ORDER_ITEM_NOT_FOUND(3008, "order item not found", HttpStatus.NOT_FOUND),
+
 
     //ALREADY EXIST
     TABLE_EXISTED(4000, "table already exist", HttpStatus.CONFLICT),
     BRANCH_EXISTED(4001,"branch name is duplicate",HttpStatus.CONFLICT),
+    EMAIL_EXISTED(4002,"Email is already existed",HttpStatus.CONFLICT),
 
+    //SPECIAL
+    ORDER_HAVE_NO_TABLE(2000,"cannot create order with no table",HttpStatus.CONFLICT),
+    ORDER_WAS_CLOSED(2001,"order was closed",HttpStatus.CONFLICT),
     ;
 
     int code;
