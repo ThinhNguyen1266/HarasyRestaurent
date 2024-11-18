@@ -3,6 +3,7 @@ package group5.swp.HarasyProject.service;
 import group5.swp.HarasyProject.dto.request.branch.BranchRequest;
 import group5.swp.HarasyProject.dto.request.food.FoodRequest;
 import group5.swp.HarasyProject.dto.request.menu.FoodInMenuRequest;
+import group5.swp.HarasyProject.dto.request.table.TableRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
@@ -38,6 +39,7 @@ public interface RestaurantManagementService {
     ApiResponse<FoodResponse> getFood(int foodId);
     ApiResponse<FoodResponse> createFood(FoodRequest request);
     ApiResponse<FoodResponse> updateFood(int foodId, FoodRequest request);
+    ApiResponse<TableResponse> updateTable(int tableId, TableRequest request);
     ApiResponse<?> deleteFood(int foodId);
     ApiResponse<?> deleteBranch(Integer branchId);
     ApiResponse<?> deleteTable(Integer tableId);
