@@ -4,7 +4,7 @@ import useMenuApi from "../hooks/api/useMenuApi"; // Hook lấy dữ liệu menu
 import { toast } from "react-toastify";
 import "../assets/styles/MenuDetailModal.css";
 
-const MenuDetailModal = ({ menuId, onClose }) => {
+const MenuDetailModal = ({ isOpen, menuId, onClose }) => {
   const { getMenuByID } = useMenuApi();
 
   // Sử dụng useQuery để lấy dữ liệu menu theo menuId
@@ -31,14 +31,23 @@ const MenuDetailModal = ({ menuId, onClose }) => {
     },
   });
 
+  console.log("Modal status isOpen:", isOpen);
+
   // Hiển thị loading
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className="text-white">Loading...</div>;
 
   // Hiển thị lỗi nếu có
-  if (isError) return <div>Error: {error.message}</div>;
+  if (isError) return <div className="text-white">Error: {error.message}</div>;
 
   // Nếu không có menuId hoặc dữ liệu không hợp lệ
   if (!responseData?.data) return null;
+
+  if (!isOpen) {
+    console.log("Modal is not open");
+    return null;
+  } else {
+    console.log("Modal is open, rendering content...");
+  }
 
   const menu = responseData.data; // Lấy menu từ response
 
@@ -48,7 +57,7 @@ const MenuDetailModal = ({ menuId, onClose }) => {
         <button className="close-button" onClick={onClose}>
           &times;
         </button>
-        <h2>{menu.type}</h2>
+        <h2 className="text-white">{menu.type}</h2>
         <p>Status: {menu.status}</p>
 
         <div>

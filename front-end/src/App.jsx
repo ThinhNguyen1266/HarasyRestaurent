@@ -55,7 +55,7 @@ function App() {
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/order" element={<OrderWaiter />} />
         <Route path="/profile/:id" element={<Profile />} />
-        <Route path="/createorder" element={<CreateOrder />} />
+
         <Route element={<StaffLayout />}>
           <Route
             element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}
@@ -72,6 +72,7 @@ function App() {
           </Route>
           <Route element={<AuthRoute allowedRoles={["WAITER"]} />}>
             <Route path="/regriscus" element={<RegrisCus />} />
+            <Route path="/createorder" element={<CreateOrder />} />
           </Route>
         </Route>
       </Routes>

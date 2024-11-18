@@ -92,7 +92,9 @@ const CreateOrder = ({ show, handleClose, onCreateOrder }) => {
       dialogClassName="create-order-modal-content"
     >
       <Modal.Header className="create-order-header">
-        <Modal.Title className="create-order-title">Create New Order</Modal.Title>
+        <Modal.Title className="create-order-title">
+          Create New Order
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className="create-order-body">
         <InputGroup className="mb-3 create-order-search">

@@ -27,4 +27,5 @@ public interface AccountService {
     ApiResponse<CustomerProfileResponse> quickCustomerRegis(QuickRegisCustomerRequest request);
     StaffAccountEntity getStaffAccount(Integer staffId) ;
     CustomerAccountEntity getCustomerAccount(Integer customerId) ;
+
 }

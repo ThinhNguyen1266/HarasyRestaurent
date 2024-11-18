@@ -68,7 +68,6 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     }
 
     @Override
-    @Transactional
     public ApiResponse<OrderResponse> createOrder(OrderRequest orderRequest) {
         BranchEntity branch = branchService.getBranchEntity(orderRequest.getBranchId());
         List<Integer> tableIds = orderRequest.getTableIds()

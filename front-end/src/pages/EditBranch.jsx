@@ -15,8 +15,9 @@ const EditBranch = () => {
 
   const handleMenuClick = (menuId) => {
     console.log("Selected Menu ID:", menuId);
+
     setSelectedMenuId(menuId); // Lưu ID của menu được nhấn
-    setIsModalOpen(true); // Mở modal
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -450,7 +451,7 @@ const EditBranch = () => {
                     className="btn btn-primary me-2"
                     onClick={() => handleMenuClick(menu.id)} // Khi nhấn, mở modal với menu ID
                   >
-                    {menu.type || "Menu " + (index + 1)}
+                    {menu.type}
                   </button>
                 ))}
               </div>
@@ -459,8 +460,9 @@ const EditBranch = () => {
             {/* Hiển thị modal khi selectedMenuId có giá trị và isModalOpen là true */}
             {isModalOpen && (
               <MenuDetailModal
-                menuId={selectedMenuId} // Truyền ID của menu vào modal
-                onClose={handleCloseModal} // Hàm đóng modal
+                isOpen={isModalOpen}
+                menuId={selectedMenuId}
+                onClose={() => setIsModalOpen(false)}
               />
             )}
           </div>
