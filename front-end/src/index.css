@@ -1,5 +1,26 @@
 body {
   background-color: rgb(0, 0, 0);
   overflow-x: hidden;
-  font-family: "Futura", sans-serif;
+  font-family: "Ogirema", sans-serif;
+}
+
+@font-face {
+  font-family: "Ogirema";
+  src: url("./assets/fonts/OgiremaBold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Ogirema";
+  src: url("./assets/fonts/OgiremaItalic.ttf") format("truetype");
+  font-weight: italic;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Ogirema";
+  src: url("./assets/fonts/Ogirema.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }

@@ -1,4 +1,3 @@
-// CreateReservationModal.jsx
 import React, { useState } from "react";
 import "../assets/styles/CreateReservationModal.css";
 
@@ -23,13 +22,24 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const handleGuestChange = (operation) => {
+    setReservationInfo((prevState) => {
+      const currentGuests = parseInt(prevState.guests || "0", 10);
+      const updatedGuests = operation === "increment" ? currentGuests + 1 : currentGuests - 1;
+      return {
+        ...prevState,
+        guests: updatedGuests >= 0 ? updatedGuests.toString() : "0", // Prevent negative numbers
+      };
+    });
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="create-reservation-modal-overlay">
       <div className="create-reservation-modal-content">
         <h2 className="create-reservation-modal-title">Create New Reservation</h2>
-        
+
         <div className="create-reservation-modal-body">
           <div className="create-reservation-info">
             <h3 className="create-reservation-modal-section-title">Reservation Info</h3>
@@ -55,13 +65,19 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
             </label>
             <label className="create-reservation-modal-label">
               Amount of Guests
-              <input
-                type="number"
-                name="guests"
-                value={reservationInfo.guests}
-                onChange={handleChange}
-                className="create-reservation-modal-input"
-              />
+              <div className="create-reservation-modal-input-wrapper">
+                <input
+                  type="number"
+                  name="guests"
+                  value={reservationInfo.guests}
+                  onChange={handleChange}
+                  className="create-reservation-modal-input"
+                />
+                <div className="custom-number-buttons">
+                  <button onClick={() => handleGuestChange("increment")}>+</button>
+                  <button onClick={() => handleGuestChange("decrement")}>-</button>
+                </div>
+              </div>
             </label>
             <label className="create-reservation-modal-label">
               Order

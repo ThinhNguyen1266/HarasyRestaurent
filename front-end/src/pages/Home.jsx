@@ -105,7 +105,7 @@ function Home() {
             <div className="section-3-col-text">
               <h2 className="section-3-title">JOIN THE E-CLUB</h2>
               <p className="section-3-description">
-                Join the Hell's Kitchen E-Club and be the first to learn about
+                Join the Harasy Restaurnt E-Club and be the first to learn about
                 local events,
                 <br /> seasonal-menu offerings, and more.
               </p>
