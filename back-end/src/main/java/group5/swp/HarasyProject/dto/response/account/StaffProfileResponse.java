@@ -15,6 +15,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StaffProfileResponse implements ProfileResponse{
+    Integer accountId;
     Integer id;
     String username;
     String email;
@@ -27,6 +28,7 @@ public class StaffProfileResponse implements ProfileResponse{
     StaffRole role;
     String bankAccount;
     String bankName;
+    String picture;
     int salary;
     int branchId;
     String branchName;

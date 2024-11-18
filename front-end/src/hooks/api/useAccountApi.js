@@ -7,17 +7,38 @@ const useAccountApi = () => {
   const { user } = useAuth();
   const getProfile = async () => {
     try {
-      const response = await axios.get(`/profile/${user.id}`);
-      const profileData = response.data; // Access 'data' from the response
+      console.log("user id", user.accountId);
+      const response = await axios.get(`/profile/${user.accountId}`);
+      const profileData = response.data;
       console.log("acc data", profileData);
       return profileData;
     } catch (error) {
       throw error;
     }
   };
-  
 
-  return { getProfile };
+  const updateCusProfile = async (updateCusProfile) => {
+    try {
+      const payload = {
+        fullName: updateCusProfile.fullName,
+        dob: updateCusProfile.dob,
+        vipPoint: updateCusProfile.vipPoint,
+      };
+
+      // Sending the update request to the backend
+      const cusProfile = await axiosPrivate.put(
+        `/profile/${user.accountId}`,
+        payload
+      ).data;
+      console.log("data sent:", payload);
+      return cusProfile;
+    } catch (error) {
+      console.error("Server error details:", error.response?.data);
+      throw error;
+    }
+  };
+
+  return { getProfile ,updateCusProfile};
 };
 
 export default useAccountApi;

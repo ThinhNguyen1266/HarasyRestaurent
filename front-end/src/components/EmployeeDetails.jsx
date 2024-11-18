@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { FiEdit2, FiTrash2, FiMail, FiPhone } from "react-icons/fi";
+import {
+  FiEdit2,
+  FiPower,
+  FiAlertCircle,
+  FiMail,
+  FiPhone,
+} from "react-icons/fi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useStaffApi from "../hooks/api/UseStaffApi";
 import uploadImage from "../services/uploadImage";
 import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
 import useBranchApi from "../hooks/api/useBranchApi";
-import "../assets/styles/EmployeeDetail.css"
+import "../assets/styles/EmployeeDetail.css";
 
-const EmployeeDetails = ({ employee, onClose, isEditing, onEdit, onDelete, refetch }) => {
+const EmployeeDetails = ({
+  employee,
+  onClose,
+  isEditing,
+  onEdit,
+  onDelete,
+  refetch,
+}) => {
   const { getBranchesStaff } = useBranchApi();
   const { data: branches = [] } = useQuery({
     queryKey: ["branches"],
@@ -73,6 +86,17 @@ const EmployeeDetails = ({ employee, onClose, isEditing, onEdit, onDelete, refet
     }
   };
 
+  const handleDelete = () => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete ${employee.fullName}? This action cannot be undone.`
+    );
+    if (isConfirmed) {
+      const updatedEmployee = { ...editedEmployee, status: "DELETED" };
+      updateStaffMutation.mutate(updatedEmployee);
+      refetch(); // Call refetch after saving
+      onClose(); // Close the modal
+    }
+  };
   // Update status when the modal closes (or some other trigger)
   const handleClose = () => {
     if (newStatus !== editedEmployee.status) {
@@ -107,6 +131,8 @@ const EmployeeDetails = ({ employee, onClose, isEditing, onEdit, onDelete, refet
                 isUploading={isUploading}
                 setIsUploading={setIsUploading}
                 branches={branches}
+                newStatus={newStatus}
+                handleStatusToggle={handleStatusToggle}
               />
             ) : (
               <ViewDetails
@@ -114,6 +140,7 @@ const EmployeeDetails = ({ employee, onClose, isEditing, onEdit, onDelete, refet
                 onEdit={onEdit}
                 onStatusToggle={handleStatusToggle}
                 currentStatus={newStatus}
+                onDelete={handleDelete}
               />
             )}
           </div>
@@ -123,7 +150,6 @@ const EmployeeDetails = ({ employee, onClose, isEditing, onEdit, onDelete, refet
   );
 };
 
-
 const EditingForm = ({
   editedEmployee,
   setEditedEmployee,
@@ -131,6 +157,8 @@ const EditingForm = ({
   isUploading,
   setIsUploading,
   branches,
+  newStatus,
+  handleStatusToggle,
 }) => {
   const [previewUrl, setPreviewUrl] = useState(editedEmployee.picture || null);
   const { user } = useAuth();
@@ -180,7 +208,9 @@ const EditingForm = ({
               <option value="CHEF">Chef</option>
               <option value="RECEPTIONIST">Receptionist</option>
             </select>
-          ) : field === "bankName" || field === "bankAccount" || field === "salary" ? (
+          ) : field === "bankName" ||
+            field === "bankAccount" ||
+            field === "salary" ? (
             <input
               type={field === "salary" ? "number" : "text"}
               value={editedEmployee[field] || ""}
@@ -237,6 +267,22 @@ const EditingForm = ({
         )}
       </div>
 
+      {/* Status Switch in Edit Mode */}
+      <div className="mb-3">
+        <label className="form-label text-light">Status</label>
+        <div className="d-flex align-items-center gap-3">
+          <label className="switch">
+            <input
+              type="checkbox"
+              checked={newStatus === "ACTIVE"}
+              onChange={handleStatusToggle}
+            />
+            <span className="slider round"></span>
+          </label>
+          <span className="text-light">{newStatus}</span>
+        </div>
+      </div>
+
       <button
         onClick={onSave}
         className="btn btn-primary w-100"
@@ -248,63 +294,75 @@ const EditingForm = ({
   );
 };
 
-
-const ViewDetails = ({ employee, onEdit, onStatusToggle, currentStatus }) => (
+const ViewDetails = ({ employee, onEdit, onDelete, currentStatus }) => (
   <div className="container">
     <div className="row justify-content-center g-4">
-    <div className="col-12 col-md-6 d-flex justify-content-center align-items-center flex-column text-center mb-2">
-  <img
-    src={employee.picture || "https://images.unsplash.com/photo-1633332755192-727a05c4013d"}
-    alt={employee.fullName}
-    className="rounded-circle mb-3"
-    style={{ width: "200px", height: "200px", objectFit: "cover" }}
-  />
-  <h3 className="text-light mb-2">{employee.fullName}</h3>
-  <p className="text-light fs-3 fw-bold">{employee.role}</p>
-</div>
-
+      <div className="col-12 col-md-6 d-flex justify-content-center align-items-center flex-column text-center mb-2">
+         <img
+                    src={`${employee.picture || "default-avatar-url"}`}
+                    alt={employee.fullName}
+                    onError={(e) =>
+                      (e.target.src =
+                        "https://images.unsplash.com/photo-1633332755192-727a05c4013d")
+                    }
+                    className="rounded-circle me-3"
+                    style={{
+                      width: "200px",
+                      height: "200px",
+                      objectFit: "cover",
+                    }}
+                  />     
+        <h3 className="text-light mb-2">{employee.fullName}</h3>
+        <p className="text-light fs-3 fw-bold ">{employee.role}</p>
+      </div>
 
       <div className="col-12 col-md-10">
         <EmployeeInfo employee={employee} />
       </div>
     </div>
 
-    <div className="d-flex gap-5 mt-4 flex-column flex-md-row">
+    <div className="d-flex gap-3 mt-4 flex-column flex-md-row">
       <button
         onClick={onEdit}
         className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
       >
         <FiEdit2 /> <span>Edit</span>
       </button>
-
-      <div className="d-flex align-items-center gap-2 w-100">
-        <span className="text-light">Status</span>
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={currentStatus === "ACTIVE"}
-            onChange={onStatusToggle}
-          />
-          <span className="slider round"></span>
-        </label>
-      </div>
+      <button
+        onClick={onDelete}
+        className="btn btn-danger w-70 d-flex align-items-center justify-content-center gap-2"
+      >
+        <FiAlertCircle /> <span>Delete</span>
+      </button>
     </div>
   </div>
 );
 
-
-
 const EmployeeInfo = ({ employee }) => {
   return (
     <ul className="list-unstyled fs-5">
-      <li><strong>Email:</strong> {employee.email}</li>
-      <li><strong>Phone:</strong> {employee.phone}</li>
-      <li><strong>Date of Birth:</strong> {new Date(employee.dob).toLocaleDateString()}</li>
-      <li><strong>Bank Name:</strong> {employee.bankName}</li>
-      <li><strong>Bank Account:</strong> {employee.bankAccount}</li>
-      <li><strong>Salary:</strong> ${employee.salary}</li>
+      <li>
+        <strong>Email:</strong> {employee.email}
+      </li>
+      <li>
+        <strong>Phone:</strong> {employee.phone}
+      </li>
+      <li>
+        <strong>Date of Birth:</strong>{" "}
+        {new Date(employee.dob).toLocaleDateString()}
+      </li>
+      <li>
+        <strong>Bank Name:</strong> {employee.bankName}
+      </li>
+      <li>
+        <strong>Bank Account:</strong> {employee.bankAccount}
+      </li>
+      <li>
+        <strong>Salary:</strong> ${employee.salary}
+      </li>
     </ul>
   );
 };
+
 
 export default EmployeeDetails;

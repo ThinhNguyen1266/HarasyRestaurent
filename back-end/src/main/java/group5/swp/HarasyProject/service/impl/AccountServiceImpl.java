@@ -1,5 +1,6 @@
 package group5.swp.HarasyProject.service.impl;
 
+import group5.swp.HarasyProject.dto.request.account.CusUpdateProfileRequest;
 import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
@@ -169,4 +170,23 @@ public class AccountServiceImpl implements AccountService {
         return customerAccountRepository.findById(customerId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
     }
+
+    @Override
+    public ApiResponse<CustomerProfileResponse> cusUpdateProfile(int id, CusUpdateProfileRequest request) {
+        AccountEntity account =accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        CustomerAccountEntity customerAccount = customerAccountRepository.findByAccount(account)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        customerAccount=accountMapper.updateCusInfo(request,customerAccount);
+        System.out.println("cus update"+customerAccount);
+        customerAccountRepository.save(customerAccount);
+        CustomerProfileResponse response = accountMapper.toCustomerProfileResponse(account);
+        return ApiResponse.<CustomerProfileResponse>builder()
+                .code(200)
+                .data(response)
+                .build();
+    }
+
+
+
 }
