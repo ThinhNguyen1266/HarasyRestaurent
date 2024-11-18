@@ -1,9 +1,8 @@
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../assets/styles/BranchManagement.css";
-import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import useBranchApi from "../hooks/api/useBranchApi";
 
 const BranchManagement = () => {
