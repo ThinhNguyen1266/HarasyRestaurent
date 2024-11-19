@@ -32,11 +32,11 @@ public class ReservationEntity extends Auditable {
 
     @Column(name = "reservation_date", nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    LocalDate reservationDate;
+    LocalDate date;
 
     @Column(name = "reservation_time", nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    LocalTime reservationTime;
+    LocalTime time;
 
     @Column(name = "amount_guest", nullable = false)
     int amountGuest;
@@ -58,14 +58,22 @@ public class ReservationEntity extends Auditable {
     @JoinColumn(name = "branch_id")
     BranchEntity branch;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     OrderEntity order;
 
-    @ManyToMany(mappedBy = "reservations", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany
+    @JoinTable(
+            name = "reservation_table",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "table_id")
+    )
     List<TableEntity> tables;
 
     @ManyToOne
     @JoinColumn(name = "reservation_type_id")
     ReservationTypeEntity type;
+
+
+
 }

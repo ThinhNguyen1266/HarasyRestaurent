@@ -4,6 +4,7 @@ package group5.swp.HarasyProject.service;
 import group5.swp.HarasyProject.dto.request.order.OrderRequest;
 import group5.swp.HarasyProject.dto.request.reservation.CheckReserveTimeRequest;
 import group5.swp.HarasyProject.dto.request.reservation.CustomerReserveRequest;
+import group5.swp.HarasyProject.dto.request.reservation.ReservationRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
 import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
@@ -23,4 +24,8 @@ public interface BusinessManagementService {
     ApiResponse<OrderResponse> updateOrder(int orderId,OrderRequest orderRequest);
     ApiResponse<AvailableReserveTimeResponse> getAvailableReserveTime(CheckReserveTimeRequest request);
     ApiResponse<ReservationResponse> customerReservation(CustomerReserveRequest request);
+    ApiResponse<ReservationResponse> createReservation(ReservationRequest request);
+    ApiResponse<Page<ReservationResponse>> getAllReservationsInBranch(Pageable pageable, Boolean isHistory, int branchId);
+    ApiResponse<ReservationResponse> getReservation(int id);
+    ApiResponse<ReservationResponse> updateReservation(ReservationRequest request,int id);
 }

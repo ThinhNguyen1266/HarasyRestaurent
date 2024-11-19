@@ -24,7 +24,7 @@ public class ReservationTypeEntity {
 
     @Column(name = "reservation_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    ReservationType reservationType = ReservationType.GENERAL;
+    ReservationType name = ReservationType.GENERAL;
 
     @OneToMany(mappedBy = "type")
     List<ReservationEntity> reservations;

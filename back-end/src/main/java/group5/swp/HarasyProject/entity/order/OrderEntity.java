@@ -76,4 +76,9 @@ public class OrderEntity extends Auditable {
         return this;
     }
 
+    public void addItem(OrderItemEntity orderItem) {
+        if(orderItems==null) orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+    }
+
 }

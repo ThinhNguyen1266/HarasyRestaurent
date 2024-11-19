@@ -7,7 +7,9 @@ import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
+import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
+import group5.swp.HarasyProject.service.BusinessManagementService;
 import group5.swp.HarasyProject.service.RestaurantManagementService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ import java.util.List;
 public class BranchController {
 
     RestaurantManagementService restaurantManagementService;
+    BusinessManagementService businessManagementService;
+
 
     @GetMapping("/branches/home")
     ApiResponse<List<BranchesViewResponse>> getBranchesHome() {
@@ -88,4 +92,18 @@ public class BranchController {
         return restaurantManagementService.getOrdersInBranch(id, pageable);
     }
 
+
+    @GetMapping("branch/{id}/reserve")
+    ApiResponse<Page<ReservationResponse>> getAllReservation(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(defaultValue = "false") Boolean isHistory,
+            @PathVariable int id) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sortBy = Sort.by(sortDirection, sort);
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+        return businessManagementService.getAllReservationsInBranch(pageable,isHistory,id);
+    }
 }
