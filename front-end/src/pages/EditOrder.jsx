@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
@@ -18,7 +18,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 function EditOrder() {
   const { user } = useAuth();
-  const { getMenubyBranchID, getOrderByID, updateOrder } = useMenuApi(); // Ensure updateOrder is in useMenuApi
+  const { getMenubyBranchID, getOrderByID, updateOrder } = useMenuApi();
   const [searchTerm, setSearchTerm] = useState("");
   const [cartItems, setCartItems] = useState({});
   const [orderNote, setOrderNote] = useState("");
@@ -38,6 +38,12 @@ function EditOrder() {
     },
   });
 
+  useEffect(() => {
+    if (order) {
+      setOrderNote(order.note || ""); // Đặt note từ order vào orderNote
+    }
+  }, [order]);
+
   // Fetch menu data
   const {
     data: menuData,
@@ -56,7 +62,7 @@ function EditOrder() {
     mutationFn: ({ id, updatedOrder }) => updateOrder(id, updatedOrder),
     onSuccess: () => {
       toast.success("Order updated successfully!");
-      queryClient.invalidateQueries(["order", id]); // Refresh order data
+      queryClient.invalidateQueries(["order", id]);
     },
     onError: (error) => {
       toast.error(
@@ -70,74 +76,76 @@ function EditOrder() {
   // Handle search input
   const handleSearch = (e) => setSearchTerm(e.target.value);
 
-  // Add food to cart
-  const addToCart = (item) => {
+  const addToCart = (item, quantity = 1) => {
     setCartItems((prev) => ({
       ...prev,
-      [item.id]: (prev[item.id] || 0) + 1,
+      [item.id]: getCurrentQuantity(item.id) + quantity,
     }));
   };
 
-  // Remove food from cart
   const removeFromCart = (itemId) => {
     setCartItems((prev) => {
       const updatedCart = { ...prev };
-      if (updatedCart[itemId] > 1) {
-        updatedCart[itemId] -= 1;
+      const currentQuantity = getCurrentQuantity(itemId);
+
+      if (currentQuantity > 1) {
+        updatedCart[itemId] = currentQuantity - 1;
       } else {
         delete updatedCart[itemId];
       }
+
       return updatedCart;
     });
   };
 
+  const getCurrentQuantity = (itemId) => {
+    return (
+      cartItems[itemId] ||
+      order.orderItems.find((item) => item.foodId === itemId)?.quantity ||
+      0
+    );
+  };
+
   // Submit updated order
   const handleUpdateOrder = () => {
-    // Map cartItems to creates (newly added items)
     const creates = Object.entries(cartItems)
       .filter(([foodId, quantity]) => {
         return !order.orderItems.some(
           (item) => item.foodId === parseInt(foodId, 10)
-        ); // Only create if foodId is not in existing order
+        );
       })
       .map(([foodId, quantity]) => ({
         foodId: parseInt(foodId, 10),
         quantity,
       }));
 
-    // Map existing orderItems to updates (items that exist in the order)
     const updates = order.orderItems
-      .filter((item) => cartItems[item.foodId]) // Only update if item exists in the cart
+      .filter((item) => cartItems[item.foodId] !== undefined)
       .map((item) => ({
         foodId: item.foodId,
-        quantity: cartItems[item.foodId], // Update quantity based on cart item
+        quantity: cartItems[item.foodId],
       }));
-
-    console.log("Creates:", creates);
-    console.log("Updates:", updates);
 
     const updatedOrder = {
       orderItems: {
-        creates, // Newly added items
-        updates, // Existing order items with updated quantities
+        creates,
+        updates,
       },
-      note: orderNote || order.note, // Preserve existing note if no new note is set
+      note: orderNote,
     };
 
     mutation.mutate({ id, updatedOrder });
   };
 
-  // Group menu items by type and filter available foods
   const groupedMenuItems = menuData
     ?.filter((menu) => menu.status === "AVAILABLE")
     .map((menu) => ({
       ...menu,
-      foods: menu.foods
+      foods: menu.menuItems
         .filter((food) => food.status === "AVAILABLE")
         .sort((a, b) => a.id - b.id),
     }));
 
-  // Filter menu items based on search term
   const filteredMenuItems =
     groupedMenuItems
       ?.flatMap((menu) =>
@@ -198,24 +206,22 @@ function EditOrder() {
                           variant="outline-success"
                           size="sm"
                           onClick={() => addToCart(item)}
-                          className="me-2"
+                          className="mx-2"
                         >
                           Add
                         </Button>
-                        {cartItems[item.id] && (
-                          <>
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => removeFromCart(item.id)}
-                            >
-                              Remove
-                            </Button>
-                            <Badge bg="secondary" className="ms-2">
-                              x{cartItems[item.id]}
-                            </Badge>
-                          </>
-                        )}
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => removeFromCart(item.id)}
+                          disabled={getCurrentQuantity(item.id) === 0}
+                          className="me-2"
+                        >
+                          Remove
+                        </Button>
+                        <Badge bg="secondary" className="mx-2">
+                          x{getCurrentQuantity(item.id)}
+                        </Badge>
                       </div>
                     </div>
                   </Col>
@@ -225,27 +231,22 @@ function EditOrder() {
           ))}
         </Col>
         <Col md={4} className="text-white">
-          <h2>Order Details</h2>
-          <p>
-            <strong>Order ID:</strong> {order.id}
-          </p>
+          <h2>Order Details # {order.id}</h2>
+
           <p>
             <strong>Payment Status:</strong> {order.paymentStatus}
           </p>
           <p>
-            <strong>Branch:</strong> {order.branch.name}
+            <strong>
+              Tables: {order.tables.map((t) => t.number).join(", ")}{" "}
+            </strong>
           </p>
+
           <p>
             <strong>Staff:</strong> {order.staff.name}
           </p>
           <p>
             <strong>Customer:</strong> {order.customer.name}
-          </p>
-          <p>
-            <strong>Total:</strong> ${order.total}
-          </p>
-          <p>
-            <strong>Note:</strong> {order.note}
           </p>
 
           <h3>Order Items</h3>
@@ -262,8 +263,8 @@ function EditOrder() {
             <Form.Control
               as="textarea"
               rows={3}
-              value={orderNote}
-              onChange={(e) => setOrderNote(e.target.value)}
+              value={orderNote} // Gán giá trị từ trạng thái orderNote
+              onChange={(e) => setOrderNote(e.target.value)} // Cập nhật orderNote khi nhập
               placeholder="Add a note..."
             />
           </Form.Group>

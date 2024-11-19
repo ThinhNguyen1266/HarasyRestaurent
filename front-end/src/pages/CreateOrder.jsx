@@ -106,7 +106,7 @@ function CreateMenu() {
     ?.filter((menu) => menu.status === "AVAILABLE") // Filter available menus
     .map((menu) => ({
       ...menu,
-      foods: menu.foods
+      foods: menu.menuItems
         .filter((food) => food.status === "AVAILABLE") // Filter available foods
         .sort((a, b) => a.id - b.id), // Sort foods by id
     }));
@@ -114,7 +114,7 @@ function CreateMenu() {
   const filteredMenuItems =
     groupedMenuItems
       ?.flatMap((menu) =>
-        menu.foods.map((food) => ({
+        menu.menuItems.map((food) => ({
           ...food,
           menuType: menu.type, // Add menu type to food
         }))
