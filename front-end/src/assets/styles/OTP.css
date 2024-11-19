@@ -1,0 +1,79 @@
+.otp-page {
+  position: relative;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.otp-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../img/loginbg.png");
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+.otp-box {
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 35px;
+  color: white;
+  width: 450px;
+  height: 400px;
+  margin: auto;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.brand-logo img {
+  width: 180px;
+  height: auto;
+  margin-bottom: 25px;
+}
+
+.otp-input {
+  font-size: 1.5rem;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+}
+
+.otp-button {
+  font-weight: bold;
+  width: 100%;
+  background-color: #fb8500;
+  padding: 10px;
+  font-size: 1.25rem;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  color: rgb(0, 0, 0);
+  font-size: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.otp-button:hover {
+  background-color: #f89e38;
+}
+
+.otp-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.otp-subtitle {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
