@@ -1,7 +1,7 @@
 .footer {
   background-color: #000;
   color: #fff;
-  padding: 60px 40px;
+  padding: 40px 20px;
   font-family: "Ogirema", sans-serif;
 }
 
@@ -9,73 +9,68 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  text-align: left;
 }
 
 .footer-nav li {
-  display: inline-block;
-  margin-right: 20px;
+  margin-bottom: 10px;
 }
 
 .footer-nav li a {
   color: #fff;
   text-transform: uppercase;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: bold;
   text-decoration: none;
-  padding-right: 20px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  display: block;
+  transition: color 0.3s ease;
 }
 
 .footer-nav li a:hover {
   color: #fb8500;
 }
 
-.footer-nav li a:active {
-  color: #fbaf57;
-}
-
 .footer-policies {
-  margin-top: 25px;
-  font-size: 15px;
+  margin-top: 20px;
+  font-size: 14px;
   color: #ffffff;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
 }
 
 .footer-policies a {
   color: #ffffff;
   text-decoration: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .footer-policies a:hover {
   color: #fb8500;
 }
 
-.footer-policies a:active {
-  color: #fbaf57;
+.footer-social {
+  margin-top: 5px;
+  text-align: center;
 }
 
 .footer-social .social-icon {
   color: #fb8500;
-  margin-left: 15px;
-  font-size: 24px;
+  margin: 0 10px;
+  font-size: 20px;
   text-decoration: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .footer-social .social-icon:hover {
   color: #fbaf57;
 }
 
-.footer-social {
-  text-align: right;
-}
-
 .footer-copyright {
-  text-align: right;
-  font-size: 16px;
+  margin-top: 5px;
+  font-size: 14px;
+  text-align: center;
 }
 
 .container {
@@ -83,9 +78,44 @@
   margin: 0 auto;
 }
 
+@media (min-width: 768px) {
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .footer-nav li {
+    margin: 0;
+  }
+
+  .footer-policies {
+    justify-content: flex-start;
+  }
+
+  .footer-social {
+    text-align: right;
+  }
+
+  .footer-copyright {
+    text-align: right;
+  }
+}
+
 @media (max-width: 768px) {
+  .footer-nav,
+  .footer-policies,
   .footer-social,
   .footer-copyright {
     text-align: center;
+  }
+
+  .footer-nav li {
+    display: inline-block;
+    margin: 5px;
+  }
+
+  .footer-social {
+    margin-bottom: 10px;
   }
 }
