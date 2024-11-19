@@ -1,6 +1,9 @@
 package group5.swp.HarasyProject.service.impl;
 
+import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
 import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
+import group5.swp.HarasyProject.exception.AppException;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.mapper.ReservationMapper;
 import group5.swp.HarasyProject.repository.ReservationRepository;
 import group5.swp.HarasyProject.service.ReservationService;
@@ -10,6 +13,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -71,7 +76,24 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public Page<ReservationEntity> getAllReservationsInBranch(Pageable pageable, Boolean isHistory,int branchId) {
+        return reservationRepository.getAllReservation(pageable,isHistory,branchId);
+    }
+
+    @Override
+    public ReservationEntity getReservationById(int id) {
+        return reservationRepository
+                .findById(id).orElseThrow(()->new AppException(ErrorCode.RESERVATION_NOT_FOUND));
+    }
+
+    @Override
     public ReservationEntity saveReservation(ReservationEntity reservation) {
         return reservationRepository.save(reservation);
+    }
+
+
+    @Override
+    public ReservationResponse toReservationResponse(ReservationEntity reservation) {
+        return reservationMapper.toResponse(reservation);
     }
 }

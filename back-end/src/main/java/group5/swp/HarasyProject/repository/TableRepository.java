@@ -25,22 +25,22 @@ public interface TableRepository extends JpaRepository<TableEntity, Integer> {
                           and t.status = 'AVAILABLE'
                           and (r  is null
                             or (
-                                   r.reservationDate = :date
+                                   r.date = :date
                                        and (
                                        r.status <> 'APPROVED'
                                            or (
                                            r.status = 'APPROVED'
                                                and
-                                            (r.reservationTime < :minTime
-                                                                     OR r.reservationTime > :maxTime)
+                                            (r.time < :minTime
+                                                                     OR r.time > :maxTime)
                                            )
                                        )
                                    )
-                            or (r.reservationDate <> :date
+                            or (r.date <> :date
                                 AND NOT EXISTS (SELECT rt
                                                     FROM TableEntity rt
                                                         JOIN rt.reservations r2
-                                                    WHERE r2.reservationDate = :date
+                                                    WHERE r2.date = :date
                                                     AND rt.id = t.id))
                             )
                         order by t.capacity desc

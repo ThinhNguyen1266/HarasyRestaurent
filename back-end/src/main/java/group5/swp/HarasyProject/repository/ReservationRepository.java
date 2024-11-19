@@ -1,6 +1,8 @@
 package group5.swp.HarasyProject.repository;
 
 import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -46,5 +48,13 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             """, nativeQuery = true)
     List<String> getAvailableTime(int branchId, String timeSlots, LocalDate date, int amountGuest);
 
-
+    @Query("""
+                    select r from ReservationEntity r
+                    where r.branch.id = :branchId
+                    and (:isHistory = true
+                        or (
+                           r.status = 'PENDING' or r.status = 'APPROVED'
+                    ) )
+            """)
+    Page<ReservationEntity> getAllReservation(Pageable pageable, Boolean isHistory,int branchId);
 }

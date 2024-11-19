@@ -20,7 +20,7 @@ public class TableController {
     ApiResponse<?> deleteTable(@PathVariable int id) {
         return restaurantManagementService.deleteTable(id);
     }
-    
+
     @PutMapping("/table/{id}")
     ApiResponse<TableResponse> updateTable(@PathVariable int id, @RequestBody TableRequest request) {
         return restaurantManagementService.updateTable(id, request);

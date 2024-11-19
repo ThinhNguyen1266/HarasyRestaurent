@@ -31,7 +31,8 @@ public enum ErrorCode {
     FOOD_NOT_FOUND(3005, "food not found", HttpStatus.NOT_FOUND),
     ORDER_NOT_FOUND(3006, "order not found", HttpStatus.NOT_FOUND),
     ORDER_ITEM_NOT_FOUND(3007, "order item not found", HttpStatus.NOT_FOUND),
-
+    RESERVATION_TYPE_NOT_FOUND(3008, "reservation type not found", HttpStatus.NOT_FOUND),
+    RESERVATION_NOT_FOUND(3009, "reservation not found", HttpStatus.NOT_FOUND),
 
     //ALREADY EXIST
     TABLE_EXISTED(4000, "table already exist", HttpStatus.CONFLICT),
@@ -43,6 +44,7 @@ public enum ErrorCode {
     ORDER_WAS_CLOSED(2001,"order was closed",HttpStatus.CONFLICT),
     INVALID_RESERVE_DATE(2002,"invalid reserve date",HttpStatus.BAD_REQUEST),
     INVALID_RESERVE_TIME(2003,"invalid reserve time",HttpStatus.BAD_REQUEST),
+    NOT_ENOUGH_TABLE_FOR_RESERVE(2004,"not enough table for reserve",HttpStatus.BAD_REQUEST),
     ;
 
     int code;
