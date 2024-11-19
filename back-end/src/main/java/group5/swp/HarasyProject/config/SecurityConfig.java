@@ -28,7 +28,7 @@ public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
             "/auth/login","/auth/validateOtp","/auth/introspect","/auth/refreshToken"
-            ,"/users", "/regis/user", "/uploadImage", "/profile/{AccountId}"
+            ,"/users", "/regis/user", "/uploadImage", "/profile/{id}"
             , "/reservations", "/search", "/reservation/{id}"
             ,"/customer/branches","/foods","/staff",
     };
@@ -47,9 +47,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET,GET_PUBLIC_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/","/staff/search","/branches").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,  "/sorted", "/staff/search").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/branch").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/staff/{id}").hasAnyRole("ADMIN","BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.PUT,"/staff/{id}").hasAnyRole("ADMIN","BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.GET,  "/sorted").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/branch","/regis/staff").hasAnyRole("ADMIN","BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/branch/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/branch/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/branch/{id}/tables").hasRole("ADMIN")

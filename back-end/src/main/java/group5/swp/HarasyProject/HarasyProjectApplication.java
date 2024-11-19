@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 @EnableTransactionManagement
 public class HarasyProjectApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(HarasyProjectApplication.class, args);
 	}

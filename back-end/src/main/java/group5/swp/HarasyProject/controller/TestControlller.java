@@ -1,33 +1,30 @@
 package group5.swp.HarasyProject.controller;
 
 
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import group5.swp.HarasyProject.dto.request.reservation.CheckReserveTimeRequest;
+import group5.swp.HarasyProject.dto.response.ApiResponse;
+import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
+import group5.swp.HarasyProject.service.BusinessManagementService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
-
 @RestController
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public class TestControlller {
 
+    BusinessManagementService businessManagementService;
+
+
     @GetMapping("/")
-    public String index() {
-        return  "hello";
+    public ApiResponse<AvailableReserveTimeResponse> index(@RequestBody CheckReserveTimeRequest request) {
+        return  businessManagementService.getAvailableReserveTime(request);
     }
 
 
-    @GetMapping("/set-cookie")
-    public ResponseEntity<Void> setCookie(HttpServletResponse response) {
-        ResponseCookie cookie = ResponseCookie.from("testCookie", "testValue")
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(Duration.ofDays(1))
-                .sameSite("Lax")
-                .build();
-        response.addHeader("Set-Cookie", cookie.toString());
-        return ResponseEntity.ok().build();
-    }
+
 }

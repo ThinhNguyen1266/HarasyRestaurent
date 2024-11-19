@@ -1,18 +1,21 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import "../assets/styles/Profile.css";
+import useAuthApi from "../hooks/api/useAuthApi";
 
 function Profile() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = useSelector((state) => state.auth.login.currentUser);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { logout } = useAuthApi();
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleLogout = () => {
-    console.log("Logged out");
+  const handleLogout = async () => {
+    await logout(dispatch, navigate);
   };
 
   if (user) {

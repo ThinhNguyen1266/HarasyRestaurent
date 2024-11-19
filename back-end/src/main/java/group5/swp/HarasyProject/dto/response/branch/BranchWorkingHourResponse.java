@@ -1,11 +1,10 @@
 package group5.swp.HarasyProject.dto.response.branch;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.enums.DayOfWeek;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.sql.Time;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Data

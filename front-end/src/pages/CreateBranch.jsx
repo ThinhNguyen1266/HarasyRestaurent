@@ -382,48 +382,47 @@ const CreateBranch = () => {
                 Add Table
               </button>
             </div>
-
-            {/* Menus */}
-            <div className="mb-3">
-              <label className="form-label text-white">Menus</label>
-              {formData.menus.map((menu, index) => (
-                <div key={index} className="d-flex align-items-center mb-2">
-                  <select
-                    value={menu.type}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        menus: prev.menus.map((m, i) =>
-                          i === index ? { ...m, type: e.target.value } : m
-                        ),
-                      }))
-                    }
-                    className="form-select me-2"
-                  >
-                    <option value="">Select Menu Type</option>
-                    <option value="BREAKFAST">BREAKFAST</option>
-                    <option value="LUNCH">LUNCH</option>
-                    <option value="DINNER">DINNER</option>
-                    <option value="DESSERT">DESSERT</option>
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => removeMenu(index)}
-                    className="btn btn-danger btn-sm"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
+          </div>
+        </div>
+        {/* Menus */}
+        <div className="mb-3">
+          <label className="form-label text-white">Menus</label>
+          {formData.menus.map((menu, index) => (
+            <div key={index} className="d-flex align-items-center mb-2">
+              <select
+                value={menu.type}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    menus: prev.menus.map((m, i) =>
+                      i === index ? { ...m, type: e.target.value } : m
+                    ),
+                  }))
+                }
+                className="form-select me-2"
+              >
+                <option value="">Select Menu Type</option>
+                <option value="BREAKFAST">BREAKFAST</option>
+                <option value="LUNCH">LUNCH</option>
+                <option value="DINNER">DINNER</option>
+                <option value="DESSERT">DESSERT</option>
+              </select>
               <button
                 type="button"
-                onClick={addMenu}
-                className="btn btn-secondary btn-sm mt-2"
+                onClick={() => removeMenu(index)}
+                className="btn btn-danger btn-sm"
               >
-                Add Menu
+                Remove
               </button>
             </div>
-          </div>
+          ))}
+          <button
+            type="button"
+            onClick={addMenu}
+            className="btn btn-secondary btn-sm mt-2"
+          >
+            Add Menu
+          </button>
         </div>
         <button type="submit" className="btn btn-primary mt-4">
           Create Branch

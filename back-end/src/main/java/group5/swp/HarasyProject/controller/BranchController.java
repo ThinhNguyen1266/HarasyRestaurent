@@ -37,6 +37,7 @@ public class BranchController {
         return restaurantManagementService.getBranchHome(id);
     }
 
+
     @GetMapping("/branches")
     ApiResponse<List<BranchResponse>> getAllBranchStaff(@RequestParam(defaultValue = "false") boolean includeAll) {
         return restaurantManagementService.getAllBranches(includeAll);
@@ -73,7 +74,7 @@ public class BranchController {
     ApiResponse<List<TableResponse>> getAllTables(@PathVariable int id){
         return restaurantManagementService.getAllTablesInBranch(id);
     }
-    
+
     @GetMapping("/branch/{id}/orders")
     ApiResponse<Page<OrderResponse>> getBranchOrders(
             @PathVariable int id,

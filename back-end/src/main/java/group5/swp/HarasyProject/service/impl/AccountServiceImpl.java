@@ -1,7 +1,9 @@
 package group5.swp.HarasyProject.service.impl;
 
+import group5.swp.HarasyProject.dto.request.account.CusUpdateProfileRequest;
 import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
 import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
+import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
 import group5.swp.HarasyProject.dto.request.auth.EmailRequest;
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
@@ -9,14 +11,18 @@ import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.RegisResponse;
 import group5.swp.HarasyProject.dto.response.auth.OtpResponse;
+import group5.swp.HarasyProject.dto.response.staff.StaffResponse;
 import group5.swp.HarasyProject.entity.account.AccountEntity;
 import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
+import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.enums.Account.AccountStatus;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.mapper.AccountMapper;
+import group5.swp.HarasyProject.mapper.StaffMapper;
 import group5.swp.HarasyProject.repository.AccountRepository;
+import group5.swp.HarasyProject.repository.BranchRepository;
 import group5.swp.HarasyProject.repository.CustomerAccountRepository;
 import group5.swp.HarasyProject.repository.StaffAccountRepository;
 import group5.swp.HarasyProject.service.AccountService;
@@ -33,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 
 @Service
@@ -44,9 +51,10 @@ public class AccountServiceImpl implements AccountService {
     AccountRepository accountRepository;
     CustomerAccountRepository customerAccountRepository;
     StaffAccountRepository staffAccountRepository;
-
+    BranchRepository branchRepository;
 
     AccountMapper accountMapper;
+    StaffMapper staffMapper;
 
     OtpService otpService;
 
@@ -75,25 +83,48 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public ApiResponse<StaffResponse> staffRegis(RegistStaffRequest request) throws IOException, MessagingException {
+        AccountEntity accountEntity = accountMapper.staffRequestToAccount(request);
+        accountEntity.setPassword(passwordEncoder.encode(accountEntity.getPassword()));
+        StaffAccountEntity staffAccountEntity = accountMapper.staffRequestToStaffAccount(request);
+        BranchEntity branch=branchRepository.findById(request.getBranchId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
+        staffAccountEntity.setBranch(branch);
+
+        accountEntity.setStaff(staffAccountEntity);
+        staffAccountEntity.setAccount(accountEntity);
+        StaffResponse staffResponse=staffMapper.toResponse(staffAccountEntity);
+        System.out.println("staff account"+accountEntity);
+        try {
+            accountRepository.save(accountEntity);
+        } catch (Exception e) {
+            e.printStackTrace(); // This will give you more details on the actual issue
+        }
+        return ApiResponse.<StaffResponse>builder()
+                .data(staffResponse)
+                .build();
+
+    }
+
+    @Override
     @Transactional
-    public ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest){
+    public ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest) {
         if (otpService.validateOtp(otpRequest)) {
             AccountEntity account = accountRepository.findByEmail(otpRequest.getEmail()).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
             account.setStatus(AccountStatus.ACTIVE);
             redisService.deleteOtp(otpRequest.getEmail());
             accountRepository.save(account);
             return ApiResponse.<OtpResponse>builder().data(OtpResponse.builder().message("Successfully verified OTP, you can sign in now!").username(account.getUsername()).build()).build();
-        }
-        else throw new AppException(ErrorCode.INVALID_OTP);
+        } else throw new AppException(ErrorCode.INVALID_OTP);
     }
 
     @Override
     public ApiResponse<ProfileResponse> viewProfile(Integer id) {
         AccountEntity account = accountRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         ProfileResponse response;
-        if(account.getCustomer()!=null ){
+        if (account.getCustomer() != null) {
             response = accountMapper.toCustomerProfileResponse(account);
-        }else {
+        } else {
             response = accountMapper.toStaffProfileResponse(account);
         }
         return ApiResponse.<ProfileResponse>builder().data(response)
@@ -101,10 +132,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
-
     @Override
     public ApiResponse<CustomerProfileResponse> quickCustomerRegis(QuickRegisCustomerRequest request) {
-        if (accountRepository.existsByEmail(request.getEmail()))  throw new AppException(ErrorCode.EMAIL_EXISTED);
+        if (accountRepository.existsByEmail(request.getEmail())) throw new AppException(ErrorCode.EMAIL_EXISTED);
 
 
         AccountEntity accountEntity = accountMapper.quickRegisToAccount(request);
@@ -112,7 +142,7 @@ public class AccountServiceImpl implements AccountService {
         String username = Arrays
                 .stream(request.getFullName()
                         .split(" "))
-                .reduce("",String::concat);
+                .reduce("", String::concat);
         do {
             int randomNumber = (int) (Math.random() * 900) + 100;
             accountEntity.setUsername(username + randomNumber);
@@ -129,6 +159,23 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
+    public ApiResponse<List<ProfileResponse>> getAccounts(String phone) {
+        List<AccountEntity> acc = accountRepository.findAllAcc(phone);
+        List<ProfileResponse> responses = acc
+                .stream().map(a->{
+                    if (a.getCustomer() != null) {
+                        return accountMapper.toCustomerProfileResponse(a);
+                    } else {
+                        return accountMapper.toStaffProfileResponse(a);
+                    }
+                })
+                .toList();
+        return ApiResponse.<List<ProfileResponse>>builder()
+                .data(responses)
+                .build();
+    }
+
+    @Override
     public StaffAccountEntity getStaffAccount(Integer staffId) {
         return staffAccountRepository.findById(staffId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -139,4 +186,24 @@ public class AccountServiceImpl implements AccountService {
         return customerAccountRepository.findById(customerId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
     }
+
+
+    @Override
+    public ApiResponse<CustomerProfileResponse> cusUpdateProfile(int id, CusUpdateProfileRequest request) {
+        AccountEntity account =accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        CustomerAccountEntity customerAccount = customerAccountRepository.findByAccount(account)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        customerAccount=accountMapper.updateCusInfo(request,customerAccount);
+        System.out.println("cus update"+customerAccount);
+        customerAccountRepository.save(customerAccount);
+        CustomerProfileResponse response = accountMapper.toCustomerProfileResponse(account);
+        return ApiResponse.<CustomerProfileResponse>builder()
+                .code(200)
+                .data(response)
+                .build();
+    }
+
+
+
 }

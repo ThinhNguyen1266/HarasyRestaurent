@@ -2,7 +2,7 @@
   background-color: #000;
   color: #fff;
   padding: 60px 40px;
-  font-family: "Futura", sans-serif;
+  font-family: "Ogirema", sans-serif;
 }
 
 .footer-nav {
@@ -19,7 +19,7 @@
 .footer-nav li a {
   color: #fff;
   text-transform: uppercase;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   text-decoration: none;
   padding-right: 20px;
@@ -36,7 +36,7 @@
 
 .footer-policies {
   margin-top: 25px;
-  font-size: 14px;
+  font-size: 15px;
   color: #ffffff;
   display: flex;
   flex-wrap: wrap;
@@ -75,7 +75,7 @@
 
 .footer-copyright {
   text-align: right;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .container {
