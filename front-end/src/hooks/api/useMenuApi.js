@@ -87,12 +87,59 @@ const useMenuApi = () => {
     }
   };
 
+  const getOrderByID = async (orderId) => {
+    try {
+      const response = await axiosPrivate.get(`/order/${orderId}`);
+      console.log("Fetched order:", response); // Log only the useful data
+      return response; // Return only the data part of the response
+    } catch (error) {
+      console.error(
+        `Error fetching order with ID ${orderId}:`,
+        error.response?.data || error.message
+      );
+      throw error; // Re-throw the error to handle it upstream
+    }
+  };
+
+  const updateOrder = async (id, updatedOrder) => {
+    try {
+      // Ensure proper payload format based on API requirements
+      const payload = {
+        orderItems: {
+          creates: (updatedOrder?.orderItems?.creates || []).filter(
+            (item) => item.foodId && item.quantity > 0
+          ), // Ensure valid foodId and quantity for new items
+          updates: (updatedOrder?.orderItems?.updates || []).filter(
+            (item) => item.foodId && item.quantity > 0 // Ensure valid foodId and quantity for updates
+          ),
+        },
+        note: updatedOrder?.note || "", // If no new note, preserve existing note
+      };
+
+      console.log("Payload for updateOrder:", payload);
+
+      // Call the API with the updated payload
+      const response = await axiosPrivate.put(`/order/${id}`, payload);
+
+      console.log("Order updated successfully:", response);
+      return response;
+    } catch (error) {
+      console.error(
+        "Error updating order:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  };
+
   return {
     addFoodToMenu,
     getMenuByID,
     getMenubyBranchID,
     createOrder,
     getCustomerProfileByPhone,
+    getOrderByID,
+    updateOrder,
   };
 };
 
