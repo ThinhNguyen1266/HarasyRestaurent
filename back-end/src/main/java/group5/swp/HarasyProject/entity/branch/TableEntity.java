@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -45,13 +44,7 @@ public class TableEntity extends Auditable {
     List<OrderEntity> orders;
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "reservation_table",
-            joinColumns = @JoinColumn(name = "table_id"),
-            inverseJoinColumns = @JoinColumn(name = "reservation_id")
-    )
-
+    @ManyToMany(mappedBy = "tables")
     List<ReservationEntity> reservations;
 
     public TableEntity order() {
@@ -59,8 +52,5 @@ public class TableEntity extends Auditable {
         return this;
     }
 
-    public void addOrder(OrderEntity order) {
-        if(orders == null) orders = new ArrayList<>();
-        orders.add(order);
-    }
+
 }
