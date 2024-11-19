@@ -15,8 +15,6 @@ import CreateFood from "./pages/CreateFood";
 import EditBranch from "./pages/EditBranch";
 import EditFood from "./pages/EditFood";
 import FindTable from "./pages/FindTable";
-import HCMMenu from "./pages/HCMMenu";
-import HCMVenues from "./pages/HCMVenues";
 import HNMenu from "./pages/HNMenu";
 import HNVenues from "./pages/HNVenues";
 import Home from "./pages/Home";
@@ -24,13 +22,16 @@ import Login from "./pages/Login";
 import ManageFood from "./pages/ManageFood";
 import Menu from "./pages/Menu";
 import OrderWaiter from "./pages/OrderWaiter";
+import OTP from "./pages/OTP";
 import Overview from "./pages/Overview";
+import Pagenotfound from "./pages/Pagenotfound";
 import Register from "./pages/Register";
 import RegrisCus from "./pages/RegrisCus";
 import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
 import WorkforceList from "./pages/WorkforceList";
+
 import CreateOrder from "./pages/CreateOrder";
 import EditOrder from "./pages/EditOrder";
 function App() {
@@ -41,16 +42,15 @@ function App() {
         <Route element={<DefaultLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/venues" element={<Venues />} />
-          <Route path="/venues/hcm" element={<HCMVenues />} />
-          <Route path="/venues/hanoi" element={<HNVenues />} />
+          <Route path="/404" element={<Pagenotfound />} />
+          <Route path="/venues/:branchId" element={<HNVenues />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/hcm" element={<HCMMenu />} />
-          <Route path="/menu/hanoi" element={<HNMenu />} />
+          <Route path="/branch/:branchId/menus" element={<HNMenu />} />
           <Route path="/about" element={<About />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/userprofile" element={<Profile />} />
         </Route>
-
+        <Route path="/otp" element={<OTP />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/findtable" element={<FindTable />} />

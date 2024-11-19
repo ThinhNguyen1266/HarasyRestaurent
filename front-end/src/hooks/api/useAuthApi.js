@@ -1,5 +1,3 @@
-import useAxiosPrivate from "../useAxiosPrivate";
-import axios from "../../services/axios";
 import {
   loginFail,
   loginStart,
@@ -8,6 +6,8 @@ import {
   logoutStart,
   logoutSuccess,
 } from "../../redux/authSlice";
+import axios from "../../services/axios";
+import useAxiosPrivate from "../useAxiosPrivate";
 const useAuthApi = () => {
   const axiosPrivate = useAxiosPrivate();
   const login = async (user, dispatch, navigate, location) => {

@@ -52,7 +52,7 @@ const FindTable = () => {
       >
         <Row>
           <Col md={12} className="text-center">
-            <div className="brand-logo">
+            <div className="brandfb-logo">
               <Link to="/">
                 <img
                   src={require("../assets/img/logo.png")}

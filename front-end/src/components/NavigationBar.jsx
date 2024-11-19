@@ -11,7 +11,7 @@ import Profile from "./Profile";
 function NavigationBar() {
   return (
     <>
-      {["sm"].map((expand) => (
+      {["sm", "md", "lg"].map((expand) => (
         <div className="nav-container">
           <Navbar key={expand} expand={expand} className="custom-navbar mb-3">
             <Container fluid>
@@ -33,7 +33,7 @@ function NavigationBar() {
               >
                 <Offcanvas.Header closeButton>
                   <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${expand}`}>
-                    Harasy
+                    Harasy Restaurant
                   </Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
@@ -52,7 +52,7 @@ function NavigationBar() {
                     </Link>
                   </Nav>
                   <Nav className="nav-button justify-content-end">
-                    <Link to="/venues" className="reservations">
+                    <Link to="/venues" className="reservations offcanvas-btn">
                       RESERVATIONS
                     </Link>
                     <Profile />

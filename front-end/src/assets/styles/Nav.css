@@ -1,32 +1,9 @@
-.login {
-  padding: 8px 16px;
-  margin-left: 10px;
-  font-size: 18px;
-  min-width: 100px;
-  font-weight: bold;
-  color: #000000;
-  background-color: #fb8500;
-  border-radius: 5px;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.login:hover {
-  color: #000000;
-  background-color: #f89e38;
-}
-
-.login:active {
-  color: #000000;
-  background-color: #fbaf57;
-}
-
+.login,
 .reservations {
   padding: 8px 16px;
   font-size: 18px;
+  max-width: 100px;
   font-weight: bold;
-  min-width: 100px;
   color: #000000;
   background-color: #fb8500;
   border-radius: 5px;
@@ -35,13 +12,13 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.login:hover,
 .reservations:hover {
-  color: #000000;
   background-color: #f89e38;
 }
 
+.login:active,
 .reservations:active {
-  color: #000000;
   background-color: #fbaf57;
 }
 
@@ -62,7 +39,9 @@
 .nav-center {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-grow: 1;
+  gap: 30px;
 }
 
 .nav-link {
@@ -70,11 +49,8 @@
   transition: color 0.3s ease;
   font-weight: bold;
   font-size: 18px;
-  margin: 0 15px;
-}
-
-.nav-link:last-child {
-  margin-right: 0;
+  text-align: center;
+  margin: 0;
 }
 
 .nav-link:hover {
@@ -90,9 +66,57 @@
 }
 
 .nav-button {
-  padding-right: 50px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-right: 40px;
 }
 
 .navbar-nav {
   --bs-nav-link-hover-color: #fb8500;
+}
+
+.offcanvas {
+  background-color: #000;
+  color: #ffffff;
+  border-left: 1px solid #fb8500;
+}
+
+.offcanvas-header {
+  background-color: #111;
+  border-bottom: 1px solid #fb8500;
+  color: #fb8500;
+}
+
+.offcanvas-title {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.offcanvas-header .btn-close {
+  filter: invert(1);
+}
+
+.offcanvas .offcanvas-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000000;
+  background-color: #fb8500;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  margin: 0 auto;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.offcanvas .offcanvas-btn:hover {
+  background-color: #f89e38;
+}
+
+.offcanvas .offcanvas-btn:active {
+  background-color: #fbaf57;
 }
