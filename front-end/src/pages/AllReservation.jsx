@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../assets/styles/AllReservation.css";
-import ReservationModal from "../components/ReservationModal"; // Import modal component
+import ReservationModal from "../components/ReservationModal";
+import CreateReservationModal from "../components/CreateReservationModal"; // Import the CreateReservationModal component
 import Sidebar from "../components/Sidebar";
 
 const reservations = [
@@ -92,6 +93,7 @@ const ReservationsPage = () => {
   const [searchPhone, setSearchPhone] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedReservation, setSelectedReservation] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const handleDetailClick = (reservation) => {
     setSelectedReservation(reservation);
@@ -99,6 +101,19 @@ const ReservationsPage = () => {
 
   const handleCloseModal = () => {
     setSelectedReservation(null);
+  };
+
+  const handleCreateNewClick = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
+  };
+
+  const handleSaveReservation = (newReservation) => {
+    console.log("New reservation:", newReservation);
+    // TODO: Implement saving logic here
   };
 
   // Extract unique dates from reservations
@@ -156,6 +171,11 @@ const ReservationsPage = () => {
               ))}
             </select>
           </div>
+          <div className="col-md-2">
+            <button className="btn btn-warning w-100" onClick={handleCreateNewClick}>
+              Create New
+            </button>
+          </div>
         </div>
 
         {/* Reservation Groups by Status */}
@@ -199,6 +219,13 @@ const ReservationsPage = () => {
             onClose={handleCloseModal}
           />
         )}
+
+        {/* Show Create Reservation Modal */}
+        <CreateReservationModal
+          isOpen={isCreateModalOpen}
+          onClose={handleCloseCreateModal}
+          onSave={handleSaveReservation}
+        />
       </div>
     </div>
   );

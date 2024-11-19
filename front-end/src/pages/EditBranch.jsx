@@ -1,14 +1,40 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useBranchApi from "../hooks/api/useBranchApi";
+
 import uploadImage from "../services/uploadImage";
 import { toast, ToastContainer } from "react-toastify";
 
+import "../assets/styles/EditBranch.css";
+import MenuDetailModal from "../components/MenuDetailModal";
+
 const EditBranch = () => {
+  const [selectedMenuId, setSelectedMenuId] = useState(null); // Trạng thái để lưu ID của menu đã chọn
+  const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái để điều khiển việc mở modal
+
+  const handleMenuClick = (menuId) => {
+    console.log("Selected Menu ID:", menuId);
+
+    setSelectedMenuId(menuId); // Lưu ID của menu được nhấn
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Đóng modal
+  };
+
+  const queryClient = useQueryClient();
   const { branchId } = useParams();
   const navigate = useNavigate();
-  const { getBranchbyID, updateBranch, getBranchManagers } = useBranchApi();
+  const { getBranchbyID, updateBranch, getBranchManagers, getMenubyBranchID } =
+    useBranchApi();
+
+  const { data: menus, isLoading: isMenusLoading } = useQuery({
+    queryKey: ["menus", branchId],
+    queryFn: () => getMenubyBranchID(branchId, true),
+    onError: (error) => toast.error(`Failed to fetch menu: ${error.message}`),
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -17,10 +43,10 @@ const EditBranch = () => {
     imageFile: null,
     phone: "",
     manager: "",
-    status: "INACTIVE",
+    status: "",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
     tables: [{ number: "", capacity: "" }],
-    menus: [{ type: "" }],
+    menus: [{ type: "", status: "" }],
   });
   const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -48,9 +74,11 @@ const EditBranch = () => {
           ? branchData.branchInfo.workingHours
           : [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
         tables: branchData.tables || [{ number: "", capacity: "" }],
-        menus: branchData.menus?.map((menu) => ({ type: menu.type })) || [
-          { type: "" },
-        ],
+        menus: branchData.menus?.map((menu) => ({
+          id: menu.id || null,
+          type: menu.type,
+          status: menu.status || "AVAILABLE",
+        })) || [{ type: "", status: "AVAILABLE" }],
       });
       setPreviewUrl(branchData.image);
     }
@@ -75,6 +103,8 @@ const EditBranch = () => {
         location: formData.location,
         image: imageUrl || formData.image,
         phone: formData.phone,
+        status: formData.status,
+        manager: formData.manager,
       },
       workingHours: {
         creates: formData.workingHours
@@ -119,12 +149,14 @@ const EditBranch = () => {
           .filter((menu) => menu.type && !menu.id) // Menu không có id sẽ được tạo mới
           .map((menu) => ({
             type: menu.type,
+            status: menu.status,
           })),
         updates: formData.menus
           .filter((menu) => menu.id && menu.type) // Menu có id sẽ được cập nhật
           .map((menu) => ({
             id: menu.id, // Chắc chắn rằng mỗi menu có id nếu nó sẽ được cập nhật
             type: menu.type,
+            status: menu.status,
           })),
       },
     };
@@ -155,7 +187,7 @@ const EditBranch = () => {
     mutationFn: updateBranch,
     onSuccess: () => {
       toast.success("Branch updated successfully!");
-
+      queryClient.invalidateQueries(["branches"]);
       navigate("/branch");
     },
     onError: (error) =>
@@ -183,11 +215,13 @@ const EditBranch = () => {
       tables: [...prev.tables, { number: "", capacity: "" }],
     }));
 
-  const addMenu = () =>
+  const addMenu = () => {
     setFormData((prev) => ({
       ...prev,
-      menus: [...prev.menus, { type: "" }],
+      menus: [...prev.menus, { type: "", id: null }], // Thêm id=null để xác định là menu mới
     }));
+  };
+
   const removeMenu = (index) => {
     setFormData((prev) => ({
       ...prev,
@@ -250,8 +284,8 @@ const EditBranch = () => {
                 {isLoadingManagers ? (
                   <option>Loading managers...</option>
                 ) : (
-                  managers.map((manager) => (
-                    <option key={manager.phone} value={manager.fullName}>
+                  managers.map((manager, index) => (
+                    <option key={index} value={manager.fullName}>
                       {manager.fullName}
                     </option>
                   ))
@@ -407,46 +441,30 @@ const EditBranch = () => {
               </button>
             </div>
 
-            {/* Menus */}
             <div className="mb-3">
               <label className="form-label text-white">Menus</label>
-              {formData.menus.map((menu, index) => (
-                <div key={index} className="d-flex align-items-center mb-2">
-                  <select
-                    value={menu.type}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        menus: prev.menus.map((m, i) =>
-                          i === index ? { ...m, type: e.target.value } : m
-                        ),
-                      }))
-                    }
-                    className="form-select me-2"
-                  >
-                    <option value="">Select Menu Type</option>
-                    <option value="BREAKFAST">BREAKFAST</option>
-                    <option value="LUNCH">LUNCH</option>
-                    <option value="DINNER">DINNER</option>
-                    <option value="DESSERT">DESSERT</option>
-                  </select>
+              <div className="d-flex flex-wrap">
+                {menus?.map((menu, index) => (
                   <button
+                    key={index}
                     type="button"
-                    onClick={() => removeMenu(index)}
-                    className="btn btn-danger btn-sm"
+                    className="btn btn-primary me-2"
+                    onClick={() => handleMenuClick(menu.id)} // Khi nhấn, mở modal với menu ID
                   >
-                    Remove
+                    {menu.type}
                   </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={addMenu}
-                className="btn btn-secondary btn-sm mt-2"
-              >
-                Add Menu
-              </button>
+                ))}
+              </div>
             </div>
+
+            {/* Hiển thị modal khi selectedMenuId có giá trị và isModalOpen là true */}
+            {isModalOpen && (
+              <MenuDetailModal
+                isOpen={isModalOpen}
+                menuId={selectedMenuId}
+                onClose={() => setIsModalOpen(false)}
+              />
+            )}
           </div>
         </div>
         <button type="submit" className="btn btn-primary mt-4">

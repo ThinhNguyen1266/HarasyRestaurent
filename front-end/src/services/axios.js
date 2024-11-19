@@ -3,14 +3,14 @@ import axios from "axios";
 // const BASE_URL = "http://localhost:8080";
 
 const axiosPublic = axios.create({
-  timeout: 3000,
+  timeout: 5000,
   header: {
     "Content-Type": "application/json",
   },
 });
 
 export const axiosPrivate = axios.create({
-  timeout: 3000,
+  timeout: 7000,
   header: {
     "Content-Type": "application/json",
   },

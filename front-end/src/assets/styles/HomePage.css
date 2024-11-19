@@ -3,7 +3,7 @@
 }
 
 .section-1-column-2 {
-  padding-top: 58px;
+  padding-top: 68px;
 }
 
 .section-1-column-1 h1,
@@ -11,11 +11,13 @@
   color: white;
   margin-bottom: 20px;
   font-weight: bold;
+  font-size: 3.25rem;
 }
 
 .section-1-column-1 p,
 .section-1-column-2 p {
   color: white;
+  font-size: 1rem;
 }
 
 .section-1-column-1 img,
@@ -46,7 +48,7 @@
 
 .section-2-title {
   color: #f5f5f5;
-  font-size: 2.5rem;
+  font-size: 3.25rem;
   font-weight: 700;
   margin: 80px;
   text-align: center;
@@ -97,8 +99,8 @@
 .hp-btn-custom {
   background-color: #fb8500;
   color: rgb(0, 0, 0);
-  padding: 10px 18px;
-  font-size: 1rem;
+  padding: 8px 16px;
+  font-size: 1.125rem;
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;

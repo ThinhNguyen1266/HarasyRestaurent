@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.util.List;
 
 @Service
@@ -23,6 +24,7 @@ public interface RestaurantManagementService {
     ApiResponse<List<BranchesViewResponse>> getBranchesView();
     ApiResponse<Page<OrderResponse>> getOrdersInBranch(int branchId, Pageable pageable);
     ApiResponse<BranchInfoHomeResponse> getBranchHome(int branchId);
+
     ApiResponse<BranchResponse> getBranch(int branchId);
     ApiResponse<List<BranchResponse>> getAllBranches(boolean includeAll);
     ApiResponse<BranchResponse> createBranch(BranchRequest request);
@@ -30,6 +32,7 @@ public interface RestaurantManagementService {
     ApiResponse<List<TableResponse>> getAllTablesInBranch(int branchId);
     ApiResponse<List<MenuResponse>> getAllMenusInBranch(int branchId,boolean isIncludeAll);
     ApiResponse<MenuResponse> getMenu(int menuId);
+
     ApiResponse<MenuResponse> addFoodsToMenu(int menuId, FoodInMenuRequest request);
     ApiResponse<MenuResponse> deleteFoodsFromMenu(int menuId, FoodInMenuRequest request);
     ApiResponse<List<FoodResponse>> getFoods(boolean includeAll);

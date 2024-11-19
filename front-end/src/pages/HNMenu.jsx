@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../assets/styles/HCMMenu.css";
+import "../assets/styles/BranchMenu.css";
 
 function HNMenu() {
   const [activeCategory, setActiveCategory] = useState("Dinner Menu");

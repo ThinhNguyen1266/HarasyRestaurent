@@ -1,0 +1,182 @@
+.findtable-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+}
+
+.findtable-page::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../img/loginbg.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+.findtable-box {
+  background-color: rgba(0, 0, 0, 0.95);
+  padding: 35px;
+  color: white;
+  width: 800px;
+  min-height: 500px;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.brand-logo img {
+  width: 180px;
+  height: auto;
+  margin: 30px;
+}
+
+.findtable-title {
+  text-align: left;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.steps-title span {
+  font-size: 20px;
+  color: #ffffff;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.steps-title span.active-step {
+  color: #fb8500;
+  font-weight: bold;
+}
+
+.steps-divider {
+  width: 100%;
+  border-top: 2px solid #ffffff;
+  margin-bottom: 20px;
+}
+
+.reservation-steps {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.table-form .col-style {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-form .col-style .form-select,
+.table-form .col-style .form-control,
+.table-form .col-style button {
+  width: 100%;
+  height: 50px;
+  border-radius: 0;
+  padding: 10px;
+  margin: 0;
+  box-sizing: border-box;
+  font-size: 18px;
+}
+
+.time-options {
+  margin-top: 20px;
+}
+
+.time-options .time-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  margin-right: 10px;
+  height: 40px;
+  font-size: 18px;
+  padding: 0 10px;
+  border-radius: 5px;
+  background-color: #fb8500 !important;
+  border: none;
+  color: black !important;
+  outline: none;
+  box-shadow: none;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.time-btn:hover:not(.disabled) {
+  color: #000000 !important;
+  background-color: #f89e38 !important;
+}
+
+.time-btn:active {
+  color: #000000 !important;
+  background-color: #fbaf57 !important;
+  box-shadow: none !important;
+}
+
+.time-btn.disabled {
+  background-color: #555 !important;
+  color: #888 !important;
+  pointer-events: none;
+}
+
+.time-options .time-btn:last-child {
+  margin-right: 0;
+}
+
+.time-picker-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 50px;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.clock-icon {
+  font-size: 20px;
+  color: #373737;
+  margin-left: 10px;
+}
+
+.time-picker-wrapper .form-select {
+  border: none;
+  flex: 1;
+  height: 100%;
+  box-shadow: none;
+  padding-left: 40px;
+}
+
+.user-picker-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 50px;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.user-icon {
+  font-size: 20px;
+  color: #373737;
+  margin-left: 10px;
+}
+
+.user-picker-wrapper .form-select {
+  border: none;
+  flex: 1;
+  height: 100%;
+  box-shadow: none;
+  padding-left: 40px;
+}

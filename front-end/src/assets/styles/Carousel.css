@@ -10,6 +10,7 @@
 
 .carousel-indicators [data-bs-target] {
   border-radius: 100%;
+  margin: 8px;
   width: 15px;
   height: 15px;
 }
@@ -26,13 +27,13 @@
 }
 
 .carousel-caption-custom h3 {
-  font-size: 3rem;
+  font-size: 3.25rem;
   font-weight: bold;
   margin: 0;
 }
 
 .carousel-caption-custom p {
-  font-size: 0.875rem;
+  font-size: 1rem;
   margin: 0;
   margin-bottom: 20px;
   margin-top: 10px;
@@ -43,7 +44,7 @@
   background-color: #fb8500;
   color: rgb(0, 0, 0);
   padding: 8px 16px;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;

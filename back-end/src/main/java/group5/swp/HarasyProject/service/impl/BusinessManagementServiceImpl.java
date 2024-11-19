@@ -84,7 +84,6 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     }
 
     @Override
-    @Transactional
     public ApiResponse<OrderResponse> createOrder(OrderRequest orderRequest) {
         OrderEntity order = buildOrderWithType(orderRequest,ReservationType.GENERAL);
         return ApiResponse.<OrderResponse>builder()
@@ -329,7 +328,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         if (request.getCustomerId() != null) {
             id = request.getCustomerId();
         } else {
-            id = accountService.quickCustomerRegis(request.getNewCustomer()).getData().getId();
+            id = accountService.quickCustomerRegis(request.getNewCustomer()).getData().getCustomerId();
         }
         return accountService.getCustomerAccount(id);
     }
