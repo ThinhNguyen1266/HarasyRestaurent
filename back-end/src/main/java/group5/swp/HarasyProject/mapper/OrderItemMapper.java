@@ -15,6 +15,7 @@ public interface OrderItemMapper {
     @Mapping(target = "foodId",source = "food.id")
     @Mapping(target = "name" , source = "food.name")
     OrderItemResponse toResponse(OrderItemEntity entity);
+
     List<OrderItemResponse> toResponses(List<OrderItemEntity> entities);
 
     OrderItemEntity update(OrderItemRequest request,@MappingTarget OrderItemEntity entity);

@@ -28,7 +28,7 @@ public class SecurityConfig {
 
     String[] PUBLIC_ENDPOINT = {
             "/auth/login","/auth/validateOtp","/auth/introspect","/auth/refreshToken"
-            ,"/users", "/regis/user", "/uploadImage", "/profile/{AccountId}"
+            ,"/users", "/regis/user", "/uploadImage", "/profile/{id}"
             , "/reservations", "/search", "/reservation/{id}"
             ,"/customer/branches","/foods","/staff",
     };

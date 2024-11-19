@@ -144,7 +144,7 @@ const TableList = () => {
                 >
                   <Card.Body className="card-body">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                      <h5 className="card-title text-white">{`Table ${table.number}`}</h5>
+                      <h5 className="card-title text-white">{`Table ${table.id}`}</h5>
                       <Form>
                         <Form.Check
                           type="switch"

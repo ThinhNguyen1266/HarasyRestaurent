@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
 import EmployeeDetails from "../components/EmployeeDetails";
 import "../assets/styles/WorkForceList.css";
-import useBranchApi from "../hooks/api/useBranchApi";
 const WorkforceList = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -21,28 +20,25 @@ const WorkforceList = () => {
   const { branchId: paramBranchId } = useParams();
 
   // Use branchId from URL if available, but override for branch managers
-  const curenUserBranchId = user.role === "BRANCH_MANAGER" ? user.branchId : paramBranchId || user.branchId;
-  
-  const { getStaffByBranchId } = useStaffApi(); 
+  const curenUserBranchId =
+    user.role === "BRANCH_MANAGER"
+      ? user.branchId
+      : paramBranchId || user.branchId;
+
+  const { getStaffByBranchId } = useStaffApi();
   const { data: staffList = [] } = useQuery({
     queryKey: ["staffList", curenUserBranchId],
     queryFn: () => getStaffByBranchId(curenUserBranchId),
     onError: (error) => toast.error(`Failed to fetch staff: ${error.message}`),
   });
-  
 
-  
-
-  
-  
-
-  const handleRefetch = () => queryClient.invalidateQueries(["staffList", curenUserBranchId]);
+  const handleRefetch = () =>
+    queryClient.invalidateQueries(["staffList", curenUserBranchId]);
 
   // Filter out the logged-in user from the staff list
   const branchFilteredStaff = staffList.filter((employee) => {
-    return employee.fullName !== user.fullName; // Only exclude the current user
+    return employee.id !== user.id;
   });
-  
 
   const filteredStaff = branchFilteredStaff.filter((employee) => {
     const matchesSearchTerm =
@@ -51,14 +47,19 @@ const WorkforceList = () => {
     const matchesRoleFilter = roleFilter
       ? employee.role.toLowerCase() === roleFilter.toLowerCase()
       : true;
-    return matchesSearchTerm && matchesRoleFilter;
+    const isNotDeleted = employee.status !== "DELETED"; // Filter out deleted employees
+    return matchesSearchTerm && matchesRoleFilter && isNotDeleted;
   });
 
-  const uniqueRoles = [...new Set(branchFilteredStaff.map((employee) => employee.role))];
+  const uniqueRoles = [
+    ...new Set(branchFilteredStaff.map((employee) => employee.role)),
+  ];
 
   return (
     <div className="workforce-container">
-      <h1 className="workforce-title">Workforce Directory - Branch {curenUserBranchId}</h1>
+      <h1 className="workforce-title">
+        Workforce Directory - Branch {curenUserBranchId}
+      </h1>
 
       {/* Search and filter inputs */}
       <div className="workforce-search-filters d-flex justify-content-between gap-3">
@@ -84,8 +85,12 @@ const WorkforceList = () => {
       </div>
 
       <button
-        onClick={() => // Thay đổi trong WorkforceList khi gọi navigate
-          navigate("/workforce/create", { state: { userbranchId: curenUserBranchId } })}
+        onClick={() =>
+          // Thay đổi trong WorkforceList khi gọi navigate
+          navigate("/workforce/create", {
+            state: { userbranchId: curenUserBranchId },
+          })
+        }
         className="btn btn-success my-4"
       >
         Add Employee
@@ -128,6 +133,7 @@ const EmployeeTable = ({ user, employees, onSelect }) => (
       <table className="table table-striped table-dark">
         <thead>
           <tr>
+            <th>Image</th>
             <th>Name</th>
             <th>Role</th>
             {user.role === "ADMIN" && <th>Branch Name</th>}
@@ -146,6 +152,23 @@ const EmployeeTable = ({ user, employees, onSelect }) => (
             })
             .map((employee) => (
               <tr key={employee.id} onClick={() => onSelect(employee)}>
+                <td className="d-flex align-items-center">
+                  <img
+                    src={`${employee.picture || "default-avatar-url"}`}
+                    alt={employee.fullName}
+                    onError={(e) =>
+                      (e.target.src =
+                        "https://images.unsplash.com/photo-1633332755192-727a05c4013d")
+                    }
+                    className="rounded-circle me-3"
+                    style={{
+                      width: "70px",
+                      height: "70px",
+                      objectFit: "cover",
+                    }}
+                  />                  
+                </td>
+
                 <td>{employee.fullName}</td>
                 <td>{employee.role}</td>
                 {user.role === "ADMIN" && <td>{employee.branchName}</td>}
@@ -177,6 +200,5 @@ const EmployeeTable = ({ user, employees, onSelect }) => (
     )}
   </div>
 );
-
 
 export default WorkforceList;

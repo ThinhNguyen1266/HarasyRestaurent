@@ -17,6 +17,7 @@ public class OrderItemResponse {
     int quantity;
     OrderItemStatus status;
     int cooked;
+    int pointsPrice;
     int price;
     long total;
 }

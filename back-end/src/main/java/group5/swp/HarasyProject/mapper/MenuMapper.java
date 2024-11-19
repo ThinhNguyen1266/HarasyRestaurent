@@ -13,7 +13,6 @@ import java.util.List;
 public interface MenuMapper {
 
     @Mapping(target = "branchId", source = "menu.branch.id")
-    @Mapping(target = "foods", source = "menu.menuItems")
     MenuResponse toMenuResponse(MenuEntity menu);
 
 

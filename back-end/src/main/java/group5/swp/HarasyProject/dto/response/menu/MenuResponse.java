@@ -20,5 +20,5 @@ public class MenuResponse {
     MenuType type;
     BinaryStatus status;
     int branchId;
-    List<FoodResponse> foods;
+    List<FoodResponse> menuItems;
 }

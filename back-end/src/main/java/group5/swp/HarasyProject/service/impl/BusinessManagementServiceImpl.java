@@ -4,17 +4,27 @@ package group5.swp.HarasyProject.service.impl;
 import group5.swp.HarasyProject.dto.request.order.CustomerOrderRequest;
 import group5.swp.HarasyProject.dto.request.order.OrderItemRequest;
 import group5.swp.HarasyProject.dto.request.order.OrderRequest;
+import group5.swp.HarasyProject.dto.request.reservation.CheckReserveTimeRequest;
+import group5.swp.HarasyProject.dto.request.reservation.CustomerReserveRequest;
+import group5.swp.HarasyProject.dto.request.reservation.ReservationRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
+import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
+import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
 import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
+import group5.swp.HarasyProject.entity.branch.BranchWorkingHourEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.order.OrderEntity;
 import group5.swp.HarasyProject.entity.order.OrderItemEntity;
 import group5.swp.HarasyProject.entity.order.OrderItemId;
+import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
+import group5.swp.HarasyProject.entity.reservation.ReservationTypeEntity;
 import group5.swp.HarasyProject.enums.OrderItemStatus;
 import group5.swp.HarasyProject.enums.PaymentStatus;
+import group5.swp.HarasyProject.enums.ReservationStatus;
+import group5.swp.HarasyProject.enums.ReservationType;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.service.*;
@@ -27,6 +37,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,6 +55,8 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     FoodService foodService;
     OrderService orderService;
     OrderItemService orderItemService;
+    ReservationService reservationService;
+    ReservationTypeService reservationTypeService;
 
 
     @Override
@@ -63,26 +79,29 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     @Override
     public ApiResponse<OrderResponse> getOrder(int orderId) {
         return ApiResponse.<OrderResponse>builder()
-                .data(toResponse(orderId))
+                .data(toOrderResponse(orderId))
                 .build();
     }
 
     @Override
-    @Transactional
     public ApiResponse<OrderResponse> createOrder(OrderRequest orderRequest) {
+        OrderEntity order = buildOrderWithType(orderRequest,ReservationType.GENERAL);
+        return ApiResponse.<OrderResponse>builder()
+                .data(toOrderResponse(order.getId()))
+                .build();
+    }
+
+    private OrderEntity buildGeneralOrder(OrderRequest orderRequest) {
         BranchEntity branch = branchService.getBranchEntity(orderRequest.getBranchId());
         List<Integer> tableIds = orderRequest.getTableIds()
                 .stream().filter(branch::isTableInBranch)
                 .toList();
         if (tableIds.isEmpty()) throw new AppException(ErrorCode.ORDER_HAVE_NO_TABLE);
-
         List<TableEntity> tables = tableService.getTables(tableIds)
                 .stream().map(TableEntity::order)
                 .toList();
-
         StaffAccountEntity staff = accountService.getStaffAccount(orderRequest.getStaffId());
         CustomerAccountEntity customer = getCustomerAccount(orderRequest.getCustomer());
-
         OrderEntity order = OrderEntity.builder()
                 .staff(staff)
                 .tables(tables)
@@ -92,51 +111,220 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .paymentStatus(PaymentStatus.PENDING)
                 .build();
         order.setOrderItems(createOrderItem(orderRequest, order));
-        order = orderService.save(order.calculateTotal());
+        return  orderService.save(order.calculateTotal());
+    }
+
+    private OrderEntity buildWeddingOrder(OrderRequest orderRequest) {
+        return null;
+    }
+
+
+
+
+    @Override
+    @Transactional
+    public ApiResponse<OrderResponse> updateOrder(int orderId, OrderRequest request) {
+        OrderEntity order = orderService.getOrderById(orderId);
+        if (order.getPaymentStatus().equals(PaymentStatus.PAYED))
+            throw new AppException(ErrorCode.ORDER_WAS_CLOSED);
+        updateOrderItemInOrder(request, order);
+        createOrderItem(request, order);
+        if (request.getNote() != null) order.setNote(request.getNote());
+        orderService.save(order.calculateTotal());
         return ApiResponse.<OrderResponse>builder()
-                .data(toResponse(order.getId()))
+                .data(toOrderResponse(order.getId()))
+                .build();
+    }
+
+
+    private List<OrderItemEntity> createOrderItem(OrderRequest request, OrderEntity order) {
+        if (request.getOrderItems().getCreates() != null) {
+            return toOrderItems(request.getOrderItems().getCreates(), order);
+        }
+        return null;
+    }
+
+    private void updateOrderItemInOrder(OrderRequest request, OrderEntity order) {
+        if (request.getOrderItems().getUpdates() != null) {
+            for (OrderItemRequest orderItemRequest : request.getOrderItems().getUpdates()) {
+                OrderItemEntity item = orderItemService
+                        .findByOrderIdAndFoodId(order.getId(), orderItemRequest.getFoodId());
+                if (!item.getStatus().equals(OrderItemStatus.PENDING)) {
+                    if (orderItemRequest.getQuantity() != null) {
+                        if (orderItemRequest.getQuantity() <= item.getQuantity()) continue;
+                    }
+                }
+                item = orderItemService.mapUpdateOrderItem(orderItemRequest, item);
+                orderItemService.save(item.calculatePrice());
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<ReservationResponse> customerReservation(CustomerReserveRequest request) {
+        BranchEntity branch = branchService.getBranchEntity(request.getBranchId());
+        CustomerAccountEntity customer = getCustomerAccount(request.getCustomer());
+        List<TableEntity> tables = calculateCustomerReserveTable(request.getBranchId(),request.getDate()
+        ,request.getTime(),request.getAmountGuest());
+        ReservationEntity reservation = ReservationEntity.builder()
+                .amountGuest(request.getAmountGuest())
+                .branch(branch)
+                .customer(customer)
+                .time(request.getTime())
+                .date(request.getDate())
+                .type(reservationTypeService
+                        .getReservationTypeById(request.getTypeId()))
+                .status(ReservationStatus.PENDING)
+                .tables(tables)
+                .order(OrderEntity.builder()
+                        .tables(tables)
+                        .paymentStatus(PaymentStatus.PENDING)
+                        .customer(customer)
+                        .branch(branch)
+                        .build())
+                .build();
+        reservation = reservationService.saveReservation(reservation);
+        return ApiResponse.<ReservationResponse>builder()
+                .data(toReservationResponse(reservation.getId()))
+                .build();
+    }
+
+
+    private List<TableEntity> calculateCustomerReserveTable(int branchId, LocalDate date,
+                                                            LocalTime time,int amountGuest){
+        List<TableEntity> tables = tableService.getAllTablesAvailableToReserve(branchId, date, time);
+        List<TableEntity> res = new ArrayList<>();
+        int total = 0;
+        for (TableEntity table : tables) {
+            if(total>=amountGuest)break;
+            total+= table.getCapacity();
+            res.add(table);
+        }
+        return res;
+    }
+
+
+    @Override
+    public ApiResponse<AvailableReserveTimeResponse> getAvailableReserveTime(CheckReserveTimeRequest request) {
+        BranchEntity branch = branchService.getBranchEntity(request.getBranchId());
+        List<BranchWorkingHourEntity> workingHours = branch.getWorkingHours();
+        if (!isValidReserveDate(request.getTime(), request.getDate(), workingHours))
+            throw new AppException(ErrorCode.INVALID_RESERVE_DATE);
+        LocalTime start = request.getTime().minusHours(2);
+        LocalTime end = request.getTime().plusHours(2);
+        List<LocalTime> timeSlots  = generateReserveTime(start,end);
+        String timeSlotsQuery = convertTimeToQuery(timeSlots);
+        List<String> availableTimes = reservationService.getAvailableTime(request.getBranchId(), timeSlotsQuery
+                ,request.getDate(), request.getAmountGuest());
+        return ApiResponse.<AvailableReserveTimeResponse>builder()
+                .data(AvailableReserveTimeResponse.builder()
+                        .availableReservations(availableTimes)
+                        .build())
                 .build();
     }
 
 
     @Override
     @Transactional
-    public ApiResponse<OrderResponse> updateOrder(int orderId,OrderRequest request) {
-        OrderEntity order = orderService.getOrderById(orderId);
-        if(order.getPaymentStatus().equals(PaymentStatus.PAYED))
-            throw new AppException(ErrorCode.ORDER_WAS_CLOSED);
-        updateOrderItemInOrder(request,order);
-        createOrderItem(request,order);
-        if(request.getNote()!=null) order.setNote(request.getNote());
-        orderService.save(order.calculateTotal());
-        return  ApiResponse.<OrderResponse>builder()
-                .data(toResponse(order.getId()))
+    public ApiResponse<ReservationResponse> createReservation(ReservationRequest request) {
+        BranchEntity branch = branchService.getBranchEntity(request.getBranchId());
+        CustomerAccountEntity customer = getCustomerAccount(request.getCustomer());
+        List<TableEntity> tables = tableService.getTables(request.getTableIds());
+        int totalCapacity = tables.stream()
+                .map(TableEntity::getCapacity)
+                .reduce(0, Integer::sum);
+        if(totalCapacity<request.getAmountGuest())
+            throw new AppException(ErrorCode.NOT_ENOUGH_TABLE_FOR_RESERVE);
+        ReservationTypeEntity type = reservationTypeService
+                .getReservationTypeById(request.getTypeId());
+        OrderEntity order = buildOrderWithType(request.getOrder(),type.getName());
+        ReservationEntity reservation = ReservationEntity.builder()
+                .amountGuest(request.getAmountGuest())
+                .branch(branch)
+                .customer(customer)
+                .time(request.getTime())
+                .date(request.getDate())
+                .type(type)
+                .tables(tables)
+                .status(ReservationStatus.APPROVED)
+                .order(order)
+                .build();
+        reservation =reservationService.saveReservation(reservation);
+        return ApiResponse.<ReservationResponse>builder()
+                .data(toReservationResponse(reservation.getId()))
                 .build();
     }
 
 
-    private  List<OrderItemEntity> createOrderItem(OrderRequest request, OrderEntity order){
-        if(request.getOrderItems().getCreates()!=null){
-            return toOrderItems(request.getOrderItems().getCreates(),order);
-        }
+    @Override
+    public ApiResponse<ReservationResponse> updateReservation(ReservationRequest request, int id) {
         return null;
     }
 
-    private void updateOrderItemInOrder(OrderRequest request, OrderEntity order) {
-        if(request.getOrderItems().getUpdates()!=null){
-            for (OrderItemRequest orderItemRequest : request.getOrderItems().getUpdates()) {
-                OrderItemEntity item = orderItemService
-                        .findByOrderIdAndFoodId(order.getId(),orderItemRequest.getFoodId());
-                if (!item.getStatus().equals(OrderItemStatus.PENDING)) {
-                    if (orderItemRequest.getQuantity() != null) {
-                        if (orderItemRequest.getQuantity() <= item.getQuantity()) continue;
-                    }
-                }
-                item = orderItemService.mapUpdateOrderItem(orderItemRequest,item);
-                orderItemService.save(item.calculatePrice());
+    @Override
+    public ApiResponse<Page<ReservationResponse>> getAllReservationsInBranch(Pageable pageable,
+                                                                             Boolean isHistory, int branchId) {
+        return ApiResponse.<Page<ReservationResponse>>builder()
+                .data(reservationService.getAllReservationsInBranch(pageable,isHistory,branchId).map(reservationService::toReservationResponse))
+                .build();
+    }
+
+    @Override
+    public ApiResponse<ReservationResponse> getReservation(int id) {
+        return ApiResponse.<ReservationResponse>builder()
+                .data(toReservationResponse(id))
+                .build();
+    }
+
+    private OrderEntity buildOrderWithType(OrderRequest orderRequest, ReservationType type){
+        return switch (type){
+            case GENERAL -> buildGeneralOrder(orderRequest);
+            case WEDDING -> buildWeddingOrder(orderRequest);
+            default -> null;
+        };
+    }
+
+
+
+    private List<LocalTime> generateReserveTime(LocalTime start, LocalTime end) {
+        List<LocalTime> slots = new ArrayList<>();
+        while (!start.isAfter(end)) {
+            slots.add(start);
+            start = start.plusMinutes(30);
+        }
+        return slots;
+    }
+
+
+    private String convertTimeToQuery(List<LocalTime> timeSlots) {
+        List<String> query  = new ArrayList<>(timeSlots.stream()
+                .map(time -> String.format("SELECT '%s' ", time.toString()))
+                .toList());
+        query.set(0, query.getFirst()+"AS slot_time ");
+        return String.join(" UNION ALL ", query);
+    }
+    
+
+    private boolean isValidReserveDate(LocalTime reserveTime,
+                                       LocalDate reserveDate, List<BranchWorkingHourEntity> workingHours) {
+        boolean validDate = false;
+        BranchWorkingHourEntity tmpHour = null;
+        for (BranchWorkingHourEntity workingHour : workingHours) {
+            DayOfWeek reserveDayOfWeek = reserveDate.getDayOfWeek();
+            DayOfWeek workingDayOfWeek = workingHour.getDayOfWeek();
+            if (reserveDayOfWeek.equals(workingDayOfWeek)) {
+                validDate = true;
+                tmpHour = workingHour;
+                break;
             }
         }
+        if (!validDate) return false;
+        return (reserveTime.plusHours(2).isAfter(tmpHour.getOpeningTime())
+                && reserveTime.minusHours(2).isBefore(tmpHour.getClosingTime()));
     }
+
+
 
 
 
@@ -145,19 +333,19 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         if (request.getCustomerId() != null) {
             id = request.getCustomerId();
         } else {
-            id = accountService.quickCustomerRegis(request.getNewCustomer()).getData().getId();
+            id = accountService.quickCustomerRegis(request.getNewCustomer()).getData().getCustomerId();
         }
         return accountService.getCustomerAccount(id);
     }
 
     private List<OrderItemEntity> toOrderItems(List<OrderItemRequest> request, OrderEntity order) {
         return request
-                .stream().map(item -> toOrderItem(item,order))
+                .stream().map(item -> toOrderItem(item, order))
                 .toList();
     }
 
-    private OrderItemEntity toOrderItem(OrderItemRequest request,OrderEntity order) {
-        return OrderItemEntity.builder()
+    private OrderItemEntity toOrderItem(OrderItemRequest request, OrderEntity order) {
+        OrderItemEntity item = OrderItemEntity.builder()
                 .id(OrderItemId.builder()
                         .foodId(request.getFoodId())
                         .build())
@@ -168,11 +356,18 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .cooked(0)
                 .build()
                 .calculatePrice();
+        order.addItem(item);
+        return item;
     }
 
-    private OrderResponse toResponse(int orderId) {
+    private OrderResponse toOrderResponse(int orderId) {
         OrderEntity order = orderService.getOrderById(orderId);
         return orderService.toResponse(order.calculateTotal());
+    }
+
+    private ReservationResponse toReservationResponse(int reserveId){
+        ReservationEntity reserve = reservationService.getReservationById(reserveId);
+        return  reservationService.toReservationResponse(reserve);
     }
 
 }

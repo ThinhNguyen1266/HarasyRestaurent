@@ -56,6 +56,7 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
         return branchService.getBranchHomeInfo(branchId);
     }
 
+
     @Override
     public ApiResponse<BranchResponse> getBranch(int branchId) {
         return branchService.getBranchResponse(branchId);
@@ -87,6 +88,11 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     }
 
     @Override
+    public ApiResponse<TableResponse> updateTable(int tableId, TableRequest request) {
+        return tableService.updateTable(tableId, request);
+    }
+
+    @Override
     public ApiResponse<List<MenuResponse>> getAllMenusInBranch(int branchId, boolean isIncludeAll) {
         List<MenuEntity> menus = menuService.getAllMenusInBranch(branchId,isIncludeAll);
         return ApiResponse.<List<MenuResponse>>builder()
@@ -100,6 +106,9 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     public ApiResponse<MenuResponse> getMenu(int menuId) {
         return menuService.getMenu(menuId);
     }
+
+
+
 
 
     @Override

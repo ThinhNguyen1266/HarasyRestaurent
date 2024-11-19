@@ -1,17 +1,60 @@
 package group5.swp.HarasyProject.repository;
 
 import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
-import group5.swp.HarasyProject.enums.ReservationStatus;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
+@Repository
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Integer> {
-    // Fetch all reservations with APPROVED status
-    List<ReservationEntity> findAllByStatus(ReservationStatus status);
+    @Query(value = """                    
+            select ts.slot_time, sum(t.capacity)
+                   from tables t
+                            left join reservation_table rt
+                                      on t.table_id = rt.table_id
+                            left join reservation r
+                                      on rt.reservation_id = r.reservation_id
+                            join (:timeSlots) AS ts (slot_time)
+                   where t.branch_id = :branchId
+                     and t.status = 'AVAILABLE'
+                     and (r.reservation_date is null
+                       or (
+                              r.reservation_date = :date
+                                  and (
+                                  r.status <> 'APPROVED'
+                                      or (
+                                      r.status = 'APPROVED'
+                                          and
+                                      r.reservation_time not between SUBTIME(slot_time, '1:30') AND ADDTIME(slot_time, '1:30')
+                                      )
+                                  )
+                              )
+                       or (r.reservation_date <> :date
+                           AND NOT EXISTS (SELECT 1
+                                           FROM reservation_table rt2
+                                                    JOIN reservation r2
+                                                         ON rt2.reservation_id = r2.reservation_id
+                                           WHERE r2.reservation_date = :date
+                                             AND rt2.table_id = t.table_id))
+                       )
+                   group by slot_time
+                   having sum(t.capacity) >= :amountGuest
+                   order by slot_time;
+            """, nativeQuery = true)
+    List<String> getAvailableTime(int branchId, String timeSlots, LocalDate date, int amountGuest);
 
-    @Query("SELECT r FROM ReservationEntity r WHERE r.customer.account.fullName LIKE %:customerName%")
-    List<ReservationEntity> findByCustomerName(String customerName);
+    @Query("""
+                    select r from ReservationEntity r
+                    where r.branch.id = :branchId
+                    and (:isHistory = true
+                        or (
+                           r.status = 'PENDING' or r.status = 'APPROVED'
+                    ) )
+            """)
+    Page<ReservationEntity> getAllReservation(Pageable pageable, Boolean isHistory,int branchId);
 }

@@ -32,6 +32,8 @@ import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
 import WorkforceList from "./pages/WorkforceList";
 
+import CreateOrder from "./pages/CreateOrder";
+import EditOrder from "./pages/EditOrder";
 function App() {
   return (
     <>
@@ -55,7 +57,8 @@ function App() {
         <Route path="/reservationdetails" element={<ConfirmReservation />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
-        <Route path="/order" element={<OrderWaiter />} />
+
+        <Route path="/profile/:id" element={<Profile />} />
 
         <Route element={<StaffLayout />}>
           <Route
@@ -74,7 +77,10 @@ function App() {
             <Route path="/branch/:branchId" element={<EditBranch />} />
           </Route>
           <Route element={<AuthRoute allowedRoles={["WAITER"]} />}>
+            <Route path="/order" element={<OrderWaiter />} />
             <Route path="/regriscus" element={<RegrisCus />} />
+            <Route path="/createorder" element={<CreateOrder />} />
+            <Route path="/order/:id" element={<EditOrder />} />
           </Route>
         </Route>
       </Routes>

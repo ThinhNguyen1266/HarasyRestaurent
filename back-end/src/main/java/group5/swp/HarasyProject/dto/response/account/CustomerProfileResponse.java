@@ -14,7 +14,9 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerProfileResponse implements ProfileResponse{
-    Integer id;
+    Integer accountId;
+    Integer customerId;
+
     String username;
     String email;
     String fullName;

@@ -13,15 +13,16 @@ const BranchManagement = () => {
   const { data: branches = [], isLoading } = useQuery({
     queryKey: ["branches"],
     queryFn: getBranchesStaff,
+
     onError: (error) => {
       toast.error(`Failed to fetch branches: ${error.message}`);
     },
   });
-
+  console.log(branches);
   const deleteBranchMutate = useMutation({
     mutationFn: deleteBranch,
     onSuccess: () => {
-      queryClient.invalidateQueries("branches");
+      queryClient.invalidateQueries(["branches"]);
     },
     onError: (error) => {
       toast.error(`Failed to delete branch: ${error.message}`);
