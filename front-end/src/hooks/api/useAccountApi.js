@@ -38,7 +38,27 @@ const useAccountApi = () => {
     }
   };
 
-  return { getProfile ,updateCusProfile};
+  const Register = async (newAccount) => {
+    try {
+      const payload = {
+        username: newAccount.username,
+        password: newAccount.password,
+        email: newAccount.email,
+        fullName: newAccount.fullName,
+        dob: newAccount.dob,
+      };
+      console.log(payload);
+
+      const response = await axios.post("/regis/user", payload);
+
+      return response.data;
+    } catch (error) {
+      console.error("Server error details:", error.response?.data);
+      throw error;
+    }
+  };
+
+  return { getProfile, updateCusProfile, Register };
 };
 
 export default useAccountApi;
