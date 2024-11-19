@@ -27,4 +27,5 @@ public interface BusinessManagementService {
     ApiResponse<ReservationResponse> createReservation(ReservationRequest request);
     ApiResponse<Page<ReservationResponse>> getAllReservationsInBranch(Pageable pageable, Boolean isHistory, int branchId);
     ApiResponse<ReservationResponse> getReservation(int id);
+    ApiResponse<ReservationResponse> updateReservation(ReservationRequest request,int id);
 }

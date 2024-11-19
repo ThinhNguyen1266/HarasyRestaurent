@@ -258,6 +258,11 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
 
     @Override
+    public ApiResponse<ReservationResponse> updateReservation(ReservationRequest request, int id) {
+        return null;
+    }
+
+    @Override
     public ApiResponse<Page<ReservationResponse>> getAllReservationsInBranch(Pageable pageable,
                                                                              Boolean isHistory, int branchId) {
         return ApiResponse.<Page<ReservationResponse>>builder()
@@ -340,7 +345,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     }
 
     private OrderItemEntity toOrderItem(OrderItemRequest request, OrderEntity order) {
-        return OrderItemEntity.builder()
+        OrderItemEntity item = OrderItemEntity.builder()
                 .id(OrderItemId.builder()
                         .foodId(request.getFoodId())
                         .build())
@@ -351,6 +356,8 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .cooked(0)
                 .build()
                 .calculatePrice();
+        order.addItem(item);
+        return item;
     }
 
     private OrderResponse toOrderResponse(int orderId) {

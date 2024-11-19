@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 public interface ReservationService {
-
     List<String> getAvailableTime(int branchId, String timeSlots, LocalDate date, int amountGuest);
     Page<ReservationEntity> getAllReservationsInBranch(Pageable pageable,Boolean isHistory,int branchId);
 
