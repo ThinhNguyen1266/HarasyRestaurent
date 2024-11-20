@@ -11,6 +11,7 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
 import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
 import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
@@ -250,6 +251,13 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .build();
     }
 
+    @Override
+    public ApiResponse<List<TableResponse>> getAvailableTable(CheckReserveTimeRequest request) {
+        List<TableEntity> tables = tableService.getAllTablesAvailableToReserve(request.getBranchId(), request.getDate(), request.getTime());
+        return ApiResponse.<List<TableResponse>>builder()
+                .data(tables.stream().map(tableService::toResponse).toList())
+                .build();
+    }
 
     @Override
     @Transactional
@@ -276,7 +284,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .status(ReservationStatus.APPROVED)
                 .order(order)
                 .build();
-        reservation = reservationService.saveReservation(reservation);
+        reservation = reservationService.saveReservation(reservation.calculate());
         return ApiResponse.<ReservationResponse>builder()
                 .data(toReservationResponse(reservation.getId()))
                 .build();
@@ -411,4 +419,33 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         return reservationService.toReservationResponse(reserve);
     }
 
+    @Override
+    public Long getRevenueByDay(LocalDate specificDate) {
+        return orderService.getRevenueByDay(specificDate);
+    }
+
+    @Override
+    public List<Object[]> getDailyRevenueInMonth(int month, int year) {
+        return orderService.getDailyRevenueInMonth(month, year);
+    }
+
+    @Override
+    public Long getRevenueByMonth(int month, int year) {
+        return orderService.getRevenueByMonth(month, year);
+    }
+
+    @Override
+    public List<Object[]> getMonthlyRevenueInYear(int year) {
+        return orderService.getMonthlyRevenueInYear(year);
+    }
+
+    @Override
+    public Long getRevenueByYear(int year) {
+        return orderService.getRevenueByYear(year);
+    }
+
+    @Override
+    public List<Object[]> getTotalRevenueForAllYears() {
+        return orderService.getTotalRevenueForAllYears();
+    }
 }

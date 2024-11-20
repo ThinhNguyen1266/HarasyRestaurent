@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -17,4 +18,15 @@ public interface OrderService {
     OrderEntity getOrderById(int id);
     OrderEntity save(OrderEntity order);
     OrderResponse toResponse(OrderEntity order);
+    public Long getRevenueByDay(LocalDate specificDate);
+
+    public List<Object[]> getDailyRevenueInMonth(int month, int year);
+
+    public Long getRevenueByMonth(int month, int year);
+
+    public List<Object[]> getMonthlyRevenueInYear(int year);
+
+    public Long getRevenueByYear(int year);
+
+    public List<Object[]> getTotalRevenueForAllYears();
 }
