@@ -44,7 +44,7 @@ function HNVenues() {
           <Link
             to={`/findtable?branch=${branchData.name
               ?.toLowerCase()
-              .replace(/ /g, "-")}`}
+              .replace(/ /g, "-")}&branchId=${branchId}`}
             className="btn"
           >
             BOOK A TABLE

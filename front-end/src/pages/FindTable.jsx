@@ -1,22 +1,37 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { FaRegClock, FaRegUser } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import axiosPublic from "../services/axios";
 import "../assets/styles/FindTable.css";
 
 const FindTable = () => {
   const location = useLocation();
-
   const params = new URLSearchParams(location.search);
-  const branch = params.get("branch") || "ha-noi";
+  const branchId = params.get("branchId");
+  const branch = params.get("branch");
+  const [request, setRequest] = useState({
+    branchId: branchId,
+    date: "",
+    time: "",
+    amnountGuest: "1",
+  });
+  const [reserveTimeOptions, setReserveTimeOptions] = useState([]);
+  const branchTitle = `Reservation at ${branch.split("-").join(" ")} `;
 
-  const branchTitle =
-    branch === "ho-chi-minh"
-      ? "Reservation at Harasy Ho Chi Minh | Restaurant"
-      : "Reservation at Harasy Ha Noi | Restaurant";
+  const getChunkTime = (reserveTimeOptions) => {
+    const chunks = [];
+    let chunkSize = 4;
+    for (let i = 0; i < reserveTimeOptions.length; i += chunkSize) {
+      const chunk = reserveTimeOptions.slice(i, i + chunkSize);
+      chunks.push(chunk);
+    }
+    return chunks;
+  };
 
   const generateTimeOptions = () => {
     const times = [];
-    let hour = 13;
+    let hour = 0;
     let minute = 0;
 
     while (hour <= 23) {
@@ -24,7 +39,6 @@ const FindTable = () => {
       const formattedMinute = minute === 0 ? "00" : minute;
       times.push(`${formattedHour}:${formattedMinute}`);
       minute += 30;
-
       if (minute === 60) {
         minute = 0;
         hour++;
@@ -33,16 +47,26 @@ const FindTable = () => {
 
     return times;
   };
-
+  console.log(request);
   const timeOptions = generateTimeOptions();
-
-  const mockTimeOptions = [
-    { time: "5:45", available: true },
-    { time: "6:00", available: true },
-    { time: "6:15", available: false },
-    { time: "7:15", available: true },
-    { time: "7:30", available: false },
+  const guestOption = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
   ];
+
+  const canFindTime = () => {
+    for (const key in request) {
+      if (Object.prototype.hasOwnProperty.call(request, key)) {
+        const element = request[key];
+        if (element == null || element === "") return false;
+      }
+    }
+    return true;
+  };
+
+  const findTime = async (request) => {
+    const res = await axiosPublic.post("/reserve/availableTime", request);
+    setReserveTimeOptions(res.data.availableReservations);
+  };
 
   return (
     <div className="findtable-page">
@@ -76,21 +100,41 @@ const FindTable = () => {
                   <Col md={3} className="col-style">
                     <div className="user-picker-wrapper">
                       <FaRegUser className="user-icon" />
-                      <Form.Select className="form-select">
-                        <option>2 people</option>
-                        <option>4 people</option>
-                        <option>6 people</option>
+                      <Form.Select
+                        className="form-select"
+                        onChange={(e) => {
+                          setRequest({
+                            ...request,
+                            amnountGuest: e.target.value,
+                          });
+                          console.log(request);
+                        }}
+                      >
+                        {guestOption.map((a) => (
+                          <option value={a}>{a} peoples</option>
+                        ))}
                       </Form.Select>
                     </div>
                   </Col>
 
                   <Col md={3} className="col-style">
-                    <Form.Control type="date" className="form-control" />
+                    <Form.Control
+                      type="date"
+                      className="form-control "
+                      onChange={(e) => {
+                        setRequest({ ...request, date: e.target.value });
+                      }}
+                    />
                   </Col>
                   <Col md={3} className="col-style">
                     <div className="time-picker-wrapper">
                       <FaRegClock className="clock-icon" />
-                      <Form.Select className="form-select">
+                      <Form.Select
+                        className="form-select"
+                        onChange={(e) => {
+                          setRequest({ ...request, time: e.target.value });
+                        }}
+                      >
                         {timeOptions.map((time, index) => (
                           <option key={index} value={time}>
                             {time}
@@ -108,37 +152,44 @@ const FindTable = () => {
                         fontWeight: "bold",
                       }}
                       className="w-100"
+                      onClick={() => {
+                        findTime(request);
+                      }}
+                      disabled={!canFindTime()}
                     >
                       Find a table
                     </Button>
                   </Col>
                 </Row>
 
-                <div className="time-options d-flex justify-content-between">
-                  {mockTimeOptions.map((option, index) => (
-                    <Button
-                      as={Link}
-                      to={
-                        option.available
-                          ? `/reservationdetails?branch=${branch}&time=${option.time}`
-                          : "#"
-                      }
-                      key={index}
-                      className={`time-btn d-flex align-items-center justify-content-center ${
-                        !option.available ? "disabled" : ""
-                      }`}
-                      disabled={!option.available}
-                    >
-                      <FaRegClock
-                        style={{
-                          marginRight: "8px",
-                          fontSize: "16px",
-                        }}
-                      />
-                      {option.time}
-                    </Button>
-                  ))}
-                </div>
+                {getChunkTime(reserveTimeOptions).map((chunk) => (
+                  <Row>
+                    <div className="time-options d-flex justify-content-between ">
+                      {chunk.map((option, index) => (
+                        <Col md={3}>
+                          <Button
+                            as={Link}
+                            to={
+                              option.available
+                                ? `/reservationdetails?branch=${branch}&time=${option}`
+                                : "#"
+                            }
+                            key={index}
+                            className={`time-btn d-flex align-items-center justify-content-center mx-1`}
+                          >
+                            <FaRegClock
+                              style={{
+                                marginRight: "8px",
+                                fontSize: "16px",
+                              }}
+                            />
+                            {option}
+                          </Button>
+                        </Col>
+                      ))}
+                    </div>
+                  </Row>
+                ))}
               </Form>
             </div>
           </Col>

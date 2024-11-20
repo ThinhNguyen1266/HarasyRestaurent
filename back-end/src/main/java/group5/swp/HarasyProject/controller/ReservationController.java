@@ -23,7 +23,7 @@ public class ReservationController {
     BusinessManagementService businessManagementService;
 
 
-    @GetMapping("/reserve/availableTime")
+    @PostMapping("/reserve/availableTime")
     ApiResponse<AvailableReserveTimeResponse> getAvailableReserveTime(@RequestBody CheckReserveTimeRequest request) {
         return businessManagementService.getAvailableReserveTime(request);
     }

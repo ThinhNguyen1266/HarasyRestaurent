@@ -12,8 +12,7 @@
 
 .main-content {
   margin-left: 250px;
-  margin-bottom: 60px;
-  padding: 20px;
+  padding: 40px;
   width: calc(100% - 250px);
   background-color: #1c1c1c;
   min-height: 100vh;
