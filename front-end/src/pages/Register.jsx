@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../assets/styles/Register.css";
 import useAccountApi from "../hooks/api/useAccountApi";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 
 function Register() {
   const { Register } = useAccountApi();
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     phone: "",
-    dobMonth: "", // Track month separately
-    dobDay: "", // Track day separately
+    dobMonth: "",
+    dobDay: "",
     dobYear: "",
     dob: "",
     fullName: "",
@@ -48,6 +48,7 @@ function Register() {
     mutationFn: Register,
     onSuccess: () => {
       toast.success(" Registed successfully!");
+      navigate("/otp", { state: { email: formData.email } });
     },
     onError: (error) => {
       toast.error(`Failed to regist : ${error.message}`);
@@ -238,6 +239,7 @@ function Register() {
             </div>
           </Col>
         </Row>
+        <ToastContainer position="top-right" autoClose={3000} />
       </Container>
     </div>
   );
