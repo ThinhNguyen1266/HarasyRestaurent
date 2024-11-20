@@ -11,6 +11,7 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
 import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
 import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.entity.account.CustomerAccountEntity;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
@@ -250,6 +251,13 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .build();
     }
 
+    @Override
+    public ApiResponse<List<TableResponse>> getAvailableTable(CheckReserveTimeRequest request) {
+        List<TableEntity> tables = tableService.getAllTablesAvailableToReserve(request.getBranchId(), request.getDate(), request.getTime());
+        return ApiResponse.<List<TableResponse>>builder()
+                .data(tables.stream().map(tableService::toResponse).toList())
+                .build();
+    }
 
     @Override
     @Transactional
