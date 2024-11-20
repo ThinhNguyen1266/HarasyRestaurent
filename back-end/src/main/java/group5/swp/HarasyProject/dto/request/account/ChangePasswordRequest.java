@@ -7,15 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CusUpdateProfileRequest {
-    String fullName;
-    Date dob;
-    int vipPoint;
+public class ChangePasswordRequest {
+    String oldPassword;
+    String newPassword;
+    String confirmPassword;
 }

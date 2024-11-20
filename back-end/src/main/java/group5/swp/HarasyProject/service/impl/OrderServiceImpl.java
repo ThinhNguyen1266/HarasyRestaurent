@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -62,5 +63,33 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toResponse(order);
     }
 
+    @Override
+    public Long getRevenueByDay(LocalDate specificDate) {
+        return orderRepository.calculateRevenueByDay(specificDate);
+    }
 
+    @Override
+    public List<Object[]> getDailyRevenueInMonth(int month, int year) {
+        return orderRepository.calculateDailyRevenueInMonth(month, year);
+    }
+
+    @Override
+    public Long getRevenueByMonth(int month, int year) {
+        return orderRepository.calculateRevenueByMonth(month, year);
+    }
+
+    @Override
+    public List<Object[]> getMonthlyRevenueInYear(int year) {
+        return orderRepository.calculateMonthlyRevenueInYear(year);
+    }
+
+    @Override
+    public Long getRevenueByYear(int year) {
+        return orderRepository.calculateRevenueByYear(year);
+    }
+
+    @Override
+    public List<Object[]> getTotalRevenueForAllYears() {
+        return orderRepository.calculateTotalRevenueForAllYears();
+    }
 }

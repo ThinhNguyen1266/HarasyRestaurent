@@ -276,7 +276,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .status(ReservationStatus.APPROVED)
                 .order(order)
                 .build();
-        reservation = reservationService.saveReservation(reservation);
+        reservation = reservationService.saveReservation(reservation.calculate());
         return ApiResponse.<ReservationResponse>builder()
                 .data(toReservationResponse(reservation.getId()))
                 .build();
@@ -411,4 +411,33 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         return reservationService.toReservationResponse(reserve);
     }
 
+    @Override
+    public Long getRevenueByDay(LocalDate specificDate) {
+        return orderService.getRevenueByDay(specificDate);
+    }
+
+    @Override
+    public List<Object[]> getDailyRevenueInMonth(int month, int year) {
+        return orderService.getDailyRevenueInMonth(month, year);
+    }
+
+    @Override
+    public Long getRevenueByMonth(int month, int year) {
+        return orderService.getRevenueByMonth(month, year);
+    }
+
+    @Override
+    public List<Object[]> getMonthlyRevenueInYear(int year) {
+        return orderService.getMonthlyRevenueInYear(year);
+    }
+
+    @Override
+    public Long getRevenueByYear(int year) {
+        return orderService.getRevenueByYear(year);
+    }
+
+    @Override
+    public List<Object[]> getTotalRevenueForAllYears() {
+        return orderService.getTotalRevenueForAllYears();
+    }
 }
