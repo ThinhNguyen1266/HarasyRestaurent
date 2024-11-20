@@ -355,13 +355,22 @@ const EditBranch = () => {
                     className="form-select me-2"
                   >
                     <option value="">Select Day</option>
-                    <option value="MONDAY">Monday</option>
-                    <option value="TUESDAY">Tuesday</option>
-                    <option value="WEDNESDAY">Wednesday</option>
-                    <option value="THURSDAY">Thursday</option>
-                    <option value="FRIDAY">Friday</option>
-                    <option value="SATURDAY">Saturday</option>
-                    <option value="SUNDAY">Sunday</option>
+                    {[
+                      "MONDAY",
+                      "TUESDAY",
+                      "WEDNESDAY",
+                      "THURSDAY",
+                      "FRIDAY",
+                      "SATURDAY",
+                      "SUNDAY",
+                    ].map((day) =>
+                      !formData.workingHours.some((h) => h.dayOfWeek === day) ||
+                      hour.dayOfWeek === day ? (
+                        <option key={day} value={day}>
+                          {day}
+                        </option>
+                      ) : null
+                    )}
                   </select>
                   <input
                     type="time"

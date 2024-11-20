@@ -24,13 +24,10 @@ public interface StaffAccountRepository extends JpaRepository<StaffAccountEntity
 
     List<StaffAccountEntity> findAllByBranchId(int branchId);
 
-
     @Query("SELECT s FROM StaffAccountEntity s " +
             "WHERE (:role IS NULL OR s.role = :role) " +
-            "AND (:status IS NULL OR s.account.status = :status) " +
-            "AND (:branchId IS NULL OR s.branch.id = :branchId)")
-    List<StaffAccountEntity> findStaffByRoleAndStatusAndBranchId(
+            "AND (:status IS NULL OR s.account.status = :status)")
+    List<StaffAccountEntity> findStaffByRoleAndStatus(
             @Param("role") StaffRole role,
-            @Param("status") AccountStatus status,
-            @Param("branchId") Integer branchId);
+            @Param("status") AccountStatus status);
 }

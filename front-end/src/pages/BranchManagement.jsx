@@ -7,8 +7,7 @@ import useBranchApi from "../hooks/api/useBranchApi";
 
 const BranchManagement = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { getBranchesStaff, deleteBranch } = useBranchApi();
+  const { getBranchesStaff } = useBranchApi();
 
   const { data: branches = [], isLoading } = useQuery({
     queryKey: ["branches"],
@@ -65,10 +64,14 @@ const BranchManagement = () => {
                   </p>
                   <span
                     className={`badge ${
-                      branch.status === "active" ? "bg-success" : "bg-danger"
+                      branch.branchInfo.status === "ACTIVE"
+                        ? "bg-success"
+                        : "bg-danger"
                     }`}
                   >
-                    {branch.branchInfo.status}
+                    {branch.branchInfo.status === "ACTIVE"
+                      ? "Active"
+                      : "Inactive"}
                   </span>
                 </div>
               </div>

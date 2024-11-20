@@ -75,7 +75,7 @@ const useBranchApi = () => {
           image: newBranch.image,
           phone: newBranch.phone,
 
-          manager: newBranch.manager,
+          managerId: newBranch.managerId,
           status: newBranch.status,
           workingHours: newBranch.workingHours.filter(
             (hour) => hour.dayOfWeek && hour.openingTime && hour.closingTime
