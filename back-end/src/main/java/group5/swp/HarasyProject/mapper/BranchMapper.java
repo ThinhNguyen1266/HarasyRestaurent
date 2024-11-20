@@ -19,13 +19,13 @@ import java.util.List;
 public interface BranchMapper {
 
     
-    @Mapping(target = "branchInfo.id" ,source = "branch.id")
-    @Mapping(target = "branchInfo.name" ,source = "branch.name")
-    @Mapping(target = "branchInfo.image" ,source = "branch.image")
-    @Mapping(target = "branchInfo.location" ,source = "branch.location")
-    @Mapping(target = "branchInfo.phone" ,source = "branch.phone")
-    @Mapping(target = "branchInfo.status" ,source = "branch.status")
-    @Mapping(target = "branchInfo.workingHours" ,source = "branch.workingHours")
+    @Mapping(target = "branchInfo.id" ,source = "id")
+    @Mapping(target = "branchInfo.name" ,source = "name")
+    @Mapping(target = "branchInfo.image" ,source = "image")
+    @Mapping(target = "branchInfo.location" ,source = "location")
+    @Mapping(target = "branchInfo.phone" ,source = "phone")
+    @Mapping(target = "branchInfo.status" ,source = "status")
+    @Mapping(target = "branchInfo.workingHours" ,source = "workingHours")
     BranchResponse toBranchResponse(BranchEntity branch);
 
     List<BranchResponse> toBranchInfoResponses(List<BranchEntity> branches);

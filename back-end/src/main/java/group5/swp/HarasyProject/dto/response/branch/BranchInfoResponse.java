@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BranchInfoResponse extends BranchInfoHomeResponse {
-    String managerId;
+    int managerId;
     String managerName;
     String managerEmail;
     String managerImage;

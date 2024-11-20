@@ -3,6 +3,8 @@ package group5.swp.HarasyProject.service.impl;
 import group5.swp.HarasyProject.dto.request.order.OrderItemRequest;
 import group5.swp.HarasyProject.dto.response.order.OrderItemResponse;
 import group5.swp.HarasyProject.entity.order.OrderItemEntity;
+import group5.swp.HarasyProject.entity.order.OrderItemId;
+import group5.swp.HarasyProject.enums.OrderItemStatus;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.mapper.OrderItemMapper;
@@ -54,5 +56,18 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderItemEntity mapUpdateOrderItem(OrderItemRequest request, OrderItemEntity orderItemEntity) {
         return orderItemMapper.update(request,orderItemEntity);
+    }
+
+    @Override
+    public void deleteItem(int orderId, int foodId) {
+        OrderItemId id = OrderItemId.builder()
+                .foodId(foodId)
+                .orderId(orderId)
+                .build();
+        OrderItemEntity orderItemEntity = orderItemRepository.findById(id)
+                .orElseThrow(()->new AppException(ErrorCode.ORDER_ITEM_NOT_FOUND));
+        if(!orderItemEntity.getStatus().equals(OrderItemStatus.PENDING))
+            throw new AppException(ErrorCode.CANNOT_DELETE_ORDER_ITEM);
+        orderItemRepository.deleteById(id);
     }
 }
