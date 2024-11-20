@@ -31,7 +31,7 @@ public interface AccountService {
 
     ApiResponse<List<ProfileResponse>> getAccounts(String phone);
 
-
+    StaffAccountEntity saveStaff(StaffAccountEntity staff);
     StaffAccountEntity getStaffAccount(Integer staffId) ;
     CustomerAccountEntity getCustomerAccount(Integer customerId) ;
 
