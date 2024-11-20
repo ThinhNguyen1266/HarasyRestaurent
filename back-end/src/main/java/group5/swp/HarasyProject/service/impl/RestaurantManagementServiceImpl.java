@@ -13,9 +13,11 @@ import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
+import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
+import group5.swp.HarasyProject.enums.Account.StaffRole;
 import group5.swp.HarasyProject.service.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,9 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     FoodService foodService;
     TableService tableService;
     OrderService orderService;
+    AccountService accountService;
+
+
 
     @Override
     public ApiResponse<Page<OrderResponse>> getOrdersInBranch(int branchId, Pageable pageable) {
@@ -136,11 +141,19 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     @Override
     public ApiResponse<BranchResponse> updateBranch(int branchId, BranchRequest request) {
         BranchEntity branch = branchService.updateBranch(branchId, request.getBranchInfo());
+        updateBranchManager(branch, request.getBranchInfo().getManagerId());
         doUpdateIn(request, branch);
         branch = branchService.saveBranch(branch);
         return ApiResponse.<BranchResponse>builder()
                 .data(branchService.toBranchResponse(branch))
                 .build();
+    }
+
+    private void updateBranchManager(BranchEntity branch , int managerId){
+        StaffAccountEntity manager = accountService.getStaffAccount(managerId);
+        for (StaffAccountEntity s : branch.getStaffs()){
+            if(s.getRole().equals(StaffRole.BRANCH_MANAGER)) s = manager;
+        }
     }
 
 
