@@ -90,11 +90,13 @@ public class BranchServiceImpl implements BranchService {
             staff = staff
                     .stream().filter(s-> s.getRole().equals(StaffRole.BRANCH_MANAGER))
                     .toList();
-            StaffAccountEntity manager = staff.getFirst();
-            info.getBranchInfo().setManagerEmail(manager.getAccount().getEmail());
-            info.getBranchInfo().setManagerId(manager.getId());
-            info.getBranchInfo().setManagerName(manager.getAccount().getFullName());
-            info.getBranchInfo().setManagerImage(manager.getPicture());
+            if(!staff.isEmpty()) {
+                StaffAccountEntity manager = staff.getFirst();
+                info.getBranchInfo().setManagerEmail(manager.getAccount().getEmail());
+                info.getBranchInfo().setManagerId(manager.getId());
+                info.getBranchInfo().setManagerName(manager.getAccount().getFullName());
+                info.getBranchInfo().setManagerImage(manager.getPicture());
+            }
         }
         return info;
     }
