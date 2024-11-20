@@ -3,7 +3,10 @@ import "../assets/styles/AllReservation.css";
 import ReservationModal from "../components/ReservationModal";
 import CreateReservationModal from "../components/CreateReservationModal"; // Import the CreateReservationModal component
 import Sidebar from "../components/Sidebar";
-
+import useReservationApi from "../hooks/api/userReservationApi";
+import { ToastContainer, toast } from "react-toastify";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import useAuth from "../hooks/useAuth";
 const reservations = [
   {
     id: 1,
@@ -90,6 +93,22 @@ const ReservationItem = ({ reservation, onDetailClick }) => {
 };
 
 const ReservationsPage = () => {
+  const { user } = useAuth();
+
+  const queryClient = useQueryClient();
+  const { getRerservationCus } = useReservationApi();
+  console.log("id", user);
+  
+  const { data: reservation = [], isLoading } = useQuery({
+    queryKey: ["reservation",user.customerId],
+    queryFn: getRerservationCus(user.customerId),
+
+    onError: (error) => {
+      toast.error(`Failed to fetch branches: ${error.message}`);
+    },
+  });
+  console.log(reservations);
+
   const [searchPhone, setSearchPhone] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedReservation, setSelectedReservation] = useState(null);
