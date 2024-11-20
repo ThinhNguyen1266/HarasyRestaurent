@@ -118,7 +118,7 @@ const useBranchApi = () => {
           location: updatedBranch.branchInfo.location,
           image: updatedBranch.branchInfo.image,
           phone: updatedBranch.branchInfo.phone,
-          manager: updatedBranch.branchInfo.manager,
+          managerId: updatedBranch.branchInfo.managerId,
           status: updatedBranch.branchInfo.status,
         },
         workingHours: {}, // Assuming this is for another purpose

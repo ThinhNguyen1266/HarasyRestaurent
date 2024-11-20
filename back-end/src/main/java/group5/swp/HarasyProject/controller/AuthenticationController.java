@@ -58,7 +58,7 @@ public class AuthenticationController {
         return authenticationService.refreshToken(request);
     }
 
-    @GetMapping("/otp")
+    @PostMapping("/resend/otp")
     public ApiResponse<?> resendOtp(@RequestBody ResendEmailRequest request) throws MessagingException, IOException {
         return accountService.resendEmail(request);
     }

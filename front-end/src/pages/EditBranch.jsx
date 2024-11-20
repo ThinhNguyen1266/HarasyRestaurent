@@ -8,32 +8,43 @@ import { toast, ToastContainer } from "react-toastify";
 
 import "../assets/styles/EditBranch.css";
 import MenuDetailModal from "../components/MenuDetailModal";
+import { FaTrash } from "react-icons/fa";
 
 const EditBranch = () => {
-  const [selectedMenuId, setSelectedMenuId] = useState(null); // Trạng thái để lưu ID của menu đã chọn
-  const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái để điều khiển việc mở modal
-
-  const handleMenuClick = (menuId) => {
-    console.log("Selected Menu ID:", menuId);
-
-    setSelectedMenuId(menuId); // Lưu ID của menu được nhấn
-    setIsModalOpen(true);
+  const handleDelete = (branchId) => {
+    if (window.confirm("Are you sure you want to delete this branch?")) {
+      deleteBranchMutate.mutate(branchId, {
+        onSuccess: () => {
+          toast.success("Branch deleted successfully!");
+          navigate("/branch");
+        },
+      });
+    }
   };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false); // Đóng modal
-  };
-
   const queryClient = useQueryClient();
   const { branchId } = useParams();
   const navigate = useNavigate();
-  const { getBranchbyID, updateBranch, getBranchManagers, getMenubyBranchID } =
-    useBranchApi();
+  const {
+    getBranchbyID,
+    updateBranch,
+    getBranchManagers,
+    getMenubyBranchID,
+    deleteBranch,
+  } = useBranchApi();
 
   const { data: menus, isLoading: isMenusLoading } = useQuery({
     queryKey: ["menus", branchId],
     queryFn: () => getMenubyBranchID(branchId, true),
     onError: (error) => toast.error(`Failed to fetch menu: ${error.message}`),
+  });
+  const deleteBranchMutate = useMutation({
+    mutationFn: deleteBranch,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["branches"]);
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete branch: ${error.message}`);
+    },
   });
 
   const [formData, setFormData] = useState({
@@ -42,7 +53,7 @@ const EditBranch = () => {
     image: "",
     imageFile: null,
     phone: "",
-    manager: "",
+    managerId: "",
     status: "",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
     tables: [{ number: "", capacity: "" }],
@@ -68,7 +79,7 @@ const EditBranch = () => {
       console.log("Branch data after reload:", branchData);
       setFormData({
         ...branchData.branchInfo,
-        manager: branchData.manager || "",
+        managerId: branchData.branchInfo.managerId || "",
         imageFile: null,
         workingHours: Array.isArray(branchData.branchInfo.workingHours)
           ? branchData.branchInfo.workingHours
@@ -104,7 +115,7 @@ const EditBranch = () => {
         image: imageUrl || formData.image,
         phone: formData.phone,
         status: formData.status,
-        manager: formData.manager,
+        managerId: formData.managerId,
       },
       workingHours: {
         creates: formData.workingHours
@@ -274,22 +285,18 @@ const EditBranch = () => {
             <div className="mb-3">
               <label className="form-label text-white">Manager</label>
               <select
-                name="manager"
-                value={formData.manager}
+                name="managerId"
+                value={formData.managerId}
                 onChange={handleInputChange}
-                className="form-select"
+                className="form-control"
                 required
               >
-                <option value="">Select a Manager</option>
-                {isLoadingManagers ? (
-                  <option>Loading managers...</option>
-                ) : (
-                  managers.map((manager, index) => (
-                    <option key={index} value={manager.fullName}>
-                      {manager.fullName}
-                    </option>
-                  ))
-                )}
+                <option value="">Select a manager</option>
+                {managers.map((manager) => (
+                  <option key={manager.id} value={manager.id}>
+                    {manager.fullName}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="mb-3">
@@ -449,26 +456,23 @@ const EditBranch = () => {
                     key={index}
                     type="button"
                     className="btn btn-primary me-2"
-                    onClick={() => handleMenuClick(menu.id)} // Khi nhấn, mở modal với menu ID
                   >
                     {menu.type}
                   </button>
                 ))}
               </div>
             </div>
-
-            {/* Hiển thị modal khi selectedMenuId có giá trị và isModalOpen là true */}
-            {isModalOpen && (
-              <MenuDetailModal
-                isOpen={isModalOpen}
-                menuId={selectedMenuId}
-                onClose={() => setIsModalOpen(false)}
-              />
-            )}
           </div>
         </div>
         <button type="submit" className="btn btn-primary mt-4">
           Save Changes
+        </button>
+        <button
+          onClick={() => handleDelete(branchId)}
+          className="btn btn-danger mt-4 mx-3"
+        >
+          <FaTrash />
+          Delete
         </button>
       </form>
       <ToastContainer position="top-right" autoClose={3000} />

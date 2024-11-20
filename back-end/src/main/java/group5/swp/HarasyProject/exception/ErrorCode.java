@@ -39,7 +39,7 @@ public enum ErrorCode {
     TABLE_EXISTED(4000, "table already exist", HttpStatus.CONFLICT),
     BRANCH_EXISTED(4001,"branch name is duplicate",HttpStatus.CONFLICT),
     EMAIL_EXISTED(4002,"Email is already existed",HttpStatus.CONFLICT),
-
+    USERNAME_EXISTED(4003,"Username is already existed",HttpStatus.CONFLICT),
     //SPECIAL
     ORDER_HAVE_NO_TABLE(2000,"cannot create order with no table",HttpStatus.BAD_REQUEST),
     ORDER_WAS_CLOSED(2001,"order was closed",HttpStatus.CONFLICT),

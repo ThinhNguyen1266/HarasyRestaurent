@@ -66,6 +66,8 @@ public class AccountServiceImpl implements AccountService {
     public ApiResponse<RegisResponse> customerRegis(RegisCustomerRequest request) throws IOException, MessagingException {
         AccountEntity accountEntity = accountMapper.regisCusToAccount(request);
         accountEntity.setPassword(passwordEncoder.encode(accountEntity.getPassword()));
+        if (accountRepository.existsByEmail(request.getEmail())) throw new AppException(ErrorCode.EMAIL_EXISTED);
+        if (accountRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USERNAME_EXISTED);
         accountEntity.setCustomer(new CustomerAccountEntity());
         accountRepository.save(accountEntity);
         EmailRequest emailRequest = EmailRequest.builder().to(request.getEmail()).subject("Your OTP").build();

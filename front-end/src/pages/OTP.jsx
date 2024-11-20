@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 
 const OTP = () => {
-  const { sentOtp } = useAccountApi();
+  const { sentOtp, resentOtp } = useAccountApi();
   const [otp, setOtp] = useState("");
   const location = useLocation();
   const email = location.state?.email;
@@ -19,6 +19,25 @@ const OTP = () => {
     token: "",
   });
 
+  const resendOtpMutate = useMutation({
+    mutationFn: resentOtp,
+    onSuccess: () => {
+      toast.success("OTP resent successfully! Check your email.");
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to resend OTP. Please try again.";
+      toast.error(errorMessage);
+    },
+  });
+
+  const handleResendOtp = () => {
+    const payload = { email }; // Email được lấy từ state location
+    console.log("Payload sent to API resendOtp:", payload);
+    resendOtpMutate.mutate(payload);
+  };
+
   const saveOtpMutate = useMutation({
     mutationFn: sentOtp,
     onSuccess: () => {
@@ -26,7 +45,10 @@ const OTP = () => {
       navigate("/login");
     },
     onError: (error) => {
-      toast.error(`Failed to validate OTP: ${error.message}`);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to validate OTP. Please try again.";
+      toast.error(errorMessage);
     },
   });
 
@@ -93,6 +115,14 @@ const OTP = () => {
                 </Form.Group>
                 <Button className="otp-button" variant="warning" type="submit">
                   Submit
+                </Button>
+                <Button
+                  className="resend-button"
+                  variant="link"
+                  onClick={handleResendOtp}
+                  disabled={resendOtpMutate.isLoading}
+                >
+                  Resend OTP
                 </Button>
               </Form>
             </div>

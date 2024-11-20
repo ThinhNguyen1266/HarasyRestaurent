@@ -51,7 +51,10 @@ function Register() {
       navigate("/otp", { state: { email: formData.email } });
     },
     onError: (error) => {
-      toast.error(`Failed to regist : ${error.message}`);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to register. Please try again.";
+      toast.error(errorMessage);
     },
   });
 

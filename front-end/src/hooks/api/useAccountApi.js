@@ -75,7 +75,23 @@ const useAccountApi = () => {
     }
   };
 
-  return { getProfile, updateCusProfile, Register, sentOtp };
+  const resentOtp = async (resentotp) => {
+    try {
+      const payload = {
+        email: resentotp.email,
+      };
+      console.log("du lieu gui api", payload);
+
+      const response = await axios.post("/resend/otp", payload);
+
+      return response;
+    } catch (error) {
+      console.error("Server error details:", error.response?.data);
+      throw error;
+    }
+  };
+
+  return { getProfile, updateCusProfile, Register, sentOtp, resentOtp };
 };
 
 export default useAccountApi;
