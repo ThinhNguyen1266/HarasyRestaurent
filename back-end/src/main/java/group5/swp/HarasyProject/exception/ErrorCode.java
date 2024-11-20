@@ -19,8 +19,9 @@ public enum ErrorCode {
     INVALID_OTP(5005, "invalid token", HttpStatus.UNAUTHORIZED),
     OTP_EXPIRED(5006, "expired otp", HttpStatus.UNAUTHORIZED),
     TOKEN_NULL(5007, "token is null", HttpStatus.UNAUTHORIZED),
-
     ACCOUNT_NOT_ACTIVE(5005, "account not active", HttpStatus.UNAUTHORIZED),
+    WRONG_PASSWORD(5006, "wrong password", HttpStatus.UNAUTHORIZED),
+    PASSWORD_NOT_MATCH(5007, "password not match", HttpStatus.UNAUTHORIZED),
 
     //NOT FOUND
     ACCOUNT_NOT_FOUND(3000, "account not found", HttpStatus.NOT_FOUND),

@@ -128,8 +128,8 @@ public class AppConfig {
                                 .build();
                         menus.add(menuEntity);
                     }
-                    branch.setMenus(menus);
-                    branch.setWorkingHours(workingHours);
+                    branch.addMenus(menus);
+                    branch.addWorkingHours(workingHours);
                     branchRepository.save(branch);
                     for (int j = 0; j < 4; j++) {
                         AccountEntity staffAccount = AccountEntity.builder()
