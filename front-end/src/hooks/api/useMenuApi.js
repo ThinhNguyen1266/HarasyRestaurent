@@ -9,7 +9,7 @@ const useMenuApi = () => {
   const getMenuByID = async (menuId) => {
     try {
       const response = await axios.get(`/menu/${menuId}`);
-
+      console.log("response", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching menu:", error);
@@ -21,7 +21,7 @@ const useMenuApi = () => {
     const response = await axiosPrivate.post(`/menu/${menuId}/foods`, {
       foodIds: foodIds,
     });
-    return response.data;
+    return response;
   };
 
   const getMenubyBranchID = async () => {
@@ -30,13 +30,32 @@ const useMenuApi = () => {
       if (!branchId) throw new Error("Branch ID not found");
       // Thêm tham số includeAll vào URL
       const response = await axiosPrivate.get(`/branch/${branchId}/menus`);
-
+      console.log("ADd api", response);
       return response;
     } catch (error) {
       console.error(`Failed to fetch menus for branch with ID :`, error);
       throw error;
     }
   };
+
+  const deleteFoodFromMenu = async (menuId, foodIds) => {
+    try {
+      const response = await axiosPrivate.delete(`/menu/${menuId}/foods`, {
+        data: {
+          foodIds: foodIds,
+        },
+      });
+      console.log("Data", foodIds);
+      return response;
+    } catch (error) {
+      throw new Error(
+        `Failed to delete food from menu: ${
+          error.response?.data?.message || error.message
+        }`
+      );
+    }
+  };
+
   const createOrder = async (orderData) => {
     try {
       const payload = {
@@ -140,6 +159,7 @@ const useMenuApi = () => {
     getCustomerProfileByPhone,
     getOrderByID,
     updateOrder,
+    deleteFoodFromMenu,
   };
 };
 

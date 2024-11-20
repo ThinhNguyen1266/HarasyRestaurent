@@ -38,6 +38,7 @@ const EditBranch = () => {
     queryFn: () => getMenubyBranchID(branchId, true),
     onError: (error) => toast.error(`Failed to fetch menu: ${error.message}`),
   });
+  console.log("menus", menus);
   const deleteBranchMutate = useMutation({
     mutationFn: deleteBranch,
     onSuccess: () => {
@@ -355,70 +356,75 @@ const EditBranch = () => {
             {/* Working Hours */}
             <div className="mb-3">
               <label className="form-label text-white">Working Hours</label>
-              {formData.workingHours.map((hour, index) => (
-                <div key={index} className="d-flex align-items-center mb-2">
-                  <select
-                    value={hour.dayOfWeek}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        workingHours: prev.workingHours.map((h, i) =>
-                          i === index ? { ...h, dayOfWeek: e.target.value } : h
-                        ),
-                      }))
-                    }
-                    className="form-select me-2"
-                  >
-                    <option value="">Select Day</option>
-                    {[
-                      "MONDAY",
-                      "TUESDAY",
-                      "WEDNESDAY",
-                      "THURSDAY",
-                      "FRIDAY",
-                      "SATURDAY",
-                      "SUNDAY",
-                    ].map((day) =>
-                      !formData.workingHours.some((h) => h.dayOfWeek === day) ||
-                      hour.dayOfWeek === day ? (
-                        <option key={day} value={day}>
-                          {day}
-                        </option>
-                      ) : null
-                    )}
-                  </select>
-                  <input
-                    type="time"
-                    value={hour.openingTime}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        workingHours: prev.workingHours.map((h, i) =>
-                          i === index
-                            ? { ...h, openingTime: e.target.value }
-                            : h
-                        ),
-                      }))
-                    }
-                    className="form-control me-2"
-                  />
-                  <input
-                    type="time"
-                    value={hour.closingTime}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        workingHours: prev.workingHours.map((h, i) =>
-                          i === index
-                            ? { ...h, closingTime: e.target.value }
-                            : h
-                        ),
-                      }))
-                    }
-                    className="form-control me-2"
-                  />
-                </div>
-              ))}
+              <div className="table-container">
+                {formData.workingHours.map((hour, index) => (
+                  <div key={index} className="d-flex align-items-center mb-2">
+                    <select
+                      value={hour.dayOfWeek}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          workingHours: prev.workingHours.map((h, i) =>
+                            i === index
+                              ? { ...h, dayOfWeek: e.target.value }
+                              : h
+                          ),
+                        }))
+                      }
+                      className="form-select me-2"
+                    >
+                      <option value="">Select Day</option>
+                      {[
+                        "MONDAY",
+                        "TUESDAY",
+                        "WEDNESDAY",
+                        "THURSDAY",
+                        "FRIDAY",
+                        "SATURDAY",
+                        "SUNDAY",
+                      ].map((day) =>
+                        !formData.workingHours.some(
+                          (h) => h.dayOfWeek === day
+                        ) || hour.dayOfWeek === day ? (
+                          <option key={day} value={day}>
+                            {day}
+                          </option>
+                        ) : null
+                      )}
+                    </select>
+                    <input
+                      type="time"
+                      value={hour.openingTime}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          workingHours: prev.workingHours.map((h, i) =>
+                            i === index
+                              ? { ...h, openingTime: e.target.value }
+                              : h
+                          ),
+                        }))
+                      }
+                      className="form-control me-2"
+                    />
+                    <input
+                      type="time"
+                      value={hour.closingTime}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          workingHours: prev.workingHours.map((h, i) =>
+                            i === index
+                              ? { ...h, closingTime: e.target.value }
+                              : h
+                          ),
+                        }))
+                      }
+                      className="form-control me-2"
+                    />
+                  </div>
+                ))}
+              </div>
               <button
                 type="button"
                 onClick={addWorkingHour}
@@ -431,38 +437,44 @@ const EditBranch = () => {
             {/* Tables */}
             <div className="mb-3">
               <label className="form-label text-white">Tables</label>
-              {formData.tables.map((table, index) => (
-                <div key={index} className="d-flex align-items-center mb-2">
-                  <input
-                    type="number"
-                    placeholder="Table Number"
-                    value={table.number}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        tables: prev.tables.map((t, i) =>
-                          i === index ? { ...t, number: e.target.value } : t
-                        ),
-                      }))
-                    }
-                    className="form-control me-2"
-                  />
-                  <input
-                    type="number"
-                    placeholder="Capacity"
-                    value={table.capacity}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        tables: prev.tables.map((t, i) =>
-                          i === index ? { ...t, capacity: e.target.value } : t
-                        ),
-                      }))
-                    }
-                    className="form-control me-2"
-                  />
-                </div>
-              ))}
+              {/* Container with scrollable area */}
+              <div className="table-container">
+                {formData.tables.map((table, index) => (
+                  <div key={index} className="d-flex align-items-center mb-2">
+                    {/* Table Number Input */}
+                    <input
+                      type="number"
+                      placeholder="Table Number"
+                      value={table.number}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          tables: prev.tables.map((t, i) =>
+                            i === index ? { ...t, number: e.target.value } : t
+                          ),
+                        }))
+                      }
+                      className="form-control me-2"
+                    />
+                    {/* Table Capacity Input */}
+                    <input
+                      type="number"
+                      placeholder="Capacity"
+                      value={table.capacity}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          tables: prev.tables.map((t, i) =>
+                            i === index ? { ...t, capacity: e.target.value } : t
+                          ),
+                        }))
+                      }
+                      className="form-control me-2"
+                    />
+                  </div>
+                ))}
+              </div>
+              {/* Add Table Button */}
               <button
                 type="button"
                 onClick={addTable}
@@ -475,17 +487,22 @@ const EditBranch = () => {
             <div className="mb-3">
               <label className="form-label text-white">Menus</label>
               <div className="d-flex flex-wrap">
-                {menus?.map((menu, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    className="btn btn-primary me-2"
-                    disabled={!isMenuTypeEnabled}
-                  >
-                    {menu.type}
-                  </button>
-                ))}
+                {Array.isArray(menus) &&
+                  menus.map((menu, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      className="btn btn-primary me-2"
+                      onClick={() => navigate(`/branch/menu/${menu.id}`)}
+                      disabled={!isMenuTypeEnabled}
+                    >
+                      {menu.type}
+                    </button>
+                  ))}
               </div>
+              {!menus?.length && (
+                <p className="text-white mt-2">No menus available.</p>
+              )}
             </div>
           </div>
         </div>
@@ -498,6 +515,13 @@ const EditBranch = () => {
         >
           <FaTrash />
           Delete
+        </button>
+
+        <button
+          onClick={() => navigate("/branch")}
+          className="btn btn-secondary mt-4  "
+        >
+          Back
         </button>
       </form>
       <ToastContainer position="top-right" autoClose={3000} />

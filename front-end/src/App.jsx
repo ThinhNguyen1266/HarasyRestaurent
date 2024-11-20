@@ -34,6 +34,7 @@ import WorkforceList from "./pages/WorkforceList";
 
 import CreateOrder from "./pages/CreateOrder";
 import EditOrder from "./pages/EditOrder";
+import AddFoodInMenu from "./pages/AddFoodInMenu";
 function App() {
   return (
     <>
@@ -73,6 +74,7 @@ function App() {
             <Route path="/branch/create" element={<CreateBranch />} />
             <Route path="/overview" element={<Overview />} />
             <Route path="/branch/:branchId" element={<EditBranch />} />
+            <Route path="/branch/menu/:menuId" element={<AddFoodInMenu />} />
           </Route>
           <Route element={<AuthRoute allowedRoles={["WAITER"]} />}>
             <Route path="/order" element={<OrderWaiter />} />

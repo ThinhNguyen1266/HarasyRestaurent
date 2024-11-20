@@ -167,7 +167,7 @@ const CreateFood = () => {
         </div>
 
         <button type="submit" className="btn btn-primary mt-4">
-          Create Branch
+          Create Food
         </button>
         <ToastContainer position="top-right" autoClose={3000} />
       </form>
