@@ -6,8 +6,6 @@ import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
-import group5.swp.HarasyProject.entity.branch.TableEntity;
-import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,8 +25,6 @@ public interface BranchService {
     BranchEntity updateBranch(Integer id , BranchInfoRequest request);
     ApiResponse<?> deleteBranch(Integer branchId);
 
-    void addTables(List<TableEntity> tables, BranchEntity branch);
-    void addMenus(List<MenuEntity> menus, BranchEntity branch);
 
     BranchEntity getBranchEntity(int branchId);
     BranchEntity saveBranch(BranchEntity branch);
