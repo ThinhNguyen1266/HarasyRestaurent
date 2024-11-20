@@ -57,4 +57,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
                     ) )
             """)
     Page<ReservationEntity> getAllReservation(Pageable pageable, Boolean isHistory,int branchId);
+
+
+    Page<ReservationEntity> findAllByCustomerId(Pageable pageable, int customerId);
 }

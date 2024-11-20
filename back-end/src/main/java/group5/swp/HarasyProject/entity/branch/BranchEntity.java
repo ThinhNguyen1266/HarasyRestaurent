@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -82,6 +83,12 @@ public class BranchEntity extends Auditable {
             menus.forEach(menu -> menu.setBranch(this));
         }
         this.menus = menus;
+    }
+
+    public void addStaff(StaffAccountEntity staff) {
+        if (staffs == null) staffs = new ArrayList<>();
+        staff.setBranch(this);
+        staffs.add(staff);
     }
 
     public boolean isTableInBranch(int tableId){

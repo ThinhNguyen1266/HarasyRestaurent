@@ -57,9 +57,7 @@ function App() {
         <Route path="/reservationdetails" element={<ConfirmReservation />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
-
         <Route path="/profile/:id" element={<Profile />} />
-
         <Route element={<StaffLayout />}>
           <Route
             element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}

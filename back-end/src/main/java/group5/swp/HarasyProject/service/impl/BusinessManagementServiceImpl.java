@@ -61,9 +61,9 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
     @Override
     public ApiResponse<Page<OrderResponse>> getAllOrders(Pageable pageable) {
-        Page<OrderEntity> orderEntities = orderService.getAllOrders(pageable);
+        Page<OrderEntity> orders = orderService.getAllOrders(pageable);
         return ApiResponse.<Page<OrderResponse>>builder()
-                .data(orderEntities.map(orderService::toResponse))
+                .data(orders.map(orderService::toResponse))
                 .build();
     }
 
@@ -73,6 +73,24 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .data(orderService.getBranchOrdersInTime(branchId)
                         .stream().map(orderService::toResponse)
                         .toList())
+                .build();
+    }
+
+
+    @Override
+    public ApiResponse<Page<OrderResponse>> getAllCusOrders(Pageable pageable, int customerId) {
+        Page<OrderEntity> orders = orderService.getOrdersByCustomerId(customerId, pageable);
+        return ApiResponse.<Page<OrderResponse>>builder()
+                .data(orders.map(orderService::toResponse))
+                .build();
+    }
+
+
+    @Override
+    public ApiResponse<Page<ReservationResponse>> getAllCusReservations(Pageable pageable, int customerId) {
+        Page<ReservationEntity> reserves = reservationService.getAllCusReservations(pageable, customerId);
+        return ApiResponse.<Page<ReservationResponse>>builder()
+                .data(reserves.map(reservationService::toReservationResponse))
                 .build();
     }
 
@@ -129,8 +147,8 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         createOrderItem(request, order);
         if (request.getNote() != null) order.setNote(request.getNote());
         if (request.getPaymentStatus() != null) {
-            if(order.getPaymentStatus().equals(PaymentStatus.PAYED)){
-                if(!order.isCookedAll()) throw new AppException(ErrorCode.ORDER_NOT_DONE_YET);
+            if (order.getPaymentStatus().equals(PaymentStatus.PAYED)) {
+                if (!order.isCookedAll()) throw new AppException(ErrorCode.ORDER_NOT_DONE_YET);
             }
             order.setPaymentStatus(request.getPaymentStatus());
         }
@@ -142,7 +160,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     }
 
     private List<OrderItemEntity> createOrderItem(OrderRequest request, OrderEntity order) {
-        if(request.getOrderItems()!=null){
+        if (request.getOrderItems() != null) {
             if (request.getOrderItems().getCreates() != null) {
                 return toOrderItems(request.getOrderItems().getCreates(), order);
             }
@@ -151,7 +169,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     }
 
     private void updateOrderItemInOrder(OrderRequest request, OrderEntity order) {
-        if(request.getOrderItems()!=null){
+        if (request.getOrderItems() != null) {
             if (request.getOrderItems().getUpdates() != null) {
                 for (OrderItemRequest orderItemRequest : request.getOrderItems().getUpdates()) {
                     OrderItemEntity item = orderItemService
@@ -291,7 +309,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
     @Override
     public ApiResponse<OrderResponse> deleteOrderItem(int orderId, int foodId) {
-        orderItemService.deleteItem(orderId,foodId);
+        orderItemService.deleteItem(orderId, foodId);
         return ApiResponse.<OrderResponse>builder()
                 .data(toOrderResponse(orderId))
                 .build();

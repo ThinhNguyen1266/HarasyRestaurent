@@ -37,6 +37,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Page<OrderEntity> getOrdersByCustomerId(int customerId, Pageable pageable) {
+        return orderRepository.findByCustomerId(customerId, pageable);
+    }
+
+    @Override
     public OrderEntity getOrderById(int id) {
         return orderRepository.getOrderWithItems(id)
                 .orElseThrow(()->new AppException(ErrorCode.ORDER_NOT_FOUND));

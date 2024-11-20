@@ -81,6 +81,11 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public Page<ReservationEntity> getAllCusReservations(Pageable pageable, int customerId) {
+        return reservationRepository.findAllByCustomerId(pageable,customerId);
+    }
+
+    @Override
     public ReservationEntity getReservationById(int id) {
         return reservationRepository
                 .findById(id).orElseThrow(()->new AppException(ErrorCode.RESERVATION_NOT_FOUND));
