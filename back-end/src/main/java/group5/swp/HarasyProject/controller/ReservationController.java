@@ -57,8 +57,7 @@ public class ReservationController {
     @PutMapping("/reserve/{id}")
     ApiResponse<ReservationResponse> updateReserve(@RequestBody ReservationRequest request,
                                                    @PathVariable int id) {
-
-        return null;
+        return businessManagementService.updateReservation(request, id);
     }
 
 }

@@ -46,6 +46,8 @@ public enum ErrorCode {
     INVALID_RESERVE_DATE(2002,"invalid reserve date",HttpStatus.BAD_REQUEST),
     INVALID_RESERVE_TIME(2003,"invalid reserve time",HttpStatus.BAD_REQUEST),
     NOT_ENOUGH_TABLE_FOR_RESERVE(2004,"not enough table for reserve",HttpStatus.BAD_REQUEST),
+    ORDER_NOT_DONE_YET(2005,"order not done yet",HttpStatus.BAD_REQUEST),
+    CANNOT_DELETE_ORDER_ITEM(2006,"cannot delete order item",HttpStatus.BAD_REQUEST),
     ;
 
     int code;

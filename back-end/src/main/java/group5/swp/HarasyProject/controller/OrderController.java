@@ -54,4 +54,8 @@ public class OrderController {
         return businessManagementService.updateOrder(id, request);
     }
 
+    @DeleteMapping("/order/{orderId}/food/{foodId}")
+    ApiResponse<OrderResponse> deleteOrder(@PathVariable int orderId, @PathVariable int foodId) {
+       return  businessManagementService.deleteOrderItem(orderId, foodId);
+    }
 }

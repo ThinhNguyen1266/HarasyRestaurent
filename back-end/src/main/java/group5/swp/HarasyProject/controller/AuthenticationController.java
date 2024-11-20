@@ -1,6 +1,7 @@
 package group5.swp.HarasyProject.controller;
 
 import com.nimbusds.jose.JOSEException;
+import group5.swp.HarasyProject.dto.request.account.ResendEmailRequest;
 import group5.swp.HarasyProject.dto.request.auth.*;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.auth.*;
@@ -12,10 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -32,7 +31,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/auth/validateOtp")
-    public ApiResponse<OtpResponse> validateOtp(@RequestBody OtpRequest otpRequest) throws IOException, MessagingException {
+    public ApiResponse<OtpResponse> validateOtp(@RequestBody OtpRequest otpRequest) {
         return accountService.validateOtp(otpRequest);
     }
 
@@ -57,5 +56,10 @@ public class AuthenticationController {
     @PostMapping("/auth/refreshToken")
     public ApiResponse<RefreshResponse> refreshToken(HttpServletRequest request) throws ParseException, JOSEException {
         return authenticationService.refreshToken(request);
+    }
+
+    @GetMapping("/otp")
+    public ApiResponse<?> resendOtp(@RequestBody ResendEmailRequest request) throws MessagingException, IOException {
+        return accountService.resendEmail(request);
     }
 }

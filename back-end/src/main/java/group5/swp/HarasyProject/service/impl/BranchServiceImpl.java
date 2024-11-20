@@ -5,13 +5,14 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
-import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
+import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
-import group5.swp.HarasyProject.exception.ErrorCode;
+import group5.swp.HarasyProject.enums.Account.StaffRole;
 import group5.swp.HarasyProject.enums.Status;
 import group5.swp.HarasyProject.exception.AppException;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.mapper.BranchMapper;
 import group5.swp.HarasyProject.repository.BranchRepository;
 import group5.swp.HarasyProject.service.BranchService;
@@ -60,7 +61,7 @@ public class BranchServiceImpl implements BranchService {
     public ApiResponse<BranchResponse> getBranchResponse(int branchId) {
         BranchEntity branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
-        BranchResponse info = branchMapper.toBranchResponse(branch);
+        BranchResponse info = toResponse(branch);
         return ApiResponse.<BranchResponse>builder()
                 .data(info)
                 .build();
@@ -74,10 +75,33 @@ public class BranchServiceImpl implements BranchService {
                     .stream().filter(branchEntity -> !branchEntity.getStatus().equals(Status.DELETED))
                     .toList();
         }
-        List<BranchResponse> branchesListResponses = branchMapper.toBranchInfoResponses(branches);
+        List<BranchResponse> branchesListResponses = toResponses(branches);
         return ApiResponse.<List<BranchResponse>>builder()
                 .data(branchesListResponses)
                 .build();
+    }
+
+
+    private BranchResponse toResponse(BranchEntity branch) {
+        BranchResponse info = branchMapper.toBranchResponse(branch);
+        List<StaffAccountEntity> staff = branch.getStaffs();
+        staff = staff
+                .stream().filter(s-> s.getRole().equals(StaffRole.BRANCH_MANAGER))
+                .toList();
+        if(!staff.isEmpty()) {
+            StaffAccountEntity manager = staff.getFirst();
+            info.getBranchInfo().setManagerEmail(manager.getAccount().getEmail());
+            info.getBranchInfo().setManagerId(manager.getId());
+            info.getBranchInfo().setManagerName(manager.getAccount().getFullName());
+            info.getBranchInfo().setManagerImage(manager.getPicture());
+        }
+        return info;
+    }
+
+    private List<BranchResponse> toResponses(List<BranchEntity> branches) {
+        return branches
+                .stream().map(this::toResponse)
+                .toList();
     }
 
     @Override
@@ -129,7 +153,7 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public BranchResponse toBranchResponse(BranchEntity branch) {
-        return branchMapper.toBranchResponse(branch);
+        return toResponse(branch);
     }
 
     @Override

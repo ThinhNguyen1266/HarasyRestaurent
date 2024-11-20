@@ -1,9 +1,6 @@
 package group5.swp.HarasyProject.service;
 
-import group5.swp.HarasyProject.dto.request.account.CusUpdateProfileRequest;
-import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
-import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
-import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
+import group5.swp.HarasyProject.dto.request.account.*;
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
@@ -39,5 +36,5 @@ public interface AccountService {
     CustomerAccountEntity getCustomerAccount(Integer customerId) ;
 
     ApiResponse<CustomerProfileResponse> cusUpdateProfile(int id,CusUpdateProfileRequest request);
-
+    ApiResponse<?> resendEmail(ResendEmailRequest request) throws MessagingException, IOException;
 }

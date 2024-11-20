@@ -27,7 +27,8 @@ public class OtpServiceImpl implements OtpService {
 
     @Override
     public String generateOtp(String email) {
-        AccountEntity account = accountRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        AccountEntity account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         String otp = String.valueOf(new Random().nextInt(100000, 999999));
         redisService.addOtp(otp,email);
         return otp;
