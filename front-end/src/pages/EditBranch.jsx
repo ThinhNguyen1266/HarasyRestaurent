@@ -21,6 +21,7 @@ const EditBranch = () => {
       });
     }
   };
+  const [isMenuTypeEnabled, setIsMenuTypeEnabled] = useState(false);
   const queryClient = useQueryClient();
   const { branchId } = useParams();
   const navigate = useNavigate();
@@ -319,6 +320,20 @@ const EditBranch = () => {
                   }}
                 />
               )}
+
+              <hr className="cr-info-divider" />
+              <h5 className="orange-text">WARNING!!!</h5>
+              <strong className="text-white ">
+                <input
+                  type="checkbox"
+                  checked={isMenuTypeEnabled}
+                  onChange={() => setIsMenuTypeEnabled((prev) => !prev)}
+                  className="form-check-input mx-1"
+                />
+                Editing the menu will be on another page, so when you click on
+                the menu, all the data you have changed before will be lost. Are
+                you sure you want to edit the menu?
+              </strong>
             </div>
           </div>
 
@@ -465,6 +480,7 @@ const EditBranch = () => {
                     key={index}
                     type="button"
                     className="btn btn-primary me-2"
+                    disabled={!isMenuTypeEnabled}
                   >
                     {menu.type}
                   </button>
