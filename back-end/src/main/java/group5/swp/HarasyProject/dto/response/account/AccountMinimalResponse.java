@@ -14,4 +14,5 @@ public class AccountMinimalResponse {
     Integer id;
     String name;
     String phone;
+    String email;
 }

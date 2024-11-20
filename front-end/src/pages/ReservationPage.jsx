@@ -1,20 +1,21 @@
-import React, { useState,useMemo  } from "react";
+import React, { useState, useMemo } from "react";
 import "../assets/styles/AllReservation.css";
 import ReservationModal from "../components/ReservationModal";
-import CreateReservationModal from "../components/CreateReservationModal"; // Import the CreateReservationModal component
+import CreateReservationModal from "../components/CreateReservationModal";
 import Sidebar from "../components/Sidebar";
 import useReservationApi from "../hooks/api/userReservationApi";
 import { ToastContainer, toast } from "react-toastify";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import EditReservationModal from "../components/EditReservationModal";
 
-const ReservationItem = ({ reservation, onDetailClick }) => {
+const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
   const getStatusColor = (status) => {
     switch (status) {
-      case "Pending":
+      case "PENDING":
         return "yellow";
-      case "Approved":
+      case "APPROVED":
         return "green";
-      case "Done":
+      case "DONE":
         return "blue";
       default:
         return "gray";
@@ -41,12 +42,19 @@ const ReservationItem = ({ reservation, onDetailClick }) => {
       >
         Detail
       </button>
+      <button
+        className="detail-button"
+        onClick={() => onEditClick(reservation)}  // Open the edit modal
+      >
+        Edit
+      </button>
     </div>
   );
 };
 
+
 const ReservationsPage = () => {
-  const { getRerservationCus } = useReservationApi();
+  const { getRerservationCus, updateReservationStatus } = useReservationApi();
   const [page, setPage] = useState(0); // Track the current page
   const { data: reservationData = { content: [], totalPages: 1 }, isLoading } =
     useQuery({
@@ -56,7 +64,8 @@ const ReservationsPage = () => {
         toast.error(`Failed to fetch reservations: ${error.message}`);
       },
     });
-
+  console.log("res", reservationData);
+  
   const allReservations = reservationData.content.map((res) => ({
     id: res.id,
     status: res.status,
@@ -70,6 +79,7 @@ const ReservationsPage = () => {
     })}`,
     customer: res.customer.name,
     phone: res.customer.phone || "N/A",
+    email: res.customer.email,
     orders: res.order.orderItems.map((item) => item.name),
     price: res.order.total.toLocaleString(),
     guests: res.amountGuest,
@@ -79,12 +89,22 @@ const ReservationsPage = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editReservation, setEditReservation] = useState(null);
+  
   const handleDetailClick = (reservation) => {
     setSelectedReservation(reservation);
   };
+  
+  const handleEditClick = (reservation) => {
+    setEditReservation(reservation);
+    setIsEditModalOpen(true);  // Open the edit modal
+  };
+  
+  const queryClient = useQueryClient();
 
   const handleCloseModal = () => {
+    queryClient.invalidateQueries("reservation");
     setSelectedReservation(null);
   };
 
@@ -103,28 +123,26 @@ const ReservationsPage = () => {
 
   const filteredReservations = useMemo(() => {
     let result = allReservations;
-  
+
     // Apply phone search filter
     if (searchPhone.trim()) {
-      result = result.filter((res) =>
-        res.phone.includes(searchPhone.trim())
-      );
+      result = result.filter((res) => res.phone.includes(searchPhone.trim()));
     }
-  
+
     // Apply date filter
     if (selectedDate) {
       result = result.filter(
         (res) => res.date.split(" - ")[0] === selectedDate
       );
     }
-  
+
     return result;
   }, [searchPhone, selectedDate, allReservations]);
 
-    const uniqueDates = useMemo(
-      () => [...new Set(allReservations.map((res) => res.date.split(" - ")[0]))],
-      [allReservations]
-    );
+  const uniqueDates = useMemo(
+    () => [...new Set(allReservations.map((res) => res.date.split(" - ")[0]))],
+    [allReservations]
+  );
 
   // Pagination Controls
   const handlePrevPage = () => {
@@ -173,13 +191,13 @@ const ReservationsPage = () => {
           </div>
         </div>
 
-        {/* Reservation Groups by Status */}
         <div className="reservation-group">
           {filteredReservations.map((reservation) => (
             <ReservationItem
               key={reservation.id}
               reservation={reservation}
               onDetailClick={handleDetailClick}
+              onEditClick={handleEditClick}
             />
           ))}
         </div>
@@ -219,6 +237,13 @@ const ReservationsPage = () => {
           onClose={handleCloseCreateModal}
           onSave={handleSaveReservation}
         />
+        {isEditModalOpen && (
+          <EditReservationModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            reservation={editReservation}
+          />
+        )}
       </div>
     </div>
   );

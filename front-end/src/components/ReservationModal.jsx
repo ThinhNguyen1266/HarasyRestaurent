@@ -1,14 +1,44 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../assets/styles/ReservationModal.css";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useReservationApi from "../hooks/api/userReservationApi";
 
 const ReservationModal = ({ reservation, onClose }) => {
+  // Hooks must be called unconditionally
+  const { updateReservationStatus } = useReservationApi();
+  const queryClient = useQueryClient();
+
+  // Mutation for updating reservation status
+  const mutation = useMutation({
+    mutationFn: updateReservationStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries("reservation");
+      // Close the modal after successful update
+    },
+    onError: (error) => {
+      console.error(`Failed to update reservation status: ${error.message}`);
+    },
+  });
+
+  // Ensure reservation check logic is defined separately
+  const handleCheckClick = (id, currentStatus) => {   
+    
+    const newStatus =
+      reservation.status === "PENDING" ? "APPROVED" : "DONE";
+      console.log("res id2", id);
+    mutation.mutate({ id, status: newStatus });
+    onClose(); 
+  };
+
   if (!reservation) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-dialog modal-lg modal-content" onClick={(e) => e.stopPropagation()}>
-        
+      <div
+        className="modal-dialog modal-lg modal-content"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="modal-title text-center">Reservation</h2>
 
         <div className="modal-body">
@@ -53,10 +83,21 @@ const ReservationModal = ({ reservation, onClose }) => {
             </div>
           </div>
         </div>
-        
+
         <div className="modal-footer">
-          <button className="btn btn-warning w-100 check-button">Check</button>
-        </div>
+  <button
+    className="btn btn-warning w-100 check-button"
+    onClick={() =>
+      handleCheckClick(
+        reservation.id,
+        reservation.status
+      )
+    }
+  >
+    {reservation.status === "PENDING" ? "APPROVED" : "DONE"}
+  </button>
+</div>
+
       </div>
     </div>
   );

@@ -15,14 +15,16 @@ const useReservationApi = () => {
       throw error;
     }
   };
-  const updateReservationStatus = async ({ tableId, status }) => {
+  const updateReservationStatus = async ({ id, status }) => {
     try {
-      const response = await axiosPrivate.put(`/table/${tableId}`, {
+        console.log("id", id);
+        console.log(status);
+        
+      const response = await axiosPrivate.put(`/reserve/${id}`, {
         status,
       });
-      return response.data;
+      return response;
     } catch (error) {
-      console.error("Error updating table status:", error);
       throw error;
     }
   };
