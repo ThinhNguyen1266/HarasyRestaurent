@@ -46,7 +46,7 @@ public class BranchEntity extends Auditable {
     @Enumerated(EnumType.STRING)
     Status status = Status.INACTIVE;
 
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch",cascade = CascadeType.ALL)
     List<StaffAccountEntity> staffs;
 
     @OneToMany(mappedBy = "branch")
@@ -93,6 +93,7 @@ public class BranchEntity extends Auditable {
 
     public void replaceManager(StaffAccountEntity manager, int oldManagerId) {
         staffs.removeIf(staff -> staff.getId() == oldManagerId);
+        manager.setBranch(this);
         staffs.add(manager);
     }
 
