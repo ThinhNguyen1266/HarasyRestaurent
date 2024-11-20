@@ -137,12 +137,13 @@
 .section-3-row {
   display: flex;
   flex-direction: row;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
 }
 
 .section-3-col-img {
   flex: 1;
-  position: relative;
 }
 
 .section-3-img {
@@ -172,4 +173,146 @@
   line-height: 1.6;
   margin-bottom: 25px;
   color: #cccccc;
+}
+
+/* Section 1 */
+@media (max-width: 992px) {
+  .section-1 {
+    padding: 60px 10px;
+  }
+
+  .section-1-column-1 h1,
+  .section-1-column-2 h1 {
+    font-size: 2.5rem;
+  }
+
+  .section-1-column-1 img,
+  .section-1-column-2 img {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-1 .row {
+    flex-direction: column;
+  }
+
+  .section-1-column-1,
+  .section-1-column-2 {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .section-1-column-1 h1,
+  .section-1-column-2 h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Section 2 */
+@media (max-width: 992px) {
+  .section-2 {
+    height: auto;
+    padding: 40px 10px;
+  }
+
+  .section-2-title {
+    font-size: 2.5rem;
+    margin: 40px 0;
+  }
+
+  .section-2-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .section-2-col {
+    text-align: center;
+  }
+
+  .section-2-img {
+    width: 100%;
+    max-width: 700px;
+    height: auto;
+    margin-bottom: 20px;
+  }
+
+  .section-2-quote {
+    padding-left: 10px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-2-row {
+    text-align: center;
+  }
+
+  .section-2-col {
+    align-items: center;
+    text-align: center;
+  }
+
+  .section-2-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* Section 3 */
+@media (max-width: 992px) {
+  .section-3-row {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .section-3-col-img {
+    margin: 20px;
+  }
+
+  .section-3-img {
+    width: 80%;
+    height: auto;
+  }
+
+  .section-3-col-text {
+    padding: 20px;
+  }
+
+  .hp-btn-custom {
+    margin: 20px auto 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .section-3-title {
+    font-size: 1.5rem;
+  }
+
+  .section-3-description {
+    font-size: 0.8rem;
+  }
+}
+
+/* Buttons */
+@media (max-width: 768px) {
+  .hp-btn-custom {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+}
+
+/* General Small Devices */
+@media (max-width: 576px) {
+  .section-1-column-1 p,
+  .section-1-column-2 p,
+  .section-2-description,
+  .section-3-description {
+    font-size: 0.85rem;
+  }
+
+  .section-2-title,
+  .section-3-title {
+    font-size: 1.5rem;
+  }
 }

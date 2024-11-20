@@ -1,7 +1,7 @@
 .venues-container {
   text-align: center;
   color: #ffffff;
-  background-color: #000; /* Nền đen cho phần toàn trang */
+  background-color: #000;
 }
 
 .venues-header {
@@ -36,6 +36,7 @@
 
 .venues-cities {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 80px;
   padding: 200px 0;
@@ -74,16 +75,6 @@
   background-size: cover;
   background-position: center;
   transition: transform 0.3s ease;
-}
-
-.hanoi-image {
-  background-image: url("../img/HRS2.png");
-  position: relative;
-  z-index: 1;
-}
-
-.hcm-image {
-  background-image: url("../img/HCM.png");
   position: relative;
   z-index: 1;
 }

@@ -102,3 +102,9 @@
   outline: 0;
   border-color: white;
 }
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}

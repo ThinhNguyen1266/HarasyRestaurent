@@ -43,7 +43,7 @@ function Profile() {
     );
   } else {
     return (
-      <Link to="/login" className="login">
+      <Link to="/login" className="login offcanvas-btn">
         LOGIN
       </Link>
     );

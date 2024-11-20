@@ -1,7 +1,34 @@
-import useAxiosPrivate from "../useAxiosPrivate";
 import axios from "../../services/axios";
+import useAxiosPrivate from "../useAxiosPrivate";
 const useBranchApi = () => {
   const axiosPrivate = useAxiosPrivate();
+
+  const getBranchHome = async (id) => {
+    try {
+      const branchesData = await axios.get(`/branch/home/${id}`);
+      return branchesData.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getBranchMenu = async (id) => {
+    try {
+      const branchesData = await axios.get(`/branch/${id}/menus`);
+      return branchesData.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getBranchesHome = async () => {
+    try {
+      const branchesData = await axios.get("/branches/home");
+      return branchesData.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const getBranchesStaff = async () => {
     try {
@@ -28,7 +55,6 @@ const useBranchApi = () => {
       throw error;
     }
   };
-  
 
   const getBranchbyID = async (id) => {
     try {
@@ -79,7 +105,6 @@ const useBranchApi = () => {
 
   const updateBranch = async (updatedBranch) => {
     try {
-      // Ensure workingHours is an array before applying filter
       const workingHours = Array.isArray(updatedBranch.workingHours)
         ? updatedBranch.workingHours.filter(
             (hour) => hour.dayOfWeek && hour.openingTime && hour.closingTime
@@ -146,11 +171,14 @@ const useBranchApi = () => {
 
   return {
     getBranchesStaff,
+    getBranchHome,
     createBranch,
     updateBranch,
     deleteBranch,
     getBranchManagers,
     getBranchbyID,
+    getBranchesHome,
+    getBranchMenu,
     getMenubyBranchID,
   };
 };
