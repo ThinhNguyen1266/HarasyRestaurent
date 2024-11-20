@@ -41,7 +41,6 @@ public class BranchController {
         return restaurantManagementService.getBranchHome(id);
     }
 
-
     @GetMapping("/branches")
     ApiResponse<List<BranchResponse>> getAllBranchStaff(@RequestParam(defaultValue = "false") boolean includeAll) {
         return restaurantManagementService.getAllBranches(includeAll);

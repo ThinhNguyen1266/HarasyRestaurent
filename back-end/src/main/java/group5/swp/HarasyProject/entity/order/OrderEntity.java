@@ -6,6 +6,7 @@ import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.reservation.ReservationEntity;
+import group5.swp.HarasyProject.enums.OrderItemStatus;
 import group5.swp.HarasyProject.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -79,6 +80,22 @@ public class OrderEntity extends Auditable {
     public void addItem(OrderItemEntity orderItem) {
         if(orderItems==null) orderItems = new ArrayList<>();
         orderItems.add(orderItem);
+    }
+
+    public void payOrder(){
+        long minusPoint =  0;
+        long addPoint = total;
+        for (OrderItemEntity orderItem : orderItems) {
+            minusPoint+= orderItem.getTotalPointsPrice();
+        }
+        customer.calculatePoint(addPoint,minusPoint);
+    }
+
+    public boolean isCookedAll(){
+        for (OrderItemEntity orderItem : orderItems) {
+            if(!orderItem.getStatus().equals(OrderItemStatus.COOKED)) return false;
+        }
+        return true;
     }
 
 }

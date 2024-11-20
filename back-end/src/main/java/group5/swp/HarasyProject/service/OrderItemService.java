@@ -18,4 +18,6 @@ public interface OrderItemService {
     OrderItemEntity findByOrderIdAndFoodId(int orderId, int foodId);
 
     OrderItemEntity mapUpdateOrderItem(OrderItemRequest request, OrderItemEntity orderItemEntity);
+
+    void deleteItem(int orderId, int foodId);
 }

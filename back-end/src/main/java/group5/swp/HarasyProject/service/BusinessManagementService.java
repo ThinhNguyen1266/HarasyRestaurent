@@ -22,6 +22,7 @@ public interface BusinessManagementService {
     ApiResponse<OrderResponse> getOrder(int orderId);
     ApiResponse<OrderResponse> createOrder(OrderRequest orderRequest);
     ApiResponse<OrderResponse> updateOrder(int orderId,OrderRequest orderRequest);
+    ApiResponse<OrderResponse> deleteOrderItem(int orderId,int foodId);
     ApiResponse<AvailableReserveTimeResponse> getAvailableReserveTime(CheckReserveTimeRequest request);
     ApiResponse<ReservationResponse> customerReservation(CustomerReserveRequest request);
     ApiResponse<ReservationResponse> createReservation(ReservationRequest request);

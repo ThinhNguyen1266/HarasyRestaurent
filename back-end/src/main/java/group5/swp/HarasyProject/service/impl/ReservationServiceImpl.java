@@ -96,4 +96,6 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationResponse toReservationResponse(ReservationEntity reservation) {
         return reservationMapper.toResponse(reservation);
     }
+
+
 }

@@ -85,7 +85,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
     @Override
     public ApiResponse<OrderResponse> createOrder(OrderRequest orderRequest) {
-        OrderEntity order = buildOrderWithType(orderRequest,ReservationType.GENERAL);
+        OrderEntity order = buildOrderWithType(orderRequest, ReservationType.GENERAL);
         return ApiResponse.<OrderResponse>builder()
                 .data(toOrderResponse(order.getId()))
                 .build();
@@ -111,14 +111,12 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .paymentStatus(PaymentStatus.PENDING)
                 .build();
         order.setOrderItems(createOrderItem(orderRequest, order));
-        return  orderService.save(order.calculateTotal());
+        return orderService.save(order.calculateTotal());
     }
 
     private OrderEntity buildWeddingOrder(OrderRequest orderRequest) {
         return null;
     }
-
-
 
 
     @Override
@@ -130,32 +128,42 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         updateOrderItemInOrder(request, order);
         createOrderItem(request, order);
         if (request.getNote() != null) order.setNote(request.getNote());
+        if (request.getPaymentStatus() != null) {
+            if(order.getPaymentStatus().equals(PaymentStatus.PAYED)){
+                if(!order.isCookedAll()) throw new AppException(ErrorCode.ORDER_NOT_DONE_YET);
+            }
+            order.setPaymentStatus(request.getPaymentStatus());
+        }
+        if (order.getPaymentStatus().equals(PaymentStatus.PAYED)) order.payOrder();
         orderService.save(order.calculateTotal());
         return ApiResponse.<OrderResponse>builder()
                 .data(toOrderResponse(order.getId()))
                 .build();
     }
 
-
     private List<OrderItemEntity> createOrderItem(OrderRequest request, OrderEntity order) {
-        if (request.getOrderItems().getCreates() != null) {
-            return toOrderItems(request.getOrderItems().getCreates(), order);
+        if(request.getOrderItems()!=null){
+            if (request.getOrderItems().getCreates() != null) {
+                return toOrderItems(request.getOrderItems().getCreates(), order);
+            }
         }
         return null;
     }
 
     private void updateOrderItemInOrder(OrderRequest request, OrderEntity order) {
-        if (request.getOrderItems().getUpdates() != null) {
-            for (OrderItemRequest orderItemRequest : request.getOrderItems().getUpdates()) {
-                OrderItemEntity item = orderItemService
-                        .findByOrderIdAndFoodId(order.getId(), orderItemRequest.getFoodId());
-                if (!item.getStatus().equals(OrderItemStatus.PENDING)) {
-                    if (orderItemRequest.getQuantity() != null) {
-                        if (orderItemRequest.getQuantity() <= item.getQuantity()) continue;
+        if(request.getOrderItems()!=null){
+            if (request.getOrderItems().getUpdates() != null) {
+                for (OrderItemRequest orderItemRequest : request.getOrderItems().getUpdates()) {
+                    OrderItemEntity item = orderItemService
+                            .findByOrderIdAndFoodId(order.getId(), orderItemRequest.getFoodId());
+                    if (!item.getStatus().equals(OrderItemStatus.PENDING)) {
+                        if (orderItemRequest.getQuantity() != null) {
+                            if (orderItemRequest.getQuantity() <= item.getQuantity()) continue;
+                        }
                     }
+                    item = orderItemService.mapUpdateOrderItem(orderItemRequest, item);
+                    orderItemService.save(item.calculatePrice());
                 }
-                item = orderItemService.mapUpdateOrderItem(orderItemRequest, item);
-                orderItemService.save(item.calculatePrice());
             }
         }
     }
@@ -165,8 +173,8 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     public ApiResponse<ReservationResponse> customerReservation(CustomerReserveRequest request) {
         BranchEntity branch = branchService.getBranchEntity(request.getBranchId());
         CustomerAccountEntity customer = getCustomerAccount(request.getCustomer());
-        List<TableEntity> tables = calculateCustomerReserveTable(request.getBranchId(),request.getDate()
-        ,request.getTime(),request.getAmountGuest());
+        List<TableEntity> tables = calculateCustomerReserveTable(request.getBranchId(), request.getDate()
+                , request.getTime(), request.getAmountGuest());
         ReservationEntity reservation = ReservationEntity.builder()
                 .amountGuest(request.getAmountGuest())
                 .branch(branch)
@@ -192,13 +200,13 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
 
     private List<TableEntity> calculateCustomerReserveTable(int branchId, LocalDate date,
-                                                            LocalTime time,int amountGuest){
+                                                            LocalTime time, int amountGuest) {
         List<TableEntity> tables = tableService.getAllTablesAvailableToReserve(branchId, date, time);
         List<TableEntity> res = new ArrayList<>();
         int total = 0;
         for (TableEntity table : tables) {
-            if(total>=amountGuest)break;
-            total+= table.getCapacity();
+            if (total >= amountGuest) break;
+            total += table.getCapacity();
             res.add(table);
         }
         return res;
@@ -213,10 +221,10 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
             throw new AppException(ErrorCode.INVALID_RESERVE_DATE);
         LocalTime start = request.getTime().minusHours(2);
         LocalTime end = request.getTime().plusHours(2);
-        List<LocalTime> timeSlots  = generateReserveTime(start,end);
+        List<LocalTime> timeSlots = generateReserveTime(start, end);
         String timeSlotsQuery = convertTimeToQuery(timeSlots);
         List<String> availableTimes = reservationService.getAvailableTime(request.getBranchId(), timeSlotsQuery
-                ,request.getDate(), request.getAmountGuest());
+                , request.getDate(), request.getAmountGuest());
         return ApiResponse.<AvailableReserveTimeResponse>builder()
                 .data(AvailableReserveTimeResponse.builder()
                         .availableReservations(availableTimes)
@@ -234,11 +242,11 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         int totalCapacity = tables.stream()
                 .map(TableEntity::getCapacity)
                 .reduce(0, Integer::sum);
-        if(totalCapacity<request.getAmountGuest())
+        if (totalCapacity < request.getAmountGuest())
             throw new AppException(ErrorCode.NOT_ENOUGH_TABLE_FOR_RESERVE);
         ReservationTypeEntity type = reservationTypeService
                 .getReservationTypeById(request.getTypeId());
-        OrderEntity order = buildOrderWithType(request.getOrder(),type.getName());
+        OrderEntity order = buildOrderWithType(request.getOrder(), type.getName());
         ReservationEntity reservation = ReservationEntity.builder()
                 .amountGuest(request.getAmountGuest())
                 .branch(branch)
@@ -250,7 +258,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .status(ReservationStatus.APPROVED)
                 .order(order)
                 .build();
-        reservation =reservationService.saveReservation(reservation);
+        reservation = reservationService.saveReservation(reservation);
         return ApiResponse.<ReservationResponse>builder()
                 .data(toReservationResponse(reservation.getId()))
                 .build();
@@ -258,15 +266,34 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
 
     @Override
+    @Transactional
     public ApiResponse<ReservationResponse> updateReservation(ReservationRequest request, int id) {
-        return null;
+        ReservationEntity reservation = reservationService.getReservationById(id);
+        if (reservation.getStatus().equals(ReservationStatus.DONE))
+            throw new AppException(ErrorCode.ORDER_WAS_CLOSED);
+        if (request.getOrder() != null) updateOrder(reservation.getOrder().getId(), request.getOrder());
+        if (request.getStatus() != null) reservation.setStatus(request.getStatus());
+        if (request.getAmountGuest() != 0) reservation.setAmountGuest(request.getAmountGuest());
+        reservation = reservationService.saveReservation(reservation);
+        return ApiResponse.<ReservationResponse>builder()
+                .data(toReservationResponse(reservation.getId()))
+                .build();
     }
 
     @Override
     public ApiResponse<Page<ReservationResponse>> getAllReservationsInBranch(Pageable pageable,
                                                                              Boolean isHistory, int branchId) {
         return ApiResponse.<Page<ReservationResponse>>builder()
-                .data(reservationService.getAllReservationsInBranch(pageable,isHistory,branchId).map(reservationService::toReservationResponse))
+                .data(reservationService.getAllReservationsInBranch(pageable, isHistory, branchId).map(reservationService::toReservationResponse))
+                .build();
+    }
+
+
+    @Override
+    public ApiResponse<OrderResponse> deleteOrderItem(int orderId, int foodId) {
+        orderItemService.deleteItem(orderId,foodId);
+        return ApiResponse.<OrderResponse>builder()
+                .data(toOrderResponse(orderId))
                 .build();
     }
 
@@ -277,14 +304,13 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .build();
     }
 
-    private OrderEntity buildOrderWithType(OrderRequest orderRequest, ReservationType type){
-        return switch (type){
+    private OrderEntity buildOrderWithType(OrderRequest orderRequest, ReservationType type) {
+        return switch (type) {
             case GENERAL -> buildGeneralOrder(orderRequest);
             case WEDDING -> buildWeddingOrder(orderRequest);
             default -> null;
         };
     }
-
 
 
     private List<LocalTime> generateReserveTime(LocalTime start, LocalTime end) {
@@ -298,13 +324,13 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
 
     private String convertTimeToQuery(List<LocalTime> timeSlots) {
-        List<String> query  = new ArrayList<>(timeSlots.stream()
+        List<String> query = new ArrayList<>(timeSlots.stream()
                 .map(time -> String.format("SELECT '%s' ", time.toString()))
                 .toList());
-        query.set(0, query.getFirst()+"AS slot_time ");
+        query.set(0, query.getFirst() + "AS slot_time ");
         return String.join(" UNION ALL ", query);
     }
-    
+
 
     private boolean isValidReserveDate(LocalTime reserveTime,
                                        LocalDate reserveDate, List<BranchWorkingHourEntity> workingHours) {
@@ -323,9 +349,6 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         return (reserveTime.plusHours(2).isAfter(tmpHour.getOpeningTime())
                 && reserveTime.minusHours(2).isBefore(tmpHour.getClosingTime()));
     }
-
-
-
 
 
     private CustomerAccountEntity getCustomerAccount(CustomerOrderRequest request) {
@@ -365,9 +388,9 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
         return orderService.toResponse(order.calculateTotal());
     }
 
-    private ReservationResponse toReservationResponse(int reserveId){
+    private ReservationResponse toReservationResponse(int reserveId) {
         ReservationEntity reserve = reservationService.getReservationById(reserveId);
-        return  reservationService.toReservationResponse(reserve);
+        return reservationService.toReservationResponse(reserve);
     }
 
 }

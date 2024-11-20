@@ -1,7 +1,6 @@
 package group5.swp.HarasyProject.dto.response.menu;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.dto.response.food.FoodResponse;
 import group5.swp.HarasyProject.enums.BinaryStatus;
 import group5.swp.HarasyProject.enums.MenuType;
 import lombok.*;
@@ -20,5 +19,5 @@ public class MenuResponse {
     MenuType type;
     BinaryStatus status;
     int branchId;
-    List<FoodResponse> menuItems;
+    List<MenuItemResponse> menuItems;
 }
