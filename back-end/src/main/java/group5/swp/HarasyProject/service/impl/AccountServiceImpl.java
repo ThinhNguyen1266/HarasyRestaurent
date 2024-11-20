@@ -209,4 +209,9 @@ public class AccountServiceImpl implements AccountService {
                 .builder()
                 .build();
     }
+
+    @Override
+    public StaffAccountEntity saveStaff(StaffAccountEntity staff) {
+        return staffAccountRepository.save(staff);
+    }
 }

@@ -154,8 +154,12 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
         List<StaffAccountEntity> staffs = branch.getStaffs();
         if (staffs != null && !staffs.isEmpty()) {
             for (StaffAccountEntity s : staffs) {
-                if (s.getRole().equals(StaffRole.BRANCH_MANAGER)) s = manager;
-                return;
+                if (s.getRole().equals(StaffRole.BRANCH_MANAGER)){
+                    s.setBranch(null);
+                    accountService.saveStaff(s);
+                    staffs.remove(s);
+                    break;
+                }
             }
         }
         branch.addStaff(manager);

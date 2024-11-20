@@ -46,10 +46,10 @@ public class BranchEntity extends Auditable {
     @Enumerated(EnumType.STRING)
     Status status = Status.INACTIVE;
 
-    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branch",cascade = CascadeType.ALL)
     List<StaffAccountEntity> staffs;
 
-    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "branch")
     List<BranchWorkingHourEntity> workingHours;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
@@ -89,6 +89,12 @@ public class BranchEntity extends Auditable {
         if (staffs == null) staffs = new ArrayList<>();
         staff.setBranch(this);
         staffs.add(staff);
+    }
+
+    public void replaceManager(StaffAccountEntity manager, int oldManagerId) {
+        staffs.removeIf(staff -> staff.getId() == oldManagerId);
+        manager.setBranch(this);
+        staffs.add(manager);
     }
 
     public boolean isTableInBranch(int tableId){
