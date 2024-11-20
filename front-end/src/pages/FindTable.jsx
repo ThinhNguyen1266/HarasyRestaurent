@@ -19,6 +19,16 @@ const FindTable = () => {
   const [reserveTimeOptions, setReserveTimeOptions] = useState([]);
   const branchTitle = `Reservation at ${branch.split("-").join(" ")} `;
 
+  const getChunkTime = (reserveTimeOptions) => {
+    const chunks = [];
+    let chunkSize = 4;
+    for (let i = 0; i < reserveTimeOptions.length; i += chunkSize) {
+      const chunk = reserveTimeOptions.slice(i, i + chunkSize);
+      chunks.push(chunk);
+    }
+    return chunks;
+  };
+
   const generateTimeOptions = () => {
     const times = [];
     let hour = 0;
@@ -47,7 +57,7 @@ const FindTable = () => {
     for (const key in request) {
       if (Object.prototype.hasOwnProperty.call(request, key)) {
         const element = request[key];
-        if (element == null || element == "") return false;
+        if (element == null || element === "") return false;
       }
     }
     return true;
@@ -152,28 +162,34 @@ const FindTable = () => {
                   </Col>
                 </Row>
 
-                <div className="time-options d-flex justify-content-between">
-                  {reserveTimeOptions.map((option, index) => (
-                    <Button
-                      as={Link}
-                      to={
-                        option.available
-                          ? `/reservationdetails?branch=${branch}&time=${option}`
-                          : "#"
-                      }
-                      key={index}
-                      className={`time-btn d-flex align-items-center justify-content-center`}
-                    >
-                      <FaRegClock
-                        style={{
-                          marginRight: "8px",
-                          fontSize: "16px",
-                        }}
-                      />
-                      {option}
-                    </Button>
-                  ))}
-                </div>
+                {getChunkTime(reserveTimeOptions).map((chunk) => (
+                  <Row>
+                    <div className="time-options d-flex justify-content-between ">
+                      {chunk.map((option, index) => (
+                        <Col md={3}>
+                          <Button
+                            as={Link}
+                            to={
+                              option.available
+                                ? `/reservationdetails?branch=${branch}&time=${option}`
+                                : "#"
+                            }
+                            key={index}
+                            className={`time-btn d-flex align-items-center justify-content-center mx-1`}
+                          >
+                            <FaRegClock
+                              style={{
+                                marginRight: "8px",
+                                fontSize: "16px",
+                              }}
+                            />
+                            {option}
+                          </Button>
+                        </Col>
+                      ))}
+                    </div>
+                  </Row>
+                ))}
               </Form>
             </div>
           </Col>

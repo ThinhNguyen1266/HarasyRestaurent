@@ -16,6 +16,7 @@ import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.mapper.BranchMapper;
 import group5.swp.HarasyProject.repository.BranchRepository;
 import group5.swp.HarasyProject.service.BranchService;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -85,10 +86,10 @@ public class BranchServiceImpl implements BranchService {
     private BranchResponse toResponse(BranchEntity branch) {
         BranchResponse info = branchMapper.toBranchResponse(branch);
         List<StaffAccountEntity> staff = branch.getStaffs();
-        staff = staff
-                .stream().filter(s-> s.getRole().equals(StaffRole.BRANCH_MANAGER))
-                .toList();
-        if(!staff.isEmpty()) {
+        if(staff!=null && !staff.isEmpty()) {
+            staff = staff
+                    .stream().filter(s-> s.getRole().equals(StaffRole.BRANCH_MANAGER))
+                    .toList();
             StaffAccountEntity manager = staff.getFirst();
             info.getBranchInfo().setManagerEmail(manager.getAccount().getEmail());
             info.getBranchInfo().setManagerId(manager.getId());
@@ -105,6 +106,7 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
+    @Transactional
     public BranchEntity createBranch(BranchInfoRequest request) {
         if (branchRepository.existsByName(request.getName())) {
             throw new AppException(ErrorCode.BRANCH_EXISTED);
@@ -115,6 +117,7 @@ public class BranchServiceImpl implements BranchService {
 
 
     @Override
+    @Transactional
     public BranchEntity updateBranch(Integer branchId, BranchInfoRequest request) {
         BranchEntity branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
@@ -122,6 +125,7 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
+    @Transactional
     public ApiResponse<?> deleteBranch(Integer branchId) {
         BranchEntity branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));

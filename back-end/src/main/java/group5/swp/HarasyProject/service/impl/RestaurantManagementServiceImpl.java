@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,11 +44,10 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     AccountService accountService;
 
 
-
     @Override
     public ApiResponse<Page<OrderResponse>> getOrdersInBranch(int branchId, Pageable pageable) {
         return ApiResponse.<Page<OrderResponse>>builder()
-                .data(orderService.getOrdersByBranchId(branchId,pageable).map(orderService::toResponse))
+                .data(orderService.getOrdersByBranchId(branchId, pageable).map(orderService::toResponse))
                 .build();
     }
 
@@ -78,8 +78,10 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     }
 
     @Override
+    @Transactional
     public ApiResponse<BranchResponse> createBranch(BranchRequest request) {
         BranchEntity branch = branchService.createBranch(request.getBranchInfo());
+        updateBranchManager(branch, request.getBranchInfo().getManagerId());
         doUpdateIn(request, branch);
         branch = branchService.saveBranch(branch);
         return ApiResponse.<BranchResponse>builder()
@@ -99,7 +101,7 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
 
     @Override
     public ApiResponse<List<MenuResponse>> getAllMenusInBranch(int branchId, boolean isIncludeAll) {
-        List<MenuEntity> menus = menuService.getAllMenusInBranch(branchId,isIncludeAll);
+        List<MenuEntity> menus = menuService.getAllMenusInBranch(branchId, isIncludeAll);
         return ApiResponse.<List<MenuResponse>>builder()
                 .data(menus
                         .stream().map(menuService::mapMenuResponse)
@@ -113,18 +115,15 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     }
 
 
-
-
-
     @Override
     public ApiResponse<MenuResponse> addFoodsToMenu(int menuId, FoodInMenuRequest request) {
-        menuService.addFood(menuId,request.getFoodIds());
+        menuService.addFood(menuId, request.getFoodIds());
         return getMenu(menuId);
     }
 
     @Override
     public ApiResponse<MenuResponse> deleteFoodsFromMenu(int menuId, FoodInMenuRequest request) {
-        menuService.deleteFood(menuId,request.getFoodIds());
+        menuService.deleteFood(menuId, request.getFoodIds());
         return getMenu(menuId);
     }
 
@@ -139,6 +138,7 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     }
 
     @Override
+    @Transactional
     public ApiResponse<BranchResponse> updateBranch(int branchId, BranchRequest request) {
         BranchEntity branch = branchService.updateBranch(branchId, request.getBranchInfo());
         updateBranchManager(branch, request.getBranchInfo().getManagerId());
@@ -149,11 +149,16 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
                 .build();
     }
 
-    private void updateBranchManager(BranchEntity branch , int managerId){
+    private void updateBranchManager(BranchEntity branch, int managerId) {
         StaffAccountEntity manager = accountService.getStaffAccount(managerId);
-        for (StaffAccountEntity s : branch.getStaffs()){
-            if(s.getRole().equals(StaffRole.BRANCH_MANAGER)) s = manager;
+        List<StaffAccountEntity> staffs = branch.getStaffs();
+        if (staffs != null && !staffs.isEmpty()) {
+            for (StaffAccountEntity s : staffs) {
+                if (s.getRole().equals(StaffRole.BRANCH_MANAGER)) s = manager;
+                return;
+            }
         }
+        branch.addStaff(manager);
     }
 
 
@@ -164,7 +169,7 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
 
     @Override
     public ApiResponse<FoodResponse> updateFood(int foodId, FoodRequest request) {
-        return foodService.updateFood(foodId,request);
+        return foodService.updateFood(foodId, request);
     }
 
     @Override
@@ -204,11 +209,12 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
         }
     }
 
+
     private void updateInBranchEntity(BranchRequest request, BranchEntity branch) {
         if (request.getTables() != null && request.getTables().getUpdates() != null) {
             List<TableEntity> listUpdateTable = request.getTables().getUpdates()
                     .stream().filter(tableRequest -> isTableInBranch(tableRequest.getId(), branch))
-                    .map(tableRequest-> mapUpdateTable(tableRequest,branch.getTables()))
+                    .map(tableRequest -> mapUpdateTable(tableRequest, branch.getTables()))
                     .toList();
             tableService.saveUpdate(listUpdateTable);
         }
@@ -216,7 +222,7 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
             List<MenuEntity> menus = menuService.toMenus(request.getMenus().getUpdates());
             List<MenuEntity> listUpdateMenu = request.getMenus().getUpdates()
                     .stream().filter(menuRequest -> isMenuInBranch(menuRequest.getId(), branch))
-                    .map(menuRequest-> mapUpdateMenu(menuRequest,branch.getMenus()))
+                    .map(menuRequest -> mapUpdateMenu(menuRequest, branch.getMenus()))
                     .toList();
             menuService.saveUpdate(listUpdateMenu);
         }
