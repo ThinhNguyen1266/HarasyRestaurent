@@ -9,6 +9,7 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
 import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
 import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,8 @@ public interface BusinessManagementService {
     ApiResponse<ReservationResponse> getReservation(int id);
 
     ApiResponse<ReservationResponse> updateReservation(ReservationRequest request, int id);
+
+    ApiResponse<List<TableResponse>> getAvailableTable(CheckReserveTimeRequest request);
 
     public Long getRevenueByDay(LocalDate specificDate);
 

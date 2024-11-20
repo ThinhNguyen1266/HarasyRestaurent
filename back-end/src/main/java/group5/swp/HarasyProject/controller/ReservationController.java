@@ -6,6 +6,7 @@ import group5.swp.HarasyProject.dto.request.reservation.ReservationRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
 import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
+import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.service.BusinessManagementService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -41,6 +44,12 @@ public class ReservationController {
         Pageable pageable = PageRequest.of(page, size, sortBy);
         return businessManagementService.getAllCusReservations(pageable, customerId);
     }
+
+    @PostMapping("/reserve/availableTable")
+    ApiResponse<List<TableResponse>> getAvailableTables(@RequestBody CheckReserveTimeRequest request) {
+        return businessManagementService.getAvailableTable(request);
+    }
+
 
 
     @GetMapping("/reserve/{id}")

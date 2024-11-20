@@ -20,4 +20,5 @@ public interface TableService {
     TableEntity mapUpdateTable(TableRequest updateTable, TableEntity oldTable);
     List<TableEntity> getTables(List<Integer> tableIds);
     List<TableEntity> getAllTablesAvailableToReserve(int branchId, LocalDate date, LocalTime time);
+    TableResponse toResponse(TableEntity table);
 };
