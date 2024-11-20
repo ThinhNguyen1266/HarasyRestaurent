@@ -20,6 +20,20 @@ const useTableApi = () => {
     }
   };
 
+  const getAvailableTablelist = async () => {
+    try {
+      const branchId = user?.branchId; // Lấy branchId từ thông tin user
+      if (!branchId) throw new Error("Branch ID not found"); // Kiểm tra nếu không có branchId
+
+      const tableData = (await axios.get(`/branch/${branchId}/tables`)).data;
+      console.log("table data:", tableData); // Gọi API với branchId
+      return tableData;
+    } catch (error) {
+      console.error("Error fetching table data:", error);
+      throw error;
+    }
+  };
+
   const updateTableStatus = async ({ tableId, status }) => {
     try {
       const response = await axiosPrivate.put(`/table/${tableId}`, {
