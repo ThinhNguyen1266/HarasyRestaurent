@@ -42,9 +42,9 @@ public class ReservationEntity extends Auditable {
     int amountGuest;
 
     @Column(nullable = false)
-    int price;
+    long price;
 
-    int deposit = 0;
+    long deposit = 0;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -74,6 +74,15 @@ public class ReservationEntity extends Auditable {
     @JoinColumn(name = "reservation_type_id")
     ReservationTypeEntity type;
 
+    public void doneReserve(){
+        this.status = ReservationStatus.DONE;
+        this.price =  order.getTotal();
+    }
 
-
+    public ReservationEntity calculate(){
+        order.calculateTotal();
+        this.price =  order.getTotal();
+        this.deposit = Math.round((float) (price * 40) / 100);
+        return this;
+    }
 }

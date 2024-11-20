@@ -1,10 +1,7 @@
 package group5.swp.HarasyProject.controller;
 
 
-import group5.swp.HarasyProject.dto.request.account.CusUpdateProfileRequest;
-import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
-import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
-import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
+import group5.swp.HarasyProject.dto.request.account.*;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
@@ -54,7 +51,9 @@ public class AccountController  {
     public  ApiResponse<CustomerProfileResponse> updateCusProfile(@RequestBody CusUpdateProfileRequest request , @PathVariable Integer id) throws Exception {
         return accountService.cusUpdateProfile(id,request);
     }
-
-
+    @PostMapping("/account/{id}/changePassword")
+    public ApiResponse<?> changePassword(@PathVariable int id, @RequestBody ChangePasswordRequest request){
+        return null;
+    }
 
 }

@@ -88,6 +88,9 @@ public class OrderEntity extends Auditable {
         for (OrderItemEntity orderItem : orderItems) {
             minusPoint+= orderItem.getTotalPointsPrice();
         }
+        if(reservation!=null){
+            reservation.doneReserve();
+        };
         customer.calculatePoint(addPoint,minusPoint);
     }
 

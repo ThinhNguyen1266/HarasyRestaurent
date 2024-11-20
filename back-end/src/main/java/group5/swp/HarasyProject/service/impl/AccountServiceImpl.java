@@ -30,6 +30,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,19 +80,35 @@ public class AccountServiceImpl implements AccountService {
                 .build();
     }
 
+
+    @Override
+    public ApiResponse<?> changePassword(int id, ChangePasswordRequest request) {
+        AccountEntity accountEntity = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        boolean authenticated = passwordEncoder.matches(request.getOldPassword(), accountEntity.getPassword());
+        if (authenticated) {
+            if (request.getNewPassword().equals(request.getConfirmPassword())) {
+                accountEntity.setPassword(passwordEncoder.encode(request.getNewPassword()));
+                accountRepository.save(accountEntity);
+            } else throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        } else throw new AppException(ErrorCode.WRONG_PASSWORD);
+        return ApiResponse.builder().build();
+    }
+
     @Override
     public ApiResponse<StaffResponse> staffRegis(RegistStaffRequest request) throws IOException, MessagingException {
         AccountEntity accountEntity = accountMapper.staffRequestToAccount(request);
         accountEntity.setPassword(passwordEncoder.encode(accountEntity.getPassword()));
         StaffAccountEntity staffAccountEntity = accountMapper.staffRequestToStaffAccount(request);
-        BranchEntity branch=branchRepository.findById(request.getBranchId())
+        BranchEntity branch = branchRepository.findById(request.getBranchId())
                 .orElseThrow(() -> new AppException(ErrorCode.BRANCH_NOT_FOUND));
         staffAccountEntity.setBranch(branch);
 
         accountEntity.setStaff(staffAccountEntity);
         staffAccountEntity.setAccount(accountEntity);
-        StaffResponse staffResponse=staffMapper.toResponse(staffAccountEntity);
-        System.out.println("staff account"+accountEntity);
+        StaffResponse staffResponse = staffMapper.toResponse(staffAccountEntity);
+        System.out.println("staff account" + accountEntity);
         try {
             accountRepository.save(accountEntity);
         } catch (Exception e) {
@@ -117,7 +134,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ApiResponse<ProfileResponse> viewProfile(Integer id) {
-        AccountEntity account = accountRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        AccountEntity account = accountRepository
+                .findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         ProfileResponse response;
         if (account.getCustomer() != null) {
             response = accountMapper.toCustomerProfileResponse(account);
@@ -159,7 +177,7 @@ public class AccountServiceImpl implements AccountService {
     public ApiResponse<List<ProfileResponse>> getAccounts(String phone) {
         List<AccountEntity> acc = accountRepository.findAllAcc(phone);
         List<ProfileResponse> responses = acc
-                .stream().map(a->{
+                .stream().map(a -> {
                     if (a.getCustomer() != null) {
                         return accountMapper.toCustomerProfileResponse(a);
                     } else {
@@ -187,12 +205,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ApiResponse<CustomerProfileResponse> cusUpdateProfile(int id, CusUpdateProfileRequest request) {
-        AccountEntity account =accountRepository.findById(id)
+        AccountEntity account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         CustomerAccountEntity customerAccount = customerAccountRepository.findByAccount(account)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-        customerAccount=accountMapper.updateCusInfo(request,customerAccount);
-        System.out.println("cus update"+customerAccount);
+        customerAccount = accountMapper.updateCusInfo(request, customerAccount);
+        System.out.println("cus update" + customerAccount);
         customerAccountRepository.save(customerAccount);
         CustomerProfileResponse response = accountMapper.toCustomerProfileResponse(account);
         return ApiResponse.<CustomerProfileResponse>builder()
