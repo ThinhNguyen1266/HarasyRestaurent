@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 
-import useOrderApi from "../hooks/api/useOrderApi";
-import useAuth from "../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import { Col, Container, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import useOrderApi from "../hooks/api/useOrderApi";
+import useAuth from "../hooks/useAuth";
 
 function OrderWaiter() {
   const navigate = useNavigate();
@@ -33,12 +32,19 @@ function OrderWaiter() {
     <Container>
       <Row className="order-list">
         {orderIntimeData.map((order) => (
-          <Col md={6}>
+          <Col md={6} key={order.id}>
             <Card
-              key={order.id}
               className="mb-3 order-card"
-              onClick={() => handleCardClick(order.id)} // Attach click handler
-              style={{ cursor: "pointer" }} // Add pointer cursor for UX
+              onClick={() => handleCardClick(order.id)}
+              style={{
+                cursor: "pointer",
+                backgroundColor: "#141414",
+                borderRadius: "10px",
+                border: "2px solid #333",
+                height: "300px",
+                color: "white",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              }}
             >
               <Card.Body>
                 <Card.Title>
