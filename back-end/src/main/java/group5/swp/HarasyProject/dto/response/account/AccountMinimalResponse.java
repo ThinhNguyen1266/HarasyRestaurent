@@ -13,4 +13,5 @@ import lombok.experimental.FieldDefaults;
 public class AccountMinimalResponse {
     Integer id;
     String name;
+    String phone;
 }

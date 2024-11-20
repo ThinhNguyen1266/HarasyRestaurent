@@ -48,7 +48,6 @@ const ReservationItem = ({ reservation, onDetailClick }) => {
 const ReservationsPage = () => {
   const { getRerservationCus } = useReservationApi();
   const [page, setPage] = useState(0); // Track the current page
-
   const { data: reservationData = { content: [], totalPages: 1 }, isLoading } =
     useQuery({
       queryKey: ["reservation", page], // Include `page` in the query key
@@ -102,9 +101,25 @@ const ReservationsPage = () => {
     // TODO: Implement saving logic here
   };
 
-  const filteredReservations = selectedDate
-    ? allReservations.filter((res) => res.date.split(" - ")[0] === selectedDate)
-    : allReservations;
+  const filteredReservations = useMemo(() => {
+    let result = allReservations;
+  
+    // Apply phone search filter
+    if (searchPhone.trim()) {
+      result = result.filter((res) =>
+        res.phone.includes(searchPhone.trim())
+      );
+    }
+  
+    // Apply date filter
+    if (selectedDate) {
+      result = result.filter(
+        (res) => res.date.split(" - ")[0] === selectedDate
+      );
+    }
+  
+    return result;
+  }, [searchPhone, selectedDate, allReservations]);
 
     const uniqueDates = useMemo(
       () => [...new Set(allReservations.map((res) => res.date.split(" - ")[0]))],

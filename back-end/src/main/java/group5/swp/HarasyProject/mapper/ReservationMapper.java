@@ -17,6 +17,7 @@ public interface ReservationMapper {
 
     @Mapping(target = "type", source = "type.name")
     @Mapping(target="customer.name" , source = "customer.account.fullName")
+    @Mapping(target="customer.phone" , source = "customer.account.phone")
     ReservationResponse toResponse(ReservationEntity reservation);
 
 

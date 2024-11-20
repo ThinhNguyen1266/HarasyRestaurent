@@ -14,6 +14,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 )
 public interface OrderMapper {
     @Mapping(target = "staff.name" , source="staff.account.fullName")
+    @Mapping(target = "staff.phone" , source="staff.account.phone")
     @Mapping(target = "customer.name" , source="customer.account.fullName")
+    @Mapping(target = "customer.phone" , source="customer.account.phone")
     OrderResponse toResponse(OrderEntity order);
 }
