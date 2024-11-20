@@ -69,7 +69,7 @@ const ReservationsPage = () => {
   const allReservations = reservationData.content.map((res) => ({
     id: res.id,
     status: res.status,
-    table: res.order.tables.map((table) => `Table ${table.number}`).join(", "),
+    table: res.order.tables.map((table) => table.number),
     date: `${new Date(res.date).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
