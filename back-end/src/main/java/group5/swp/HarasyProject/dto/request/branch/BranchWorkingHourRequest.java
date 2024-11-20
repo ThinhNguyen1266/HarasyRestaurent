@@ -14,6 +14,7 @@
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public class BranchWorkingHourRequest {
+        Integer id;
         DayOfWeek dayOfWeek;
         LocalTime openingTime;
         LocalTime closingTime;

@@ -5,11 +5,8 @@ import group5.swp.HarasyProject.dto.response.branch.BranchInfoHomeResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
-import group5.swp.HarasyProject.entity.branch.TableEntity;
-import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import org.mapstruct.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
@@ -40,19 +37,5 @@ public interface BranchMapper {
     BranchInfoHomeResponse toBranchInfoHomeResponse(BranchEntity branch);
 
 
-    default void addTables(TableEntity table, @MappingTarget BranchEntity branch){
-        if (branch.getTables() == null) {
-            branch.setTables(new ArrayList<>());
-        }
-        table.setBranch(branch);
-        branch.getTables().add(table);
-    };
 
-    default void addMenus(MenuEntity menu, @MappingTarget BranchEntity branch){
-        if (branch.getMenus() == null) {
-            branch.setMenus(new ArrayList<>());
-        }
-        menu.setBranch(branch);
-        branch.getMenus().add(menu);
-    }
 }
