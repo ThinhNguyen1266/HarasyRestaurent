@@ -1,58 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useMemo  } from "react";
 import "../assets/styles/AllReservation.css";
 import ReservationModal from "../components/ReservationModal";
 import CreateReservationModal from "../components/CreateReservationModal"; // Import the CreateReservationModal component
 import Sidebar from "../components/Sidebar";
 import useReservationApi from "../hooks/api/userReservationApi";
 import { ToastContainer, toast } from "react-toastify";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import useAuth from "../hooks/useAuth";
-const reservations = [
-  {
-    id: 1,
-    status: "Pending",
-    table: "Table 2",
-    date: "30, April - 10:30 AM",
-    customer: "Nguyen Van A",
-    phone: "0387678789",
-    orders: ["Steak Tartare", "Lobster Risotto"],
-    price: "540,000",
-    guests: 6,
-  },
-  {
-    id: 2,
-    status: "Approved",
-    table: "Table 2",
-    date: "30, April - 10:30 AM",
-    customer: "Nguyen Van B",
-    phone: "0387678789",
-    orders: ["Beef Wellington", "Chinese Takeout Dish"],
-    price: "650,000",
-    guests: 5,
-  },
-  {
-    id: 3,
-    status: "Done",
-    table: "Table 2",
-    date: "29, April - 10:30 AM",
-    customer: "Nguyen Van C",
-    phone: "0387678789",
-    orders: [],
-    price: "720,000",
-    guests: 4,
-  },
-  {
-    id: 4,
-    status: "Pending",
-    table: "Table 2",
-    date: "28, April - 10:30 AM",
-    customer: "Nguyen Van D",
-    phone: "0387678789",
-    orders: ["Sushi", "Salmon Roll"],
-    price: "400,000",
-    guests: 3,
-  },
-];
+import { useQuery } from "@tanstack/react-query";
 
 const ReservationItem = ({ reservation, onDetailClick }) => {
   const getStatusColor = (status) => {
@@ -93,21 +46,35 @@ const ReservationItem = ({ reservation, onDetailClick }) => {
 };
 
 const ReservationsPage = () => {
-  const { user } = useAuth();
-
-  const queryClient = useQueryClient();
   const { getRerservationCus } = useReservationApi();
-  console.log("id", user);
-  
-  const { data: reservation = [], isLoading } = useQuery({
-    queryKey: ["reservation",user.customerId],
-    queryFn: getRerservationCus(user.customerId),
+  const [page, setPage] = useState(0); // Track the current page
 
-    onError: (error) => {
-      toast.error(`Failed to fetch branches: ${error.message}`);
-    },
-  });
-  console.log(reservations);
+  const { data: reservationData = { content: [], totalPages: 1 }, isLoading } =
+    useQuery({
+      queryKey: ["reservation", page], // Include `page` in the query key
+      queryFn: () => getRerservationCus(page),
+      onError: (error) => {
+        toast.error(`Failed to fetch reservations: ${error.message}`);
+      },
+    });
+
+  const allReservations = reservationData.content.map((res) => ({
+    id: res.id,
+    status: res.status,
+    table: res.order.tables.map((table) => `Table ${table.number}`).join(", "),
+    date: `${new Date(res.date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+    })} - ${new Date(`1970-01-01T${res.time}`).toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`,
+    customer: res.customer.name,
+    phone: res.customer.phone || "N/A",
+    orders: res.order.orderItems.map((item) => item.name),
+    price: res.order.total.toLocaleString(),
+    guests: res.amountGuest,
+  }));
 
   const [searchPhone, setSearchPhone] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
@@ -135,29 +102,23 @@ const ReservationsPage = () => {
     // TODO: Implement saving logic here
   };
 
-  // Extract unique dates from reservations
-  const uniqueDates = [
-    ...new Set(reservations.map((res) => res.date.split(" - ")[0])),
-  ];
+  const filteredReservations = selectedDate
+    ? allReservations.filter((res) => res.date.split(" - ")[0] === selectedDate)
+    : allReservations;
 
-  const groupedReservations = {
-    Pending: reservations.filter((res) => res.status === "Pending"),
-    Approved: reservations.filter((res) => res.status === "Approved"),
-    Done: reservations.filter((res) => res.status === "Done"),
+    const uniqueDates = useMemo(
+      () => [...new Set(allReservations.map((res) => res.date.split(" - ")[0]))],
+      [allReservations]
+    );
+
+  // Pagination Controls
+  const handlePrevPage = () => {
+    if (page > 0) setPage(page - 1);
   };
 
-  // Filter reservations based on search and date selection
-  const filteredReservations = Object.keys(groupedReservations).reduce(
-    (acc, status) => {
-      acc[status] = groupedReservations[status].filter(
-        (res) =>
-          res.phone.includes(searchPhone) &&
-          (selectedDate === "" || res.date.includes(selectedDate))
-      );
-      return acc;
-    },
-    {}
-  );
+  const handleNextPage = () => {
+    if (page < reservationData.totalPages - 1) setPage(page + 1);
+  };
 
   return (
     <div className="reservations-page">
@@ -191,16 +152,15 @@ const ReservationsPage = () => {
             </select>
           </div>
           <div className="col-md-2">
-            <button className="btn btn-warning w-100" onClick={handleCreateNewClick}>
-              Create New
+            <button className="btn btn-warning" onClick={handleCreateNewClick}>
+              Create
             </button>
           </div>
         </div>
 
         {/* Reservation Groups by Status */}
         <div className="reservation-group">
-          <h2>Pending</h2>
-          {filteredReservations.Pending.map((reservation) => (
+          {filteredReservations.map((reservation) => (
             <ReservationItem
               key={reservation.id}
               reservation={reservation}
@@ -209,26 +169,25 @@ const ReservationsPage = () => {
           ))}
         </div>
 
-        <div className="reservation-group">
-          <h2>Approved</h2>
-          {filteredReservations.Approved.map((reservation) => (
-            <ReservationItem
-              key={reservation.id}
-              reservation={reservation}
-              onDetailClick={handleDetailClick}
-            />
-          ))}
-        </div>
-
-        <div className="reservation-group">
-          <h2>Done</h2>
-          {filteredReservations.Done.map((reservation) => (
-            <ReservationItem
-              key={reservation.id}
-              reservation={reservation}
-              onDetailClick={handleDetailClick}
-            />
-          ))}
+        {/* Pagination Controls */}
+        <div className="pagination-controls">
+          <button
+            className="btn btn-secondary"
+            onClick={handlePrevPage}
+            disabled={page === 0}
+          >
+            Previous
+          </button>
+          <span className="mx-2">
+            {page + 1} of {reservationData.totalPages}
+          </span>
+          <button
+            className="btn btn-secondary"
+            onClick={handleNextPage}
+            disabled={page === reservationData.totalPages - 1}
+          >
+            Next
+          </button>
         </div>
 
         {/* Show Modal if a reservation is selected */}

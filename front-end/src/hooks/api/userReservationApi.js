@@ -1,14 +1,18 @@
 import axios from "../../services/axios";
 import useAxiosPrivate from "../useAxiosPrivate";
+import { ToastContainer, toast } from "react-toastify";
+import useAuth from "../useAuth"; 
 const useReservationApi = () => {
   const axiosPrivate = useAxiosPrivate();
-
-  const getRerservationCus = async (id) => {
+  const { user } = useAuth();
+  const getRerservationCus = async (page) => {
     try {
-        console.log("api /reserve/",id);
-      const cusReservation = await axiosPrivate.get(`/reserve/${id}`);
-      
-      return cusReservation.data;
+      console.log("api /branch/", user.branchId, "/reserve)");
+      const cusReservation = await axiosPrivate.get(`/branch/${user.branchId}/reserve`, {
+        params: { page },
+      });
+      console.log("a2", cusReservation);
+      return cusReservation;
     } catch (error) {
       throw error;
     }
@@ -22,7 +26,6 @@ const useReservationApi = () => {
       throw error;
     }
   };
-
 
   const getBranchesStaff = async () => {
     try {
