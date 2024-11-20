@@ -11,6 +11,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,20 +23,23 @@ public class ReservationController {
     BusinessManagementService businessManagementService;
 
 
-    @GetMapping("/reserve/availableTime")
+    @PostMapping("/reserve/availableTime")
     ApiResponse<AvailableReserveTimeResponse> getAvailableReserveTime(@RequestBody CheckReserveTimeRequest request) {
         return businessManagementService.getAvailableReserveTime(request);
     }
 
-
-    @GetMapping("/reserve")
-    ApiResponse<Page<ReservationResponse>> getAllReservation(
+    @GetMapping("customer/{customerId}/reserve")
+    public ApiResponse<Page<ReservationResponse>> getAllCustomerReserves(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "desc") String direction,
-            @RequestParam(defaultValue = "false") boolean isHistory) {
-        return null;
+            @PathVariable int customerId
+    ) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sortBy = Sort.by(sortDirection, sort);
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+        return businessManagementService.getAllCusReservations(pageable, customerId);
     }
 
 
@@ -41,7 +47,6 @@ public class ReservationController {
     ApiResponse<ReservationResponse> getReservation(@PathVariable int id) {
         return businessManagementService.getReservation(id);
     }
-
 
 
     @PostMapping("/cusReserve")
@@ -57,8 +62,7 @@ public class ReservationController {
     @PutMapping("/reserve/{id}")
     ApiResponse<ReservationResponse> updateReserve(@RequestBody ReservationRequest request,
                                                    @PathVariable int id) {
-
-        return null;
+        return businessManagementService.updateReservation(request, id);
     }
 
 }

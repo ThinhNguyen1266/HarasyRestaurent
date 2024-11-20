@@ -1,7 +1,6 @@
-package group5.swp.HarasyProject.dto.response.order;
+package group5.swp.HarasyProject.dto.response.menu;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import group5.swp.HarasyProject.enums.OrderItemStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,8 +10,13 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderItemInTimeResponse {
+public class MenuItemResponse {
     Integer foodId;
-    int quantity;
-    OrderItemStatus status;
+    String name;
+    String description;
+    String image;
+    Integer price;
+    Integer pointsPrice;
+    String status;
+    String categoryName;
 }

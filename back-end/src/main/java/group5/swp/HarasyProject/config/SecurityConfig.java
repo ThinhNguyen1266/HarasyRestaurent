@@ -30,11 +30,11 @@ public class SecurityConfig {
             "/auth/login","/auth/validateOtp","/auth/introspect","/auth/refreshToken"
             ,"/users", "/regis/user", "/uploadImage", "/profile/{id}"
             , "/reservations", "/search", "/reservation/{id}"
-            ,"/customer/branches","/foods","/staff",
+            ,"/customer/branches","/foods","/staff","/reserve/availableTime"
     };
     String[] GET_PUBLIC_ENDPOINT ={
                 "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
-            "/menu/{id}","/food/{id}","/branches/home/**","/branch/home/{id}"
+            "/menu/{id}","/food/{id}","/branches/home/**", "/otp","/branch/home/{id}"
     };
     CustomJwtDecoder jwtDecoder;
 

@@ -13,6 +13,7 @@ import java.util.List;
 public interface ReservationService {
     List<String> getAvailableTime(int branchId, String timeSlots, LocalDate date, int amountGuest);
     Page<ReservationEntity> getAllReservationsInBranch(Pageable pageable,Boolean isHistory,int branchId);
+    Page<ReservationEntity> getAllCusReservations(Pageable pageable,int customerId);
 
     ReservationEntity getReservationById(int id);
     ReservationEntity saveReservation(ReservationEntity reservation);

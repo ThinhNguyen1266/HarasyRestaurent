@@ -1,9 +1,6 @@
 package group5.swp.HarasyProject.service.impl;
 
-import group5.swp.HarasyProject.dto.request.account.CusUpdateProfileRequest;
-import group5.swp.HarasyProject.dto.request.account.QuickRegisCustomerRequest;
-import group5.swp.HarasyProject.dto.request.account.RegisCustomerRequest;
-import group5.swp.HarasyProject.dto.request.account.RegistStaffRequest;
+import group5.swp.HarasyProject.dto.request.account.*;
 import group5.swp.HarasyProject.dto.request.auth.EmailRequest;
 import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
@@ -98,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             accountRepository.save(accountEntity);
         } catch (Exception e) {
-            e.printStackTrace(); // This will give you more details on the actual issue
+            e.printStackTrace();
         }
         return ApiResponse.<StaffResponse>builder()
                 .data(staffResponse)
@@ -204,6 +201,12 @@ public class AccountServiceImpl implements AccountService {
                 .build();
     }
 
-
-
+    @Override
+    public ApiResponse<?> resendEmail(ResendEmailRequest request) throws MessagingException, IOException {
+        EmailRequest emailRequest = EmailRequest.builder().to(request.getEmail()).subject("Your OTP").build();
+        mailService.sendOtpMail(emailRequest, otpService.generateOtp(request.getEmail()));
+        return ApiResponse
+                .builder()
+                .build();
+    }
 }

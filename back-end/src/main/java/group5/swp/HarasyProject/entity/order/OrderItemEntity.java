@@ -27,7 +27,7 @@ public class OrderItemEntity extends Auditable {
             @JoinColumn(name = "order_id")
     OrderEntity order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @MapsId("foodId")
     @JoinColumn(name = "food_id")
     FoodEntity food;
@@ -41,6 +41,12 @@ public class OrderItemEntity extends Auditable {
 
     @Column(nullable = false)
     long price;
+
+    @Column(name = "point_price",nullable = false)
+    int pointsPrice;
+
+    @Column(name = "total_point_price",nullable = false)
+    long totalPointsPrice;
 
     @Column(nullable = false)
     long total;
@@ -56,6 +62,13 @@ public class OrderItemEntity extends Auditable {
             } else {
                 price = 0;
                 total = 0;
+            }
+            if  (food.getPointsPrice()>0){
+                pointsPrice = food.getPointsPrice();
+                totalPointsPrice = (long) food.getPointsPrice() * quantity;
+            }else {
+                pointsPrice = 0;
+                totalPointsPrice = 0;
             }
         }
         return this;

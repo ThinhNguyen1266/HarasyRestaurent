@@ -19,13 +19,16 @@ import java.util.List;
 public interface BusinessManagementService {
     ApiResponse<Page<OrderResponse>> getAllOrders(Pageable pageable);
     ApiResponse<List<OrderResponse>> getAllInTimeOrders(int branchId);
+    ApiResponse<Page<OrderResponse>> getAllCusOrders(Pageable pageable, int customerId);
     ApiResponse<OrderResponse> getOrder(int orderId);
     ApiResponse<OrderResponse> createOrder(OrderRequest orderRequest);
     ApiResponse<OrderResponse> updateOrder(int orderId,OrderRequest orderRequest);
+    ApiResponse<OrderResponse> deleteOrderItem(int orderId,int foodId);
     ApiResponse<AvailableReserveTimeResponse> getAvailableReserveTime(CheckReserveTimeRequest request);
     ApiResponse<ReservationResponse> customerReservation(CustomerReserveRequest request);
     ApiResponse<ReservationResponse> createReservation(ReservationRequest request);
     ApiResponse<Page<ReservationResponse>> getAllReservationsInBranch(Pageable pageable, Boolean isHistory, int branchId);
+    ApiResponse<Page<ReservationResponse>> getAllCusReservations(Pageable pageable, int customerId);
     ApiResponse<ReservationResponse> getReservation(int id);
     ApiResponse<ReservationResponse> updateReservation(ReservationRequest request,int id);
 }

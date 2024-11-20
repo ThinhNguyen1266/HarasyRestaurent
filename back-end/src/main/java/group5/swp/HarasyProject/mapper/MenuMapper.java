@@ -9,10 +9,10 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring" ,uses = {FoodMapper.class})
+@Mapper(componentModel = "spring" ,uses = {MenuItemMapper.class})
 public interface MenuMapper {
 
-    @Mapping(target = "branchId", source = "menu.branch.id")
+    @Mapping(target = "branchId", source = "branch.id")
     MenuResponse toMenuResponse(MenuEntity menu);
 
 

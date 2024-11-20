@@ -12,6 +12,7 @@ import java.util.List;
 public interface OrderService {
     Page<OrderEntity> getAllOrders(Pageable pageable);
     Page<OrderEntity> getOrdersByBranchId(int branchId, Pageable pageable);
+    Page<OrderEntity> getOrdersByCustomerId(int customerId, Pageable pageable);
     List<OrderEntity> getBranchOrdersInTime(int branchId);
     OrderEntity getOrderById(int id);
     OrderEntity save(OrderEntity order);

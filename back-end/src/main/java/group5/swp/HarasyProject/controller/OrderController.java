@@ -34,6 +34,22 @@ public class OrderController {
         return businessManagementService.getAllOrders(pageable);
     }
 
+    @GetMapping("customer/{customerId}/order")
+    public ApiResponse<Page<OrderResponse>> getAllCustomerOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction,
+            @PathVariable int customerId
+    ) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sortBy = Sort.by(sortDirection, sort);
+        Pageable pageable = PageRequest.of(page, size, sortBy);
+        return businessManagementService.getAllCusOrders(pageable, customerId);
+    }
+
+
+
     @GetMapping("/orderInTime/{branchId}")
     public ApiResponse<List<OrderResponse>> getAllOrdersInTime(@PathVariable int branchId){
         return businessManagementService.getAllInTimeOrders(branchId);
@@ -54,4 +70,8 @@ public class OrderController {
         return businessManagementService.updateOrder(id, request);
     }
 
+    @DeleteMapping("/order/{orderId}/food/{foodId}")
+    ApiResponse<OrderResponse> deleteOrder(@PathVariable int orderId, @PathVariable int foodId) {
+       return  businessManagementService.deleteOrderItem(orderId, foodId);
+    }
 }

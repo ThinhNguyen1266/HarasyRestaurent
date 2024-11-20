@@ -24,7 +24,7 @@ public class CustomerAccountEntity {
     Integer id;
 
     @Column(name = "vip_point", nullable = false, columnDefinition = "integer default 0")
-    int vipPoint = 0;
+    long vipPoint = 0;
 
 
     @OneToOne
@@ -37,5 +37,10 @@ public class CustomerAccountEntity {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     List<ReservationEntity> reservations;
 
+    public void calculatePoint(long addPoint, long minusPoint){
+        vipPoint += addPoint;
+        vipPoint -= minusPoint;
+        if(vipPoint < 0) vipPoint = 0;
+    }
 
 }
