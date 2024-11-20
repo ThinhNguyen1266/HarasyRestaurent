@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-const AuthRoute = ({ allowedRoles }) => {
+const AuthRoute = ({ allowedRoles, isRequired }) => {
   const { user } = useAuth();
   const location = useLocation();
 
@@ -13,7 +13,11 @@ const AuthRoute = ({ allowedRoles }) => {
     CUSTOMER: "/",
   };
 
-  return allowedRoles.find((role) => role === user?.role) ? (
+  return allowedRoles.find(
+    (role) =>
+      role === user?.role ||
+      (role === "CUSTOMER" && user?.role === "CUSTOMER" && isRequired === false)
+  ) ? (
     <Outlet />
   ) : user ? (
     <Navigate to={defaultRolePath[user?.role]} replace />
