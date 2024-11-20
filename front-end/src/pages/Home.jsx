@@ -18,12 +18,9 @@ function Home() {
             <h1>DINE WITH US</h1>
             <img src={img1} alt="Dining" className="img-fluid mb-3" />
             <p>
-              Lorem ipsum dolor sit amet consectetur adipiscing elit, pharetra
-              dictum mus nec malesuada suscipit euismod, faucibus vestibulum
-              eros quisque hendrerit facilisis.Lorem ipsum dolor sit amet
-              consectetur adipiscing elit, pharetra dictum mus nec malesuada
-              suscipit euismod, faucibus vestibulum eros quisque hendrerit
-              facilisis.
+              Experience Harasy Restaurant signature dishes like Beef
+              Wellington, Lobster Risotto,
+              <br /> Pan-Seared Scallops, Sticky Toffee Pudding, and more.
             </p>
             <Link to="/menu" className="hp-btn-custom">
               SEE THE MENU
@@ -37,12 +34,11 @@ function Home() {
             </h1>
             <img src={img2} alt="Restaurant" className="img-fluid mb-3" />
             <p>
-              Lorem ipsum dolor sit amet consectetur adipiscing elit, pharetra
-              dictum mus nec malesuada suscipit euismod, faucibus vestibulum
-              eros quisque hendrerit facilisis.Lorem ipsum dolor sit amet
-              consectetur adipiscing elit, pharetra dictum mus nec malesuada
-              suscipit euismod, faucibus vestibulum eros quisque hendrerit
-              facilisis.
+              Welcome to Harasy Restaurant, a European dining chain in Vietnam
+              known for its elegant ambiance, exquisite cuisine, and
+              unparalleled hospitality. Whether you're looking for a romantic
+              dinner or a memorable family gathering, Harasy promises an
+              experience unlike any other.
             </p>
             <Link to="/about" className="hp-btn-custom">
               LEARN MORE
@@ -53,7 +49,7 @@ function Home() {
 
       <div className="section-2">
         <div className="section-2-container">
-          <h2 className="section-2-title">HARASY</h2>
+          <h2 className="section-2-title">WE SERVE THE BEST</h2>
           <div className="section-2-row">
             <div className="section-2-col section-2-col-img">
               <img
@@ -64,12 +60,14 @@ function Home() {
             </div>
             <div className="section-2-col section-2-col-text">
               <p className="section-2-description">
-                Lorem ipsum dolor sit amet consectetur adipiscing elit, pharetra
-                dictum mus nec malesuada suscipit euismod, faucibus vestibulum
-                eros quisque hendrerit facilisis.
+                Indulge in our **Prix Fixe Signature Menu**, a carefully curated
+                three-course dining experience featuring the finest ingredients
+                and expertly paired wines. Explore culinary excellence crafted
+                to perfection.
               </p>
               <p className="section-2-description">
-                Aliquam sed dui non est mattis rhoncus id eget quam.
+                **Prix Fixe Signature Menu** <br />
+                Three courses $104.95 | With wine pairing $164.95{" "}
               </p>
               <Link to="/about" className="hp-btn-custom">
                 LEARN MORE
@@ -77,12 +75,10 @@ function Home() {
 
               <div className="section-2-quote">
                 <p className="quote-description">
-                  Lorem ipsum dolor sit amet consectetur adipiscing elit,
-                  pharetra dictum mus nec malesuada suscipit euismod, faucibus
-                  vestibulum eros quisque hendrerit facilisis. Lorem ipsum dolor
-                  sit amet consectetur adipiscing elit, pharetra dictum mus nec
-                  malesuada suscipit euismod, faucibus vestibulum eros quisque
-                  hendrerit facilisis.
+                  "Our Prix Fixe Signature menu is inspired by the passion for
+                  excellence and the desire to provide an unforgettable culinary
+                  experience. Each dish reflects a story of taste, balance, and
+                  craftsmanship."
                 </p>
                 <p>
                   <br />
