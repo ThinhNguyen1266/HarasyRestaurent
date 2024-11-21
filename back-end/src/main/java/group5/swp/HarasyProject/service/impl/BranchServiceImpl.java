@@ -7,8 +7,6 @@ import group5.swp.HarasyProject.dto.response.branch.BranchResponse;
 import group5.swp.HarasyProject.dto.response.branch.BranchesViewResponse;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
-import group5.swp.HarasyProject.entity.branch.TableEntity;
-import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
 import group5.swp.HarasyProject.enums.Status;
 import group5.swp.HarasyProject.exception.AppException;
@@ -143,19 +141,7 @@ public class BranchServiceImpl implements BranchService {
         return branchRepository.save(branch);
     }
 
-    @Override
-    public void addTables(List<TableEntity> tables, BranchEntity branch) {
-        for (TableEntity table : tables) {
-            branchMapper.addTables(table, branch);
-        }
-    }
 
-    @Override
-    public void addMenus(List<MenuEntity> menus, BranchEntity branch) {
-        for (MenuEntity menu : menus) {
-            branchMapper.addMenus(menu, branch);
-        }
-    }
 
     @Override
     public BranchResponse toBranchResponse(BranchEntity branch) {

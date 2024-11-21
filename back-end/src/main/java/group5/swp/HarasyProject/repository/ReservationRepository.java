@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -60,4 +61,12 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
 
     Page<ReservationEntity> findAllByCustomerId(Pageable pageable, int customerId);
+
+    @Query("""
+    select r from ReservationEntity r
+    where r.status = 'APPROVED'
+    and r.date = :date
+    and r.time between :startTime and :endTime
+""")
+    List<ReservationEntity> findReservationBetween(LocalDate date, LocalTime startTime, LocalTime endTime);
 }

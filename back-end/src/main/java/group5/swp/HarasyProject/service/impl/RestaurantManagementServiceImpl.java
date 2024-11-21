@@ -1,6 +1,7 @@
 package group5.swp.HarasyProject.service.impl;
 
 import group5.swp.HarasyProject.dto.request.branch.BranchRequest;
+import group5.swp.HarasyProject.dto.request.branch.BranchWorkingHourRequest;
 import group5.swp.HarasyProject.dto.request.food.FoodRequest;
 import group5.swp.HarasyProject.dto.request.menu.FoodInMenuRequest;
 import group5.swp.HarasyProject.dto.request.menu.MenuRequest;
@@ -15,6 +16,7 @@ import group5.swp.HarasyProject.dto.response.order.OrderResponse;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.entity.account.StaffAccountEntity;
 import group5.swp.HarasyProject.entity.branch.BranchEntity;
+import group5.swp.HarasyProject.entity.branch.BranchWorkingHourEntity;
 import group5.swp.HarasyProject.entity.branch.TableEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.enums.Account.StaffRole;
@@ -42,7 +44,7 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
     TableService tableService;
     OrderService orderService;
     AccountService accountService;
-
+    BranchWorkingHourService branchWorkingHourService;
 
     @Override
     public ApiResponse<Page<OrderResponse>> getOrdersInBranch(int branchId, Pageable pageable) {
@@ -154,13 +156,16 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
         List<StaffAccountEntity> staffs = branch.getStaffs();
         if (staffs != null && !staffs.isEmpty()) {
             for (StaffAccountEntity s : staffs) {
-                if (s.getRole().equals(StaffRole.BRANCH_MANAGER)) s = manager;
-                return;
+                if (s.getRole().equals(StaffRole.BRANCH_MANAGER)) {
+                    s.setBranch(null);
+                    accountService.saveStaff(s);
+                    staffs.remove(s);
+                    break;
+                }
             }
         }
         branch.addStaff(manager);
     }
-
 
     @Override
     public ApiResponse<FoodResponse> createFood(FoodRequest request) {
@@ -187,30 +192,42 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
         return menuService.deleteMenu(menuId);
     }
 
+    @Override
+    public ApiResponse<?> deleteWorkingHour(int hourId) {
+        branchWorkingHourService.deleteWorkingHour(hourId);
+        return ApiResponse.builder().build();
+    }
+
     private void doUpdateIn(BranchRequest request, BranchEntity branch) {
         updateInBranchEntity(request, branch);
         addInBranchEntity(request, branch);
     }
 
     private void addInBranchEntity(BranchRequest request, BranchEntity branch) {
+        if (request.getWorkingHours() != null && request.getWorkingHours().getCreates() != null) {
+            List<BranchWorkingHourEntity> hours = branchWorkingHourService
+                    .mapWorkingHours(request.getWorkingHours().getCreates());
+            branch.addWorkingHours(hours);
+        }
         if (request.getTables() != null && request.getTables().getCreates() != null) {
             List<TableEntity> tables = tableService.toTableList(request.getTables().getCreates());
-            if (branch.getTables() == null || branch.getTables().isEmpty()) branch.setTables(tables);
-            else {
-                branchService.addTables(tables, branch);
-            }
+            branch.addTables(tables);
         }
         if (request.getMenus() != null && request.getMenus().getCreates() != null) {
             List<MenuEntity> menus = menuService.toMenus(request.getMenus().getCreates());
-            if (branch.getMenus() == null || branch.getMenus().isEmpty()) branch.setMenus(menus);
-            else {
-                branchService.addMenus(menus, branch);
-            }
+            branch.addMenus(menus);
         }
     }
 
 
     private void updateInBranchEntity(BranchRequest request, BranchEntity branch) {
+        if (request.getWorkingHours() != null && request.getWorkingHours().getUpdates() != null) {
+            List<BranchWorkingHourEntity> hours = request.getWorkingHours().getUpdates()
+                    .stream().filter(hour->isHourInBranch(hour.getId(), branch))
+                    .map(hour-> mapUpdateHour(hour,branch.getWorkingHours()))
+                    .toList();
+            branchWorkingHourService.saveUpdate(hours);
+        }
         if (request.getTables() != null && request.getTables().getUpdates() != null) {
             List<TableEntity> listUpdateTable = request.getTables().getUpdates()
                     .stream().filter(tableRequest -> isTableInBranch(tableRequest.getId(), branch))
@@ -219,7 +236,6 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
             tableService.saveUpdate(listUpdateTable);
         }
         if (request.getMenus() != null && request.getMenus().getUpdates() != null) {
-            List<MenuEntity> menus = menuService.toMenus(request.getMenus().getUpdates());
             List<MenuEntity> listUpdateMenu = request.getMenus().getUpdates()
                     .stream().filter(menuRequest -> isMenuInBranch(menuRequest.getId(), branch))
                     .map(menuRequest -> mapUpdateMenu(menuRequest, branch.getMenus()))
@@ -228,12 +244,28 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
         }
     }
 
+    private boolean isHourInBranch(int hourId, BranchEntity branch) {
+        return branch.getWorkingHours().stream().anyMatch(workingHour -> workingHour.getId() == hourId);
+    }
+
     private boolean isTableInBranch(int tableId, BranchEntity branch) {
         return branch.getTables().stream().anyMatch(table -> table.getId() == tableId);
     }
 
     private boolean isMenuInBranch(int menuId, BranchEntity branch) {
         return branch.getMenus().stream().anyMatch(menu -> menu.getId() == menuId);
+    }
+
+
+    private BranchWorkingHourEntity mapUpdateHour(BranchWorkingHourRequest updateHour,
+                                                  List<BranchWorkingHourEntity>hours) {
+        for (BranchWorkingHourEntity branchWorkingHourEntity : hours) {
+            if (Objects.equals(branchWorkingHourEntity.getId(), updateHour.getId())) {
+                branchWorkingHourEntity = branchWorkingHourService.mapUpdateWorkingHour(updateHour, branchWorkingHourEntity);
+                return branchWorkingHourEntity;
+            }
+        }
+        return null;
     }
 
     private TableEntity mapUpdateTable(TableRequest updateTable, List<TableEntity> tables) {

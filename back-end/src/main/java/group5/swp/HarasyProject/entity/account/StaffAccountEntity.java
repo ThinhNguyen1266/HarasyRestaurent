@@ -28,7 +28,6 @@ public class StaffAccountEntity {
     @Enumerated(EnumType.STRING)
     StaffRole role;
 
-
     @Column(name = "bank_account")
     String bankAccount;
 
@@ -51,6 +50,5 @@ public class StaffAccountEntity {
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
     List<OrderEntity> orders;
-
 
 }

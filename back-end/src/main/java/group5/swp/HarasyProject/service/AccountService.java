@@ -23,6 +23,8 @@ public interface AccountService {
 
     ApiResponse<StaffResponse> staffRegis(RegistStaffRequest request) throws IOException, MessagingException;
 
+    ApiResponse<?> changePassword(int id,ChangePasswordRequest request);
+
     ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest);
 
     ApiResponse<ProfileResponse> viewProfile(Integer id) throws IOException, MessagingException;
@@ -31,7 +33,7 @@ public interface AccountService {
 
     ApiResponse<List<ProfileResponse>> getAccounts(String phone);
 
-
+    StaffAccountEntity saveStaff(StaffAccountEntity staff);
     StaffAccountEntity getStaffAccount(Integer staffId) ;
     CustomerAccountEntity getCustomerAccount(Integer customerId) ;
 

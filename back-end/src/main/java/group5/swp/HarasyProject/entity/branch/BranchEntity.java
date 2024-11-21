@@ -46,7 +46,7 @@ public class BranchEntity extends Auditable {
     @Enumerated(EnumType.STRING)
     Status status = Status.INACTIVE;
 
-    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "branch",cascade = CascadeType.ALL)
     List<StaffAccountEntity> staffs;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
@@ -64,25 +64,28 @@ public class BranchEntity extends Auditable {
     @OneToMany(mappedBy = "branch" , cascade = CascadeType.ALL)
     List<OrderEntity> orders;
 
-    public void setWorkingHours(List<BranchWorkingHourEntity> workingHours) {
+    public void addWorkingHours(List<BranchWorkingHourEntity> workingHours) {
         if (workingHours != null && !workingHours.isEmpty()) {
             workingHours.forEach(workingHour -> workingHour.setBranch(this));
         }
-        this.workingHours = workingHours;
+        if(this.workingHours==null) this.workingHours=new ArrayList<>();
+        if(workingHours!=null) this.workingHours.addAll(workingHours);
     }
 
-    public void setTables(List<TableEntity> tables) {
+    public void addTables(List<TableEntity> tables) {
         if (tables != null && !tables.isEmpty()) {
             tables.forEach(table -> table.setBranch(this));
         }
-        this.tables = tables;
+        if(this.tables==null) this.tables=new ArrayList<>();
+        if(tables!=null) this.tables.addAll(tables);
     }
 
-    public void setMenus(List<MenuEntity> menus) {
+    public void addMenus(List<MenuEntity> menus) {
         if (menus != null && !menus.isEmpty()) {
             menus.forEach(menu -> menu.setBranch(this));
         }
-        this.menus = menus;
+        if(this.menus==null) this.menus=new ArrayList<>();
+        if(menus!=null) this.menus.addAll(menus);
     }
 
     public void addStaff(StaffAccountEntity staff) {
@@ -90,6 +93,9 @@ public class BranchEntity extends Auditable {
         staff.setBranch(this);
         staffs.add(staff);
     }
+
+
+
 
     public boolean isTableInBranch(int tableId){
         return this.getTables().stream().anyMatch(table-> table.getId() == tableId);

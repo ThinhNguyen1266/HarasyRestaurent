@@ -90,4 +90,9 @@ public class TableServiceImpl implements TableService {
         LocalTime maxTime = time.plusMinutes(90);
         return tableRepository.getAvailableForReserve(branchId,date,minTime,maxTime);
     }
+
+    @Override
+    public TableResponse toResponse(TableEntity table) {
+        return tableMapper.toResponse(table);
+    }
 }
