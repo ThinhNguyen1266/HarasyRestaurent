@@ -1,4 +1,3 @@
-/* Updated FAQs Styling with Reduced Widths */
 .faqs-container {
     padding: 60px 20px;
     background-color: #000;
@@ -10,32 +9,32 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center-align the content */
+    align-items: center;
     gap: 40px;
 }
 
 .faqs-header {
-    margin-top: 80px; /* Add space to move the header down */
-    text-align: center; /* Ensure the content remains centered */
+    margin-top: 80px;
+    text-align: center;
 }
 
 .faqs-title {
     font-size: 2.5rem;
     font-weight: bold;
     color: #fff;
-    margin-bottom: 10px; /* Space below the title */
+    margin-bottom: 10px;
 }
 
 .faqs-intro {
     font-size: 1.2rem;
     color: #ccc;
-    margin-bottom: 20px; /* Space below the intro text */
+    margin-bottom: 20px;
 }
 
 
 .faqs-content {
-    width: 90%; /* Slightly reduce the overall width */
-    max-width: 1000px; /* Limit the maximum width */
+    width: 90%;
+    max-width: 1000px;
     display: flex;
     flex-direction: column;
     gap: 40px;
@@ -47,7 +46,7 @@
     padding: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
     background-color: rgba(0, 0, 0, 0.8);
-    width: 100%; /* Ensure it fits within the content width */
+    width: 100%;
 }
 
 .faqs-category-title {
@@ -80,7 +79,7 @@
 }
 
 .faqs-accordion .accordion-button:not(.collapsed) {
-    background-color: rgba(255, 215, 0, 0.2); /* Highlight active section */
+    background-color: rgba(255, 215, 0, 0.2);
     color: #FB8500;
     border: 1px solid #FB8500;
 }
@@ -105,10 +104,10 @@
     box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .faqs-content {
-        width: 95%; /* Slightly narrower on smaller screens */
+        width: 95%;
     }
 
     .faqs-title {

@@ -1,233 +1,233 @@
 .About-container {
-    background-image: url("../img/black.jpg");
-    background-size: cover;
-    background-position: center;
-    color: white;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    text-align: left;
+  background-image: url("../img/black.jpg");
+  background-size: cover;
+  background-position: center;
+  color: white;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: left;
 }
 
 .About-content {
-    max-width: 1200px;
-    width: 100%;
+  max-width: 1200px;
+  width: 100%;
 }
 
 .About-title {
-    color: #f5f5f5;
-    font-size: 3.25rem;
-    font-weight: 700;
-    margin: 50px 0;
-    text-align: center;
+  color: #f5f5f5;
+  font-size: 3.25rem;
+  font-weight: 700;
+  margin: 50px 0;
+  text-align: center;
 }
 
 .About-row {
-    display: flex;
-    gap: 60px;
-    flex-direction: row;
-    align-items: flex-start;
+  display: flex;
+  gap: 60px;
+  flex-direction: row;
+  align-items: flex-start;
 }
 
 .About-col {
-    flex: 1;
+  flex: 1;
 }
 
 .About-img-item {
-    width: 100%;
-    border-radius: 8px;
+  width: 100%;
+  border-radius: 8px;
 }
 
 .About-description {
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    color: #d3d3d3;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #d3d3d3;
 }
 
 .About-quote {
-    margin-top: 40px;
-    padding-left: 15px;
-    border-left: 4px solid #fb8500;
-    font-style: italic;
+  margin-top: 40px;
+  padding-left: 15px;
+  border-left: 4px solid #fb8500;
+  font-style: italic;
 }
 
 .quote-description {
-    margin: 0;
-    font-size: 1.25rem;
-    line-height: 1.6;
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.6;
 }
 
 .quote-author {
-    margin-top: 10px;
-    color: #f5f5f5;
-    text-align: right;
+  margin-top: 10px;
+  color: #f5f5f5;
+  text-align: right;
 }
 
 .About-history {
-    margin-top: 60px;
+  margin-top: 60px;
 }
 
 .About-history-row {
-    display: flex;
-    gap: 60px;
-    flex-direction: row;
-    align-items: flex-start;
+  display: flex;
+  gap: 60px;
+  flex-direction: row;
+  align-items: flex-start;
 }
 
 .About-history-col {
-    flex: 1;
+  flex: 1;
 }
 
 .About-history-img {
-    width: 100%;
-    border-radius: 8px;
+  width: 100%;
+  border-radius: 8px;
 }
 
 .About-history-title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #f5f5f5;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #f5f5f5;
 }
 
 @media (max-width: 992px) {
-    .About-history-row {
-        flex-direction: column;
-        text-align: center;
-    }
+  .About-history-row {
+    flex-direction: column;
+    text-align: center;
+  }
 
-    .About-history-img {
-        max-width: 90%;
-        margin: auto;
-        margin-bottom: 30px;
-    }
+  .About-history-img {
+    max-width: 90%;
+    margin: auto;
+    margin-bottom: 30px;
+  }
 
-    .About-history-title {
-        font-size: 1.5rem;
-    }
+  .About-history-title {
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 576px) {
-    .About-history-title {
-        font-size: 1.2rem;
-    }
+  .About-history-title {
+    font-size: 1.2rem;
+  }
 
-    .About-description {
-        font-size: 0.9rem;
-    }
+  .About-description {
+    font-size: 0.9rem;
+  }
 }
 
 /* History Section */
 .About-history {
-    margin-top: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  .About-history-row {
-    display: flex;
-    flex-direction: row;
-    gap: 40px;
-    max-width: 1200px;
-    width: 100%;
-    align-items: center;
-  }
-  
-  .About-history-img {
-    flex: 1;
-  }
-  
-  .About-history-text {
-    flex: 1;
-    color: #ffffff;
-    text-align: left;
-  }
-  
-  .About-history-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .About-btn {
-    background-color: #fb8500;
-    color: #000;
-    padding: 10px 20px;
-    font-size: 1.125rem;
-    font-weight: bold;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-  }
-  
-  .About-btn:hover {
-    background-color: #f89e38;
-  }
-  
-  .About-btn:active {
-    background-color: #fbaf57;
-  }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 992px) {
-    .About-history-row {
-      flex-direction: column;
-      text-align: center;
-      gap: 20px;
-    }
-  
-    .About-history-img img {
-      max-width: 90%;
-      margin: auto;
-    }
-  
-    .About-history-text {
-      text-align: center;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .About-history-title {
-      font-size: 1.75rem;
-    }
-  
-    .About-btn {
-      font-size: 1rem;
-      padding: 8px 16px;
-    }
-  }
-  
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
 
+.About-history-row {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  max-width: 1200px;
+  width: 100%;
+  align-items: center;
+}
+
+.About-history-img {
+  flex: 1;
+}
+
+.About-history-text {
+  flex: 1;
+  color: #ffffff;
+  text-align: left;
+}
+
+.About-history-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.About-btn {
+  background-color: #fb8500;
+  color: #000;
+  padding: 10px 20px;
+  font-size: 1.125rem;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.About-btn:hover {
+  background-color: #f89e38;
+}
+
+.About-btn:active {
+  background-color: #fbaf57;
+}
+
+/* Responsive Adjustments */
 @media (max-width: 992px) {
-    .About-row {
-        flex-direction: column;
-        text-align: center;
-    }
+  .About-history-row {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
 
-    .About-col {
-        margin-bottom: 30px;
-    }
+  .About-history-img img {
+    max-width: 90%;
+    margin: auto;
+  }
 
-    .About-img-item {
-        max-width: 90%;
-        margin: auto;
-    }
+  .About-history-text {
+    text-align: center;
+  }
 }
 
 @media (max-width: 576px) {
-    .About-title {
-        font-size: 2rem;
-    }
+  .About-history-title {
+    font-size: 1.75rem;
+  }
 
-    .About-description {
-        font-size: 0.9rem;
-    }
+  .About-btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+  }
+}
+
+
+@media (max-width: 992px) {
+  .About-row {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .About-col {
+    margin-bottom: 30px;
+  }
+
+  .About-img-item {
+    max-width: 90%;
+    margin: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .About-title {
+    font-size: 2rem;
+  }
+
+  .About-description {
+    font-size: 0.9rem;
+  }
 }

@@ -8,7 +8,8 @@ function FAQs() {
       <div className="faqs-header">
         <h1 className="faqs-title">Frequently Asked Questions</h1>
         <p className="faqs-intro">
-          Find quick answers to the most commonly asked questions about Harasy Restaurant.
+          Find quick answers to the most commonly asked questions about Harasy
+          Restaurant.
         </p>
       </div>
 
@@ -22,7 +23,10 @@ function FAQs() {
                 Can I make reservations in Harasy Restaurant?
               </Accordion.Header>
               <Accordion.Body>
-                Yes, you can make reservations at any Harasy Restaurant through our website or by calling the location directly. Advance reservations are recommended, especially during weekends and holidays.
+                Yes, you can make reservations at any Harasy Restaurant through
+                our website or by calling the location directly. Advance
+                reservations are recommended, especially during weekends and
+                holidays.
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="1">
@@ -30,7 +34,9 @@ function FAQs() {
                 What is the cancellation policy for reservations?
               </Accordion.Header>
               <Accordion.Body>
-                Reservations can be canceled up to 24 hours in advance without a fee. Cancellations within 24 hours may incur a charge depending on the location.
+                Reservations can be canceled up to 24 hours in advance without a
+                fee. Cancellations within 24 hours may incur a charge depending
+                on the location.
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
@@ -45,7 +51,9 @@ function FAQs() {
                 Does Harasy Restaurant offer vegan options?
               </Accordion.Header>
               <Accordion.Body>
-                Yes, we offer a variety of vegan dishes crafted with the freshest ingredients. You can find these options clearly marked on our menu.
+                Yes, we offer a variety of vegan dishes crafted with the
+                freshest ingredients. You can find these options clearly marked
+                on our menu.
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="3">
@@ -53,7 +61,9 @@ function FAQs() {
                 Can I request customizations to my dish?
               </Accordion.Header>
               <Accordion.Body>
-                Absolutely! We strive to accommodate dietary preferences and restrictions. Let your server know, and we’ll do our best to customize your order.
+                Absolutely! We strive to accommodate dietary preferences and
+                restrictions. Let your server know, and we’ll do our best to
+                customize your order.
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
@@ -68,15 +78,15 @@ function FAQs() {
                 Does Harasy Restaurant host private events?
               </Accordion.Header>
               <Accordion.Body>
-                Yes, we host private events and parties. Contact your nearest location or visit our Events page for more details.
+                Yes, we host private events and parties. Contact your nearest
+                location or visit our Events page for more details.
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="5">
-              <Accordion.Header>
-                Do you offer gift cards?
-              </Accordion.Header>
+              <Accordion.Header>Do you offer gift cards?</Accordion.Header>
               <Accordion.Body>
-                Yes, Harasy gift cards are available for purchase online or at any of our restaurant locations.
+                Yes, Harasy gift cards are available for purchase online or at
+                any of our restaurant locations.
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>

@@ -1,13 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import img3 from "../assets/img/ittime.jpg";
 import "../assets/styles/About.css";
 
 function About() {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate("/venues"); // Navigate to the /venues page
+    navigate("/venues");
   };
 
   return (
