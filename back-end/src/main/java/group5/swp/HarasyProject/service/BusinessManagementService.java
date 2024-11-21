@@ -9,6 +9,7 @@ import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.order.OrderResponse;
 import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
 import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
+import group5.swp.HarasyProject.dto.response.reservation.ReservationTypeResonse;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +43,7 @@ public interface BusinessManagementService {
     ApiResponse<Page<ReservationResponse>> getAllReservationsInBranch(Pageable pageable, Boolean isHistory, int branchId);
 
     ApiResponse<Page<ReservationResponse>> getAllCusReservations(Pageable pageable, int customerId);
-
+     ApiResponse<List<ReservationTypeResonse>> getAllReservationTypes();
     ApiResponse<ReservationResponse> getReservation(int id);
 
     ApiResponse<ReservationResponse> updateReservation(ReservationRequest request, int id);

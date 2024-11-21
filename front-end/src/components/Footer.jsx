@@ -17,10 +17,13 @@ function Footer() {
                 <Link to="#">CAREERS</Link>
               </li>
               <li>
-                <Link to="#">FAQS</Link>
+                <Link to="faqs">FAQS</Link>
               </li>
               <li>
-                <Link to="#">CONTACT</Link>
+                <Link to="/about">ABOUT</Link>
+              </li>
+              <li>
+                <Link to="/contacts">CONTACT</Link>
               </li>
             </ul>
             <div className="footer-policies">

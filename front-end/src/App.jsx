@@ -31,11 +31,13 @@ import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
 import WorkforceList from "./pages/WorkforceList";
-
+import FAQs from "./pages/FAQs";
 import CreateOrder from "./pages/CreateOrder";
 import EditOrder from "./pages/EditOrder";
+import ReservationsPage from "./pages/ReservationPage";
 import AddFoodInMenu from "./pages/AddFoodInMenu";
 import AllOrder from "./pages/AllOrder";
+import CustomerOrder from "./pages/CustomerOrder";
 function App() {
   return (
     <>
@@ -51,6 +53,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/userprofile" element={<Profile />} />
+          <Route path="/faqs" element={<FAQs />} />
         </Route>
         <Route path="/otp" element={<OTP />} />
         <Route path="/login" element={<Login />} />
@@ -59,7 +62,10 @@ function App() {
         <Route path="/reservationdetails" element={<ConfirmReservation />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
+        <Route path="/reservation" element={<ReservationsPage />} />
+        <Route path="/customer/order" element={<CustomerOrder />} />
         <Route path="/profile/:id" element={<Profile />} />
+
         <Route element={<StaffLayout />}>
           <Route
             element={
@@ -80,6 +86,7 @@ function App() {
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />
             <Route path="/overview" element={<Overview />} />
+
             <Route path="/branch/:branchId" element={<EditBranch />} />
             <Route path="/branch/menu/:menuId" element={<AddFoodInMenu />} />
           </Route>

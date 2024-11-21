@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import {
@@ -6,21 +7,32 @@ import {
   FaRegClock,
   FaRegUser,
 } from "react-icons/fa6";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../assets/styles/ConfirmReservation.css";
+import useReservationApi from "../hooks/api/userReservationApi";
 import useAuth from "../hooks/useAuth";
 const ConfirmReservation = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
   const params = new URLSearchParams(location.search);
+  const branchId = params.get("branchid");
   const branch = params.get("branch");
   const time = params.get("time");
-  const guest = params.get("guest");
+  const guest = params.get("guests");
   const branchLocation = params.get("location");
   const date = params.get("date");
   const [formData, setFormData] = useState({
     email: user?.email || "",
     fullname: user?.fullName || "",
+  });
+  const { cusCreateReservation } = useReservationApi();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: cusCreateReservation,
+    onError: (error) => {
+      console.error(`Failed to update reservation status: ${error.message}`);
+    },
   });
 
   const [errors, setErrors] = useState({
@@ -37,6 +49,10 @@ const ConfirmReservation = () => {
     });
     setErrors({ ...errors, [id]: "" });
   };
+  const [type, setType] = useState(1);
+  const handleTypeChange = (e) => {
+    setType(e.target.value);
+  };
 
   const handleConfirmReservation = () => {
     const newErrors = {};
@@ -46,6 +62,7 @@ const ConfirmReservation = () => {
       newErrors.termsAccepted = "You must accept the terms and conditions.";
 
     setErrors(newErrors);
+    console.log("acc", user);
 
     if (Object.keys(newErrors).length === 0) {
       console.log("Reservation Confirmed", {
@@ -56,7 +73,24 @@ const ConfirmReservation = () => {
         time,
         guest,
       });
-      alert("Reservation confirmed successfully!");
+      const reservationData = {
+        branchId: branchId,
+        customerId: user.customerId,
+        date: date,
+        time: time,
+        amountGuest: guest,
+        typeId: type,
+      };
+      mutation.mutate(reservationData, {
+        onSuccess: () => {
+          alert("Reservation confirmed successfully!");
+          navigate("/"); // Navigate to the Home page after the alert is acknowledged
+        },
+        onError: (error) => {
+          console.error("Error confirming reservation:", error.message);
+          alert("Failed to confirm reservation.");
+        },
+      });
     }
   };
   return (
@@ -118,18 +152,27 @@ const ConfirmReservation = () => {
                         <div className="error-text">{errors.fullname}</div>
                       )}
                     </Form.Group>
-                    <Form.Group controlId="occasion">
-                      <Form.Control as="select">
-                        <option>GENERAL</option>
-                        <option>BIRTHDAY</option>
-                        <option>WEDDING</option>
+                    <Form.Group controlId="type">
+                      <Form.Control
+                        as="select"
+                        value={type}
+                        onChange={handleTypeChange}
+                      >
+                        <option value={1}>GENERAL</option>
+                        <option value={2}>BIRTHDAY</option>
+                        <option value={3}>WEDDING</option>
                       </Form.Control>
                     </Form.Group>
                     <div className="required-label">Required:</div>
-                    <Form.Group controlId="terms" className="checkbox-group">
+                    <Form.Group
+                      controlId="termsAccepted"
+                      className="checkbox-group"
+                    >
                       <Form.Check
                         type="checkbox"
                         label="I agree to the restaurant's terms and conditions."
+                        checked={formData.termsAccepted || false}
+                        onChange={handleInputChange}
                       />
                       {errors.termsAccepted && (
                         <div className="error-text">{errors.termsAccepted}</div>

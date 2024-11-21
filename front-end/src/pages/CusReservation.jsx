@@ -3,41 +3,7 @@ import "../assets/styles/CusReservation.css";
 import Sidebar from "../components/Sidebar";
 import CusReservationDetail from "../components/CusReservationDetail";
 import CusHistoryReservationDetail from "../components/CusHistoryReservationDetail";
-const reservations = [
-  {
-    id: 2,
-    status: "Current",
-    table: "Table 2",
-    date: "30, April - 10:30 AM",
-    Venue: "Hanoi",
-    phone: "0387678789",
-    orders: ["Beef Wellington", "Chinese Takeout Dish"],
-    price: "650,000",
-    guests: 5,
-  },
-  {
-    id: 3,
-    status: "Done",
-    table: "Table 2",
-    date: "29, April - 10:30 AM",
-    Venue: "Hanoi",
-    phone: "0387678789",
-    orders: [],
-    price: "720,000",
-    guests: 4,
-  },
-  {
-    id: 4,
-    status: "Done",
-    table: "Table 2",
-    date: "28, April - 10:30 AM",
-    Venue: "Hanoi",
-    phone: "0387678789",
-    orders: ["Sushi", "Salmon Roll"],
-    price: "400,000",
-    guests: 3,
-  },
-];
+
 
 const ReservationItem = ({ reservation, onDetailClick }) => {
   return (

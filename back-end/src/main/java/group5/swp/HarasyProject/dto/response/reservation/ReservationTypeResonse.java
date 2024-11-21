@@ -1,6 +1,7 @@
-package group5.swp.HarasyProject.dto.response.account;
+package group5.swp.HarasyProject.dto.response.reservation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import group5.swp.HarasyProject.enums.ReservationType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,9 +11,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AccountMinimalResponse {
-    Integer id;
-    String name;
-    String phone;
-    String email;
+public class ReservationTypeResonse {
+    int id;
+    long minPrice;
+    ReservationType name;
 }

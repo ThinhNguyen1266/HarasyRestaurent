@@ -1,120 +1,294 @@
-import React, { useState } from "react";
-import "../assets/styles/CreateReservationModal.css";
-
-const CreateReservationModal = ({ isOpen, onClose }) => {
+import React, { useState, useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { Button } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
+const CreateReservationModal = ({
+  reservationType,
+  userId,
+  foodData,
+  isOpen,
+  onClose,
+  availableTable,
+  branchid,
+  getCustomerProfileByPhone,
+  addReservation,
+}) => {
+  const [customerPhone, setCustomerPhone] = useState("");
   const [reservationInfo, setReservationInfo] = useState({
-    table: "",
-    dateTime: "",
-    guests: "",
-    orders: {},
-    customerName: "",
-    phoneNumber: "",
-    email: "",
+    branchId: branchid,
+    tableIds: [],
+    customer: { customerId: 0, name: "", email: "" },
+    date: "",
+    time: "",
+    amountGuest: 0,
+    typeId: 1,
+    order: {
+      branchId: branchid,
+      tableIds: [],
+      staffId: userId,
+      customer: { customerId: 0,
+        newCustomer:{
+                      name: "", email: ""
+        }
+      },
+      orderItems: {
+        creates: [],
+        updates: [],
+      },
+      note: "",
+    },
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [availableFoods] = useState([
-    "Vegetable Mixups",
-    "Chinese Takeout Dish",
-    "Pasta",
-    "Garlic Bread",
-    "Pizza",
-    "Caesar Salad",
-    "Sushi",
-    "Miso Soup",
-    "Burger",
-    "Fries",
-    "Tacos",
-    "Nachos",
-  ]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [request, setRequest] = useState({
+    branchId: branchid,
+    date: "",
+    time: "",
+    amountGuest: "",
+  });
 
-  // List of tables (10 tables)
-  const tables = ["Table 1", "Table 2", "Table 3", "Table 4", "Table 5", "Table 6", "Table 7", "Table 8", "Table 9", "Table 10"];
+  const { data: tables = [] } = useQuery({
+    queryKey: ["availableTable", request],
+    queryFn: () => availableTable(request),
+    onError: (error) => {
+      toast.error(`Failed to fetch tables: ${error.message}`);
+    },
+  });
+  const createReaservation = useMutation({
+    mutationFn: addReservation, // Pass the function, not its return value
+    onSuccess: () => {},
+    onError: (error) => {
+      toast.error(`Failed to create reservation: ${error.message}`);
+    },
+  });
+
+  useEffect(() => {
+    if (
+      reservationInfo.date &&
+      reservationInfo.time &&
+      reservationInfo.amountGuest
+    ) {
+      setRequest((prevRequest) => ({
+        ...prevRequest,
+        date: reservationInfo.date,
+        time: reservationInfo.time,
+        amountGuest: reservationInfo.amountGuest,
+      }));
+    }
+  }, [reservationInfo.date, reservationInfo.time, reservationInfo.amountGuest]);
 
   const handleChange = (e) => {
-    setReservationInfo({ ...reservationInfo, [e.target.name]: e.target.value });
+    const { name, value, type, options } = e.target;
+
+    if (name === "tableIds") {
+      const selectedTableIds = Array.from(options)
+        .filter((option) => option.selected)
+        .map((option) => parseInt(option.value, 10));
+
+      setReservationInfo((prevState) => {
+        const updatedTableIds = [...prevState.tableIds];
+
+        // Add only new IDs to the array
+        selectedTableIds.forEach((id) => {
+          if (!updatedTableIds.includes(id)) {
+            updatedTableIds.push(id);
+          }
+        });
+
+        return {
+          ...prevState,
+          tableIds: updatedTableIds,
+          order: {
+            ...prevState.order,
+            tableIds: updatedTableIds,
+          },
+        };
+      });
+    } else if (name === "dateTime") {
+      const [date, time] = value.split("T");
+      setReservationInfo((prevState) => ({
+        ...prevState,
+        date,
+        time,
+      }));
+      setRequest((prevRequest) => ({
+        ...prevRequest,
+        date,
+        time,
+      }));
+    } else {
+      setReservationInfo((prevState) => ({
+        ...prevState,
+        [name]: value,
+        customer: {
+          ...prevState.customer,
+          ...(name === "name" || name === "email" ? { [name]: value } : {}),
+        },
+      }));
+    }
+  };
+
+  const handleRemoveTable = (tableId) => {
+    setReservationInfo((prevState) => {
+      const updatedTableIds = prevState.tableIds.filter((id) => id !== tableId);
+      return {
+        ...prevState,
+        tableIds: updatedTableIds,
+        order: {
+          ...prevState.order,
+          tableIds: updatedTableIds,
+        },
+      };
+    });
   };
 
   const handleSave = () => {
-    console.log("Reservation created:", reservationInfo);
-    onClose();
-  };
+    createReaservation.mutate(reservationInfo, {
+      onSuccess: () => {
+        // Reset the modal's state
+        setReservationInfo({
+          branchId: branchid,
+          tableIds: [],
+          customer: { customerId: null, name: "", email: "" },
+          date: "",
+          time: "",
+          amountGuest: 0,
+          typeId: 1,
+          order: {
+            branchId: branchid,
+            tableIds: [],
+            staffId: userId,
+            customer: { customerId: null },
+            orderItems: {
+              creates: [],
+              updates: [],
+            },
+            note: "",
+          },
+        });
 
-  const handleGuestChange = (operation) => {
-    setReservationInfo((prevState) => {
-      const currentGuests = parseInt(prevState.guests || "0", 10);
-      const updatedGuests = operation === "increment" ? currentGuests + 1 : currentGuests - 1;
-      return {
-        ...prevState,
-        guests: updatedGuests >= 0 ? updatedGuests.toString() : "0",
-      };
+        setCustomerPhone("");
+
+        toast.success("Reservation created successfully!");
+      },
+      onError: (error) => {
+        toast.error(`Failed to create reservation: ${error.message}`);
+      },
     });
   };
 
-  const handleOrderSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const handleCustomerSearch = async () => {
+    if (!customerPhone) {
+      toast.error("Please enter a phone number to search.");
+      return;
+    }
 
-  const handleSelectFood = (food) => {
-    setReservationInfo((prevState) => {
-      const updatedOrders = { ...prevState.orders };
-      if (updatedOrders[food]) {
-        updatedOrders[food] += 1;
+    try {
+      const response = await getCustomerProfileByPhone(customerPhone);
+
+      if (response && response.length > 0) {
+        toast.success(`Customer found`);
+
+        const customer = response[0]; // Assuming the first result is the desired customer
+        setReservationInfo((prevState) => ({
+          ...prevState,
+          customer: {
+            ...prevState.customer,
+            customerId: customer.customerId,
+            name: customer.fullName,
+            email: customer.email,
+          },
+        }));
+        toast.success(`Customer found: ${customer.fullName}`);
       } else {
-        updatedOrders[food] = 1;
+        setReservationInfo((prevState) => ({
+          ...prevState,
+          customer: {
+            ...prevState.customer,
+            customerId: 0, // Clear customerId if no customer is found
+          },
+        }));
+        toast.warning("No customer found with the given phone number.");
       }
-      return {
-        ...prevState,
-        orders: updatedOrders,
-      };
-    });
-    setSearchTerm(""); // Clear search after selecting food
-    setShowDropdown(false); // Hide the dropdown
+    } catch (error) {
+      toast.error("Error fetching customer profile.");
+      console.error(error);
+    }
   };
-
-  const handleRemoveFood = (food) => {
-    setReservationInfo((prevState) => {
-      const updatedOrders = { ...prevState.orders };
-      if (updatedOrders[food] > 1) {
-        updatedOrders[food] -= 1;
-      } else {
-        delete updatedOrders[food];
-      }
-      return {
-        ...prevState,
-        orders: updatedOrders,
-      };
-    });
-  };
-
-  const filteredFoods = availableFoods.filter((food) =>
-    food.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   if (!isOpen) return null;
 
   return (
     <div className="create-reservation-modal-overlay">
       <div className="create-reservation-modal-content">
-        <h2 className="create-reservation-modal-title">Create New Reservation</h2>
+        <h2 className="create-reservation-modal-title">
+          Create New Reservation
+        </h2>
 
         <div className="create-reservation-modal-body">
           <div className="create-reservation-info">
-            <h3 className="create-reservation-modal-section-title">Reservation Info</h3>
-            
-            {/* Table Dropdown */}
+            <h3 className="create-reservation-modal-section-title">
+              Reservation Info
+            </h3>
+
             <label className="create-reservation-modal-label">
-              Table
+              Customer Name
+              <input
+                type="text"
+                name="name"
+                value={reservationInfo.customer.name}
+                onChange={handleChange}
+                className="create-reservation-modal-input"
+              />
+              {reservationInfo.customer.customerId > 0 ? (
+                <small className="text-success">Customer found!</small>
+              ) : reservationInfo.customer.customerId === 0 ? (
+                <small className="text-danger">No customer found</small>
+              ) : null}
+            </label>
+
+            <label className="create-reservation-modal-label">
+              Customer Email
+              <input
+                type="email"
+                name="email"
+                value={reservationInfo.customer.email}
+                onChange={handleChange}
+                className="create-reservation-modal-input"
+              />
+            </label>
+            <label className="create-reservation-modal-label">
+              Customer Phone
+              <input
+                type="text"
+                name="phone"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                className="create-reservation-modal-input"
+              />
+              <Button
+                variant="outline-primary"
+                className="mt-2"
+                onClick={handleCustomerSearch}
+              >
+                <FaSearch /> Search
+              </Button>
+            </label>
+
+            <label className="create-reservation-modal-label">
+              Reservation Type
               <select
-                name="table"
-                value={reservationInfo.table}
+                name="typeId"
+                value={reservationInfo.typeId}
                 onChange={handleChange}
                 className="create-reservation-modal-input"
               >
-                <option value="" disabled>Select a table</option>
-                {tables.map((table, index) => (
-                  <option key={index} value={table}>{table}</option>
+                {reservationType.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
                 ))}
               </select>
             </label>
@@ -124,98 +298,61 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
               <input
                 type="datetime-local"
                 name="dateTime"
-                value={reservationInfo.dateTime}
+                value={`${reservationInfo.date}T${reservationInfo.time}`}
                 onChange={handleChange}
                 className="create-reservation-modal-input"
               />
             </label>
+
             <label className="create-reservation-modal-label">
-              Amount of Guests
-              <div className="create-reservation-modal-input-wrapper">
-                <input
-                  type="number"
-                  name="guests"
-                  value={reservationInfo.guests}
-                  onChange={handleChange}
-                  className="create-reservation-modal-input"
-                />
-              </div>
+              Table
+              <select
+                name="tableIds"
+                value={reservationInfo.tableIds}
+                onChange={handleChange}
+                className="create-reservation-modal-input"
+                multiple
+              >
+                {tables.map((table) => (
+                  <option key={table.id} value={table.id}>
+                    {`Table ${table.number} (Capacity: ${table.capacity})`}
+                  </option>
+                ))}
+              </select>
             </label>
 
-            {/* Order Section with Search and Dropdown */}
-            <label className="create-reservation-modal-label">
-              Order
-              <div className="create-reservation-modal-order-search">
-                <input
-                  type="text"
-                  placeholder="Search for foods..."
-                  value={searchTerm}
-                  onChange={handleOrderSearch}
-                  onClick={() => setShowDropdown(!showDropdown)}
-                  className="create-reservation-modal-input"
-                />
-                {showDropdown && (
-                  <div className="create-reservation-modal-dropdown">
-                    {filteredFoods.map((food) => (
-                      <div
-                        key={food}
-                        className="create-reservation-modal-dropdown-item"
-                        onClick={() => handleSelectFood(food)}
-                      >
-                        {food}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </label>
-            <div className="create-reservation-modal-orders-list">
-              {Object.keys(reservationInfo.orders).length > 0 && (
+            <div className="selected-tables">
+              <h4>Selected Tables:</h4>
+              {reservationInfo.tableIds.length > 0 ? (
                 <ul>
-                  {Object.entries(reservationInfo.orders).map(([food, quantity], index) => (
-                    <li key={index}>
-                      x{quantity} {food}
-                      <button
-                        className="remove-food-button"
-                        onClick={() => handleRemoveFood(food)}
-                      >
-                        Remove
-                      </button>
-                    </li>
-                  ))}
+                  {reservationInfo.tableIds.map((tableId) => {
+                    const table = tables.find((t) => t.id === tableId);
+                    return (
+                      <li key={tableId}>
+                        {`Table ${table?.number || tableId} (Capacity: ${
+                          table?.capacity || "N/A"
+                        })`}
+                        <button
+                          onClick={() => handleRemoveTable(tableId)}
+                          className="remove-table-button"
+                        >
+                          Remove
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
+              ) : (
+                <p>No tables selected.</p>
               )}
             </div>
-          </div>
 
-          <div className="create-customer-info">
-            <h3 className="create-reservation-modal-section-title">Customer Info</h3>
             <label className="create-reservation-modal-label">
-              Name
+              Amount of Guests
               <input
-                type="text"
-                name="customerName"
-                value={reservationInfo.customerName}
-                onChange={handleChange}
-                className="create-reservation-modal-input"
-              />
-            </label>
-            <label className="create-reservation-modal-label">
-              Phone Number
-              <input
-                type="text"
-                name="phoneNumber"
-                value={reservationInfo.phoneNumber}
-                onChange={handleChange}
-                className="create-reservation-modal-input"
-              />
-            </label>
-            <label className="create-reservation-modal-label">
-              Email
-              <input
-                type="email"
-                name="email"
-                value={reservationInfo.email}
+                type="number"
+                name="amountGuest"
+                value={reservationInfo.amountGuest}
                 onChange={handleChange}
                 className="create-reservation-modal-input"
               />
@@ -223,16 +360,16 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <div className="create-reservation-modal-actions">
+        <div className="create-reservation-modal-footer">
           <button
-            className="create-reservation-modal-button create-reservation-modal-save"
             onClick={handleSave}
+            className="create-reservation-modal-button create-reservation-modal-save"
           >
             Save
           </button>
           <button
-            className="create-reservation-modal-button create-reservation-modal-cancel"
             onClick={onClose}
+            className="create-reservation-modal-button create-reservation-modal-cancel"
           >
             Cancel
           </button>

@@ -106,6 +106,50 @@ const CreateBranch = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (formData.name.length > 50) {
+      toast.error("Branch Name cannot exceed 50 characters.");
+      return;
+    }
+
+    const phoneRegex = /^\+?[0-9]{10,15}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error("Enter a valid phone number (10-15 digits).");
+      return;
+    }
+
+    for (let i = 0; i < formData.workingHours.length; i++) {
+      const { dayOfWeek, openingTime, closingTime } = formData.workingHours[i];
+      if (!dayOfWeek || !openingTime || !closingTime) {
+        toast.error(
+          "All working hours must have day, opening, and closing times."
+        );
+        return;
+      }
+      if (openingTime >= closingTime) {
+        toast.error("Opening time must be earlier than closing time.");
+        return;
+      }
+    }
+
+    for (let i = 0; i < formData.tables.length; i++) {
+      const { number, capacity } = formData.tables[i];
+      if (!number || !capacity) {
+        toast.error("All tables must have a number and capacity.");
+        return;
+      }
+      if (isNaN(capacity) || Number(capacity) <= 0) {
+        toast.error("Table capacity must be a valid positive number.");
+        return;
+      }
+    }
+
+    for (let i = 0; i < formData.menus.length; i++) {
+      if (!formData.menus[i].type) {
+        toast.error("All menus must have a type.");
+        return;
+      }
+    }
+
     if (formData.imageFile) {
       uploadImageMutate.mutate(formData.imageFile);
     } else {
