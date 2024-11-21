@@ -12,20 +12,20 @@
 }
 
 /* Order List */
-.order-list {
+.order-list-customer {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.order-grid {
+.order-grid-customer {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: space-between;
 }
 
-.order-card {
+.order-card-customer {
   background-color: #18191a;
   color: white;
   padding: 20px;
@@ -35,23 +35,23 @@
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.order-card:hover {
+.order-card-customer:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.card-body {
+.card-body-customer {
   display: flex;
   flex-direction: column;
 }
 
-.order-title {
+.order-title-customer {
   font-size: 1.25rem;
   font-weight: bold;
   color: #f1c40f; /* Gold color */
 }
 
-.order-info {
+.order-info-customer {
   margin-bottom: 8px;
 }
 
