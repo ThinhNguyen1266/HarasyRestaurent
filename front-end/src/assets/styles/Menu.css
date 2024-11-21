@@ -124,3 +124,72 @@
   color: #000000;
   background-color: #fbaf57;
 }
+
+/* Responsive for tablets and medium-sized devices */
+@media (max-width: 768px) {
+  .menu-header {
+    padding: 150px 0 20px;
+    height: 50vh;
+  }
+
+  .menu-header h1 {
+    padding-top: 120px;
+    font-size: 3rem;
+  }
+
+  .menu-cities {
+    flex-direction: column;
+    gap: 40px;
+    padding: 100px 20px;
+  }
+
+  .menu-city {
+    width: 80%;
+    height: 300px;
+  }
+
+  .menu-city-name {
+    font-size: 2rem;
+  }
+
+  .menu-button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    bottom: 40px;
+  }
+}
+
+/* Responsive for mobile devices */
+@media (max-width: 480px) {
+  .menu-header {
+    padding: 100px 0 15px;
+    height: 40vh;
+  }
+
+  .menu-header h1 {
+    font-size: 2rem;
+  }
+
+  .menu-cities {
+    flex-direction: column;
+    gap: 20px;
+    padding: 50px 10px;
+  }
+
+  .menu-city {
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    margin: 0 auto;
+  }
+
+  .menu-city-name {
+    font-size: 1.5rem;
+  }
+
+  .menu-button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    bottom: 40px;
+  }
+}

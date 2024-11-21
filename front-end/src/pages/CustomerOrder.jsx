@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import useAuth from "../hooks/useAuth";
-import useOrderApi from "../hooks/api/useOrderApi";
 import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import "../assets/styles/CustomerOrder.css";
+import useOrderApi from "../hooks/api/useOrderApi";
+import useAuth from "../hooks/useAuth";
 
 const CustomerOrder = () => {
   const { user } = useAuth();
@@ -118,7 +118,7 @@ const CustomerOrder = () => {
                 <div className="order-items-container">
                   {selectedOrder.orderItems.map((item, index) => (
                     <div key={index} className="order-item-card">
-                      <h5 className="item-name">{item.name}</h5>
+                      <h5 className="cusitem-name">{item.name}</h5>
                       <p className="item-info">
                         <strong>Quantity:</strong> {item.quantity}
                       </p>
