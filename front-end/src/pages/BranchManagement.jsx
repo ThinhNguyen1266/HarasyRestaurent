@@ -59,7 +59,15 @@ const BranchManagement = () => {
         <div className="row g-4">
           {branches?.map((branch) => (
             <div key={branch.id} className="col-md-4">
-              <div className="card h-100">
+              <div
+                className="card h-100"
+                style={{
+                  backgroundColor: "#141414", // New background color
+                  color: "white", // Ensure text is readable
+                  borderRadius: "10px", // Optional: Add rounded corners
+                  border: "1px solid #333", // Optional: Add a border
+                }}
+              >
                 <img
                   src={branch.branchInfo.image}
                   className="card-img-top"
@@ -86,7 +94,7 @@ const BranchManagement = () => {
                 <div className="card-footer d-flex justify-content-end">
                   <button
                     onClick={() => navigate(`/branch/${branch.branchInfo.id}`)}
-                    className="btn btn-warning btn-sm"
+                    className="btn btn-warning btn-sm me-2"
                   >
                     <FaEdit />
                   </button>

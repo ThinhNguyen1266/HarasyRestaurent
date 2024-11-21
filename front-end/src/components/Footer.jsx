@@ -20,16 +20,12 @@ function Footer() {
                 <Link to="#">FAQS</Link>
               </li>
               <li>
-                <Link to="#">ABOUT</Link>
-              </li>
-              <li>
                 <Link to="#">CONTACT</Link>
               </li>
             </ul>
             <div className="footer-policies">
               <Link to="#">Accessibility</Link> |
               <Link to="#"> Privacy Policy</Link> |
-              <Link to="#"> Cookie Policy</Link> |
               <Link to="#"> Terms & Conditions</Link>
             </div>
           </div>
