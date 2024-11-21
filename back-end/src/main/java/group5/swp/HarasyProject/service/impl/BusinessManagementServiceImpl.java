@@ -235,11 +235,17 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     @Override
     public ApiResponse<AvailableReserveTimeResponse> getAvailableReserveTime(CheckReserveTimeRequest request) {
         BranchEntity branch = branchService.getBranchEntity(request.getBranchId());
-        List<BranchWorkingHourEntity> workingHours = branch.getWorkingHours();
-        if (!isValidReserveDate(request.getTime(), request.getDate(), workingHours))
-            throw new AppException(ErrorCode.INVALID_RESERVE_DATE);
+        BranchWorkingHourEntity hour = getBranchWorkingHourEntity(request, branch);
+        if (!isValidReserveTime(request.getTime(), hour))
+            throw new AppException(ErrorCode.INVALID_RESERVE_TIME);
         LocalTime start = request.getTime().minusHours(2);
+        start = isValidReserveTime(start, hour)
+                ? start
+                : hour.getOpeningTime();
         LocalTime end = request.getTime().plusHours(2);
+        end = isValidReserveTime(end, hour)
+                ? end
+                : hour.getClosingTime();
         List<LocalTime> timeSlots = generateReserveTime(start, end);
         String timeSlotsQuery = convertTimeToQuery(timeSlots);
         List<String> availableTimes = reservationService.getAvailableTime(request.getBranchId(), timeSlotsQuery
@@ -249,6 +255,21 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                         .availableReservations(availableTimes)
                         .build())
                 .build();
+    }
+
+    private BranchWorkingHourEntity getBranchWorkingHourEntity(CheckReserveTimeRequest request, BranchEntity branch) {
+        List<BranchWorkingHourEntity> workingHours = branch.getWorkingHours();
+        BranchWorkingHourEntity hour = null;
+        for (BranchWorkingHourEntity workingHour : workingHours) {
+            DayOfWeek reserveDayOfWeek = request.getDate().getDayOfWeek();
+            DayOfWeek workingDayOfWeek = workingHour.getDayOfWeek();
+            if (reserveDayOfWeek.equals(workingDayOfWeek)) {
+                hour = workingHour;
+                break;
+            }
+        }
+        if (hour == null) throw new AppException(ErrorCode.INVALID_RESERVE_DATE);
+        return hour;
     }
 
     @Override
@@ -358,22 +379,9 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     }
 
 
-    private boolean isValidReserveDate(LocalTime reserveTime,
-                                       LocalDate reserveDate, List<BranchWorkingHourEntity> workingHours) {
-        boolean validDate = false;
-        BranchWorkingHourEntity tmpHour = null;
-        for (BranchWorkingHourEntity workingHour : workingHours) {
-            DayOfWeek reserveDayOfWeek = reserveDate.getDayOfWeek();
-            DayOfWeek workingDayOfWeek = workingHour.getDayOfWeek();
-            if (reserveDayOfWeek.equals(workingDayOfWeek)) {
-                validDate = true;
-                tmpHour = workingHour;
-                break;
-            }
-        }
-        if (!validDate) return false;
-        return (reserveTime.plusHours(2).isAfter(tmpHour.getOpeningTime())
-                && reserveTime.minusHours(2).isBefore(tmpHour.getClosingTime()));
+    private boolean isValidReserveTime(LocalTime reserveTime, BranchWorkingHourEntity workingHour) {
+        return (reserveTime.isAfter(workingHour.getOpeningTime())
+                && reserveTime.isBefore(workingHour.getClosingTime()));
     }
 
 

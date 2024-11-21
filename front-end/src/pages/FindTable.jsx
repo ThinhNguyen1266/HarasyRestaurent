@@ -1,23 +1,33 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { FaRegClock, FaRegUser } from "react-icons/fa6";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import moment from "moment";
 import axiosPublic from "../services/axios";
+import useBranchApi from "../hooks/api/useBranchApi";
 import "../assets/styles/FindTable.css";
 
 const FindTable = () => {
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const branchId = params.get("branchId");
-  const branch = params.get("branch");
+  const { branchId } = useParams();
+  const { getBranchHome } = useBranchApi();
   const [request, setRequest] = useState({
     branchId: branchId,
     date: "",
     time: "",
     amnountGuest: "1",
   });
+
+  const { data: branchData } = useQuery({
+    queryKey: ["branchHome", branchId],
+    queryFn: () => getBranchHome(branchId),
+    onError: (error) => toast.error(`Failed to fetch branch: ${error.message}`),
+  });
+
+  const [filterTimeOptions, setFilterTimeOptions] = useState([]);
   const [reserveTimeOptions, setReserveTimeOptions] = useState([]);
-  const branchTitle = `Reservation at ${branch.split("-").join(" ")} `;
+  const branchTitle = `Reservation at ${branchData?.name}`;
 
   const getChunkTime = (reserveTimeOptions) => {
     const chunks = [];
@@ -27,6 +37,45 @@ const FindTable = () => {
       chunks.push(chunk);
     }
     return chunks;
+  };
+
+  const isWithinWorkingHours = (workingHours, selectedDate, selectedTime) => {
+    const dayOfWeek = moment(selectedDate).format("dddd").toUpperCase(); // Lấy thứ (ví dụ: MONDAY)
+    const workingHour = workingHours.find((w) => w.dayOfWeek === dayOfWeek);
+
+    if (!workingHour) {
+      return false; // Không tìm thấy giờ làm việc cho ngày được chọn
+    }
+
+    const openingTime = moment(workingHour.openingTime, "HH:mm:ss");
+    const closingTime = moment(workingHour.closingTime, "HH:mm:ss");
+    const selectedTimeMoment = moment(selectedTime, "HH:mm");
+
+    return selectedTimeMoment.isBetween(openingTime, closingTime, null, "[)");
+  };
+
+  const filterTime = (workingHours, selectedDate) => {
+    const dayOfWeek = moment(selectedDate).format("dddd").toUpperCase(); // Lấy thứ
+    const workingHour = workingHours.find((w) => w.dayOfWeek === dayOfWeek);
+
+    if (!workingHour) {
+      return []; // Không có giờ làm việc cho ngày này
+    }
+
+    const openingTime = moment(workingHour.openingTime, "HH:mm:ss");
+    const closingTime = moment(workingHour.closingTime, "HH:mm:ss");
+
+    const times = generateTimeOptions(); // Sử dụng hàm `generateTimeOptions` từ code của bạn
+    return times.filter((time) => {
+      const timeMoment = moment(time, "HH:mm");
+      return timeMoment.isBetween(openingTime, closingTime, null, "[)");
+    });
+  };
+
+  const handleDateChange = (selectedDate) => {
+    setRequest({ ...request, date: selectedDate });
+    const validTimes = filterTime(branchData?.workingHours || [], selectedDate);
+    setFilterTimeOptions(validTimes);
   };
 
   const generateTimeOptions = () => {
@@ -64,8 +113,17 @@ const FindTable = () => {
   };
 
   const findTime = async (request) => {
-    const res = await axiosPublic.post("/reserve/availableTime", request);
-    setReserveTimeOptions(res.data.availableReservations);
+    const { date, time } = request;
+    if (!isWithinWorkingHours(branchData?.workingHours || [], date, time)) {
+      toast.error("Selected time is outside working hours.");
+      return;
+    }
+    try {
+      const res = await axiosPublic.post("/reserve/availableTime", request);
+      setReserveTimeOptions(res.data.availableReservations);
+    } catch (error) {
+      toast.error("Failed to find available times.");
+    }
   };
 
   return (
@@ -107,7 +165,6 @@ const FindTable = () => {
                             ...request,
                             amnountGuest: e.target.value,
                           });
-                          console.log(request);
                         }}
                       >
                         {guestOption.map((a) => (
@@ -121,9 +178,8 @@ const FindTable = () => {
                     <Form.Control
                       type="date"
                       className="form-control "
-                      onChange={(e) => {
-                        setRequest({ ...request, date: e.target.value });
-                      }}
+                      min={moment().format("YYYY-MM-DD")}
+                      onChange={(e) => handleDateChange(e.target.value)}
                     />
                   </Col>
                   <Col md={3} className="col-style">
@@ -135,7 +191,7 @@ const FindTable = () => {
                           setRequest({ ...request, time: e.target.value });
                         }}
                       >
-                        {timeOptions.map((time, index) => (
+                        {filterTimeOptions.map((time, index) => (
                           <option key={index} value={time}>
                             {time}
                           </option>
@@ -169,11 +225,7 @@ const FindTable = () => {
                         <Col md={3}>
                           <Button
                             as={Link}
-                            to={
-                              option.available
-                                ? `/reservationdetails?branch=${branch}&time=${option}`
-                                : "#"
-                            }
+                            to={`/reservationdetails?branch=${branchData?.name}&time=${option}&guests=${request.amnountGuest}&location=${branchData?.location}&date=${request.date}`}
                             key={index}
                             className={`time-btn d-flex align-items-center justify-content-center mx-1`}
                           >

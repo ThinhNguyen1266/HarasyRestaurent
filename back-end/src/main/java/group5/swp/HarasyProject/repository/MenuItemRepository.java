@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface MenuItemRepository extends JpaRepository<MenuItemEntity, MenuItemId> {
     List<MenuItemEntity> findByMenuId(int menuId);
-
+    void deleteByFoodId(int foodId);
 }

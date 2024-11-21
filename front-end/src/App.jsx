@@ -53,7 +53,7 @@ function App() {
         <Route path="/otp" element={<OTP />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/findtable" element={<FindTable />} />
+        <Route path="/findtable/:branchId" element={<FindTable />} />
         <Route path="/reservationdetails" element={<ConfirmReservation />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
@@ -62,7 +62,12 @@ function App() {
 
         <Route element={<StaffLayout />}>
           <Route
-            element={<AuthRoute allowedRoles={["ADMIN", "BRANCH_MANAGER"]} />}
+            element={
+              <AuthRoute
+                allowedRoles={["ADMIN", "BRANCH_MANAGER"]}
+                isRequired={true}
+              />
+            }
           >
             <Route path="/food" element={<ManageFood />} />
             <Route path="/food/create" element={<CreateFood />} />
