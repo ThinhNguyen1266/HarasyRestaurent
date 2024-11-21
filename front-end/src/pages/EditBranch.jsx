@@ -22,9 +22,31 @@ const EditBranch = () => {
       });
     }
   };
+
+  const handleDeleteTable = (tableId) => {
+    if (window.confirm("Are you sure you want to delete this table?")) {
+      deleteTableMutate.mutate(tableId, {
+        onSuccess: () => {
+          toast.success("The Table has change to deleted successfully!");
+        },
+      });
+    }
+  };
+
+  const handleDeleteWorkingHour = (hourId) => {
+    if (window.confirm("Are you sure you want to delete this workingHour?")) {
+      deleteBranchWorkingHourMutate.mutate(hourId, {
+        onSuccess: () => {
+          console.log("hourID .", hourId);
+          toast.success("WorkingHour deleted successfully!");
+        },
+      });
+    }
+  };
   const [isMenuTypeEnabled, setIsMenuTypeEnabled] = useState(false);
   const queryClient = useQueryClient();
   const { branchId } = useParams();
+
   const navigate = useNavigate();
   const {
     getBranchbyID,
@@ -32,18 +54,43 @@ const EditBranch = () => {
     getBranchManagers,
     getMenubyBranchID,
     deleteBranch,
+    deleteBranchWorkingHour,
+    deleteTable,
   } = useBranchApi();
   const { user } = useAuth();
+
   const { data: menus, isLoading: isMenusLoading } = useQuery({
     queryKey: ["menus", branchId],
     queryFn: () => getMenubyBranchID(branchId, true),
     onError: (error) => toast.error(`Failed to fetch menu: ${error.message}`),
   });
+
   console.log("menus", menus);
+
   const deleteBranchMutate = useMutation({
     mutationFn: deleteBranch,
     onSuccess: () => {
       queryClient.invalidateQueries(["branches"]);
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete branch: ${error.message}`);
+    },
+  });
+
+  const deleteBranchWorkingHourMutate = useMutation({
+    mutationFn: deleteBranchWorkingHour,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["branch"]);
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete branch: ${error.message}`);
+    },
+  });
+
+  const deleteTableMutate = useMutation({
+    mutationFn: deleteTable,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["branch"]);
     },
     onError: (error) => {
       toast.error(`Failed to delete branch: ${error.message}`);
@@ -77,6 +124,10 @@ const EditBranch = () => {
     onError: (error) => toast.error(`Failed to fetch branch: ${error.message}`),
   });
 
+  const hourId = branchData?.branchInfo?.workingHours[0]?.id;
+  const tableId = branchData?.tables?.map((table) => table.id);
+  console.log("tableID", tableId);
+  console.log("hourId", hourId);
   useEffect(() => {
     if (branchData) {
       setFormData({
@@ -174,9 +225,6 @@ const EditBranch = () => {
           })),
       },
     };
-
-    // Kiểm tra payload
-    console.log("Data Nhan duoc:", JSON.stringify(payload, null, 2));
 
     // Gửi payload đến API
     saveBranchMutate.mutate(payload);
@@ -429,6 +477,13 @@ const EditBranch = () => {
                       }
                       className="form-control me-2"
                     />
+                    <button
+                      onClick={() => handleDeleteWorkingHour(hourId)}
+                      className="btn btn-danger btn-sm mx-1 "
+                    >
+                      <FaTrash />
+                      Delete
+                    </button>
                   </div>
                 ))}
               </div>
@@ -478,6 +533,13 @@ const EditBranch = () => {
                       }
                       className="form-control me-2"
                     />
+                    <button
+                      onClick={() => handleDeleteTable(table.id)}
+                      className="btn btn-danger btn-sm mx-1 "
+                    >
+                      <FaTrash />
+                      Delete
+                    </button>
                   </div>
                 ))}
               </div>

@@ -193,6 +193,23 @@ const useBranchApi = () => {
     }
   };
 
+  const deleteBranchWorkingHour = async (hourId) => {
+    try {
+      const branch = await axiosPrivate.delete(`/hour/${hourId}`);
+      return branch;
+    } catch (error) {
+      throw error;
+    }
+  };
+  const deleteTable = async (tableId) => {
+    try {
+      const branch = await axiosPrivate.delete(`/table/${tableId}`);
+      return branch;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     getBranchesStaff,
     getBranchHome,
@@ -205,6 +222,8 @@ const useBranchApi = () => {
     getBranchMenu,
     getMenubyBranchID,
     getOrderbyBranchID,
+    deleteBranchWorkingHour,
+    deleteTable,
   };
 };
 
