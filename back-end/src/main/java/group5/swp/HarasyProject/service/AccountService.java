@@ -24,8 +24,10 @@ public interface AccountService {
     ApiResponse<StaffResponse> staffRegis(RegistStaffRequest request) throws IOException, MessagingException;
 
     ApiResponse<?> changePassword(int id,ChangePasswordRequest request);
+    ApiResponse<?> forgotPassword(ForgotPasswordRequest request);
 
     ApiResponse<OtpResponse> validateOtp(OtpRequest otpRequest);
+    ApiResponse<OtpResponse> validateOtpForgotPassword(OtpRequest otpRequest);
 
     ApiResponse<ProfileResponse> viewProfile(Integer id) throws IOException, MessagingException;
 
