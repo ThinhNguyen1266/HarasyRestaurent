@@ -90,8 +90,33 @@ const useAccountApi = () => {
       throw error;
     }
   };
+  const changePassWord = async (request) => {
+    try {      
 
-  return { getProfile, updateCusProfile, Register, sentOtp, resentOtp };
+      // Sending the update request to the backend
+      const cusProfile = await axiosPrivate.post(
+        `/account/${user.accountId}/changePassword`,
+        {
+          oldPassword: request.password,
+          newPassword: request.newPass,
+          confirmPassword: request.confirmPass,
+        }
+      ).data;
+      return cusProfile;
+    } catch (error) {
+      console.error("Server error details:", error.response?.data);
+      throw error;
+    }
+  };
+
+  return {
+    getProfile,
+    updateCusProfile,
+    Register,
+    sentOtp,
+    resentOtp,
+    changePassWord,
+  };
 };
 
 export default useAccountApi;

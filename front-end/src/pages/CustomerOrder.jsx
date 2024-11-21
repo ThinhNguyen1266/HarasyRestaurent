@@ -102,7 +102,7 @@ const CustomerOrder = () => {
       {/* Modal for Order Items */}
       {selectedOrder && (
         <div className="modal-overlay">
-          <div className="modal-dialog">
+          <div className="cusmodal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">

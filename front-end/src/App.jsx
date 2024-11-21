@@ -38,6 +38,7 @@ import ReservationsPage from "./pages/ReservationPage";
 import AddFoodInMenu from "./pages/AddFoodInMenu";
 import AllOrder from "./pages/AllOrder";
 import CustomerOrder from "./pages/CustomerOrder";
+import ChangePasswork from "./pages/ChangePassword";
 function App() {
   return (
     <>
@@ -65,7 +66,7 @@ function App() {
         <Route path="/reservation" element={<ReservationsPage />} />
         <Route path="/customer/order" element={<CustomerOrder />} />
         <Route path="/profile/:id" element={<Profile />} />
-
+        <Route path="/changepassword" element={<ChangePasswork />} />
         <Route element={<StaffLayout />}>
           <Route
             element={

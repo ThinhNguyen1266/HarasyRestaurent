@@ -3,6 +3,7 @@ import useAxiosPrivate from "../useAxiosPrivate";
 const useOrderApi = () => {
   const { user } = useAuth();
   const axiosPrivate = useAxiosPrivate();
+  
   const getOrderInTimebyBranchID = async (id) => {
     try {
       const response = await axiosPrivate.get(`/orderInTime/${id}`);
@@ -34,17 +35,21 @@ const useOrderApi = () => {
         `Failed to fetch monthly revenue for month ${month} and ${year}:`,
         error
       );
-      const getCustomerOrders = async (page, size) => {
-        try {
-          const response = await axiosPrivate.get(
-            `/customer/${user.customerId}/order?page=${page}&size=${size}`
-          );
-          return response.data;
-        } catch (error) {
-          console.error("Error fetching customer orders:", error);
-          throw error;
-        }
-      };
+    }}
+
+    const getCustomerOrders = async (page, size) => {
+      try {
+        const response = await axiosPrivate.get(
+          `/customer/${user.customerId}/order?page=${page}&size=${size}`
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching customer orders:", error);
+        throw error;
+      }
+    };
+
+
 
       const getTotalOrder = async () => {
         try {
@@ -155,6 +160,5 @@ const useOrderApi = () => {
         getCustomerOrders,
       };
     }
-  };
-};
+
 export default useOrderApi;
