@@ -60,7 +60,7 @@ const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
 };
 
 const ReservationsPage = () => {
-  const { getMenubyBranchID, getRerservationCus, getReservationType } =
+  const { getMenubyBranchID, getRerservationCus, getReservationType, getAvailableTablelist} =
     useMenuApi();
   const [page, setPage] = useState(0);
   const [searchPhone, setSearchPhone] = useState("");
@@ -84,6 +84,7 @@ const ReservationsPage = () => {
     },
   });
 
+  
   // Fetch food data
   const { data: menuData = [], isLoading: isLoadingFood } = useQuery({
     queryKey: ["menu"],
@@ -259,6 +260,7 @@ const ReservationsPage = () => {
           onClose={handleCloseCreateModal}
           reservationType={type}
           type={type}
+          availableTable={getAvailableTablelist}
         />
         {isEditModalOpen && (
           <EditReservationModal

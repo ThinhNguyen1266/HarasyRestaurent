@@ -47,14 +47,11 @@ const useMenuApi = () => {
       throw error;
     }
   };
-  const getAvailableTablelist = async () => {
+  const getAvailableTablelist = async (request) => {
     try {      
-      const tableData = (await axiosPrivate.post(`/reserve/availableTable`,{
-        "branchId": 1,
-        "date": "2024-12-30",
-        "time": "08:00",
-        "amountGuest": 4
-    })).data;
+      console.log("req api ", request);
+      
+      const tableData = (await axiosPrivate.post(`/reserve/availableTable`,request));
       console.log("table data:", tableData); 
       return tableData;
     } catch (error) {
