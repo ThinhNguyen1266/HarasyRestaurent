@@ -6,6 +6,7 @@ import group5.swp.HarasyProject.dto.request.reservation.ReservationRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.reservation.AvailableReserveTimeResponse;
 import group5.swp.HarasyProject.dto.response.reservation.ReservationResponse;
+import group5.swp.HarasyProject.dto.response.reservation.ReservationTypeResonse;
 import group5.swp.HarasyProject.dto.response.table.TableResponse;
 import group5.swp.HarasyProject.service.BusinessManagementService;
 import lombok.AccessLevel;
@@ -72,6 +73,11 @@ public class ReservationController {
     ApiResponse<ReservationResponse> updateReserve(@RequestBody ReservationRequest request,
                                                    @PathVariable int id) {
         return businessManagementService.updateReservation(request, id);
+    }
+
+    @GetMapping("/reserve/type")
+    ApiResponse<List<ReservationTypeResonse>> getAllReservationTypes() {
+        return businessManagementService.getAllReservationTypes();
     }
 
 }

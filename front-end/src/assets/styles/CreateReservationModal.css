@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75); /* Darker overlay for modern feel */
+  background-color: rgba(0, 0, 0, 0.75); /* Darker overlay */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,59 +21,49 @@
   padding: 35px;
   border-radius: 20px;
   width: 100%;
-  max-width: 750px; /* Set a maximum width to prevent horizontal overflow */
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.85); /* Deeper shadow */
+  max-width: 750px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.85);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  max-height: 90vh; /* Limit height to prevent overflowing the viewport */
-  overflow-y: auto; /* Vertical scrolling only */
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-/* Modal Content Hover Effect */
+/* Modal Hover Effect */
 .create-reservation-modal-content:hover {
   transform: scale(1.01);
   box-shadow: 0 0 45px rgba(0, 0, 0, 0.9);
 }
 
-/* Modal Title */
+/* Title */
 .create-reservation-modal-title {
   font-size: 2.1rem;
-  color: #ff9800; /* Softer orange for title */
+  color: #ff9800;
   margin-bottom: 25px;
   text-align: center;
   font-weight: bold;
   letter-spacing: 1.2px;
 }
 
-/* Modal Body - Split into Two Columns */
+/* Modal Body */
 .create-reservation-modal-body {
   display: flex;
-  flex-direction: column; /* Stack columns vertically for mobile */
-  gap: 20px; /* Reduce gap for smaller screens */
+  flex-direction: column;
+  gap: 20px;
   margin-bottom: 25px;
 }
 
 @media (min-width: 768px) {
   .create-reservation-modal-body {
-    flex-direction: row; /* Side-by-side columns for larger screens */
-    gap: 50px; /* Increase gap for a more modern look */
+    flex-direction: row;
+    gap: 50px;
   }
 }
 
-/* Sections */
 .create-reservation-info,
 .create-customer-info {
   flex: 1;
-  min-width: 0; /* Allow shrinking without causing horizontal scroll */
-}
-
-/* Section Titles */
-.create-reservation-modal-section-title {
-  font-size: 1.4rem;
-  color: #ffb347; /* Brighter section title */
-  margin-bottom: 20px;
-  font-weight: 600;
 }
 
 /* Labels & Inputs */
@@ -93,26 +83,26 @@
   background-color: #232323;
   color: #e0e0e0;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  width: 100%; /* Ensure input fields take the full width of their container */
-  box-sizing: border-box; /* Prevent overflow from padding */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .create-reservation-modal-input:focus {
-  border-color: #ffa726; /* Softer focus color */
+  border-color: #ffa726;
   box-shadow: 0 0 10px rgba(255, 167, 38, 0.4);
   outline: none;
 }
 
-/* Action Buttons */
+/* Buttons */
 .create-reservation-modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 20px; /* Increased gap for a cleaner layout */
+  gap: 20px;
   margin-top: 15px;
 }
 
 .create-reservation-modal-button {
-  padding: 14px 25px; /* Larger padding for buttons */
+  padding: 14px 25px;
   border: none;
   border-radius: 10px;
   font-weight: 600;
@@ -125,7 +115,7 @@
 .create-reservation-modal-save {
   background-color: #ff9800;
   color: #121212;
-  box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3); /* Light shadow for depth */
+  box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
 }
 
 .create-reservation-modal-save:hover {
@@ -145,45 +135,22 @@
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Improved Scrollbar for Inputs */
-.create-reservation-modal-content::-webkit-scrollbar {  
-  width: 8px;
+/* Guest Controls */
+.guest-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.create-reservation-modal-content::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 10px;
+.guest-controls button {
+  font-size: 18px;
+  background: none;
+  border: none;
+  color: #f5f5f5;
+  cursor: pointer;
 }
 
-.create-reservation-modal-content::-webkit-scrollbar-thumb:hover {
-  background: #888;
-}
-
-/* Improved Number Input - Amount of Guests */
-.create-reservation-modal-input[type="number"] {
-  -webkit-appearance: none; /* Remove default number input arrows in WebKit browsers */
-  -moz-appearance: textfield; /* Remove default number input arrows in Firefox */
-  appearance: textfield;
-  padding-right: 80px; /* Additional space to accommodate custom buttons */
-  position: relative;
-}
-
-/* Custom Increment/Decrement Buttons */
-.create-reservation-modal-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none; /* Remove the default spin button */
-}
-
-.create-reservation-modal-input-wrapper {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-/* Order Search and Dropdown */
-.create-reservation-modal-order-search {
-  position: relative;
-}
-
+/* Order Search Dropdown */
 .create-reservation-modal-dropdown {
   position: absolute;
   top: 100%;
@@ -208,29 +175,7 @@
   background-color: #444;
 }
 
-/* Remove button styles */
-.remove-food-button {
-  background: none;
-  border: none;
-  color: #ff4c4c;
-  font-size: 14px;
-  cursor: pointer;
-  margin-left: 10px;
-}
-
-.remove-food-button:hover {
-  text-decoration: underline;
-}
-
-/* Orders List */
-.create-reservation-modal-orders-list {
-  margin-top: 20px;
-  background-color: #2d2d2d; /* Dark background for the list */
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
+/* Order List */
 .create-reservation-modal-orders-list ul {
   list-style-type: none;
   margin: 0;
@@ -238,7 +183,7 @@
 }
 
 .create-reservation-modal-orders-list li {
-  background-color: #3a3a3a; /* Slightly lighter background for list items */
+  background-color: #3a3a3a;
   color: #f5f5f5;
   display: flex;
   justify-content: space-between;
@@ -250,7 +195,7 @@
 }
 
 .create-reservation-modal-orders-list li:hover {
-  background-color: #505050; /* Hover effect on list items */
+  background-color: #505050;
 }
 
 .create-reservation-modal-orders-list li .remove-food-button {
