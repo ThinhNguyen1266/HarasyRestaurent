@@ -34,7 +34,8 @@ public enum ErrorCode {
     ORDER_ITEM_NOT_FOUND(3007, "order item not found", HttpStatus.NOT_FOUND),
     RESERVATION_TYPE_NOT_FOUND(3008, "reservation type not found", HttpStatus.NOT_FOUND),
     RESERVATION_NOT_FOUND(3009, "reservation not found", HttpStatus.NOT_FOUND),
-    STAFF_NOT_FOUND(3010, "staff not found", HttpStatus.NOT_FOUND),
+    WORKING_HOUR_NOT_FOUND(30010, "working hour not found", HttpStatus.NOT_FOUND),
+    STAFF_NOT_FOUND(3011, "staff not found", HttpStatus.NOT_FOUND),
 
     //ALREADY EXIST
     TABLE_EXISTED(4000, "table already exist", HttpStatus.CONFLICT),

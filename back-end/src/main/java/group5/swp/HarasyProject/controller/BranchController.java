@@ -78,6 +78,11 @@ public class BranchController {
         return restaurantManagementService.getAllTablesInBranch(id);
     }
 
+    @DeleteMapping("/hour/{hourId}")
+    ApiResponse<?> deleteHour(@PathVariable int hourId) {
+        return restaurantManagementService.deleteWorkingHour(hourId);
+    }
+
     @GetMapping("/branch/{id}/orders")
     ApiResponse<Page<OrderResponse>> getBranchOrders(
             @PathVariable int id,
