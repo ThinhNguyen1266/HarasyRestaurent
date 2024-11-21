@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/auth/login","/auth/validateOtp","/auth/introspect","/auth/refreshToken"
             ,"/users", "/regis/user", "/uploadImage", "/profile/{id}"
             , "/reservations", "/search", "/reservation/{id}"
-            ,"/customer/branches","/foods","/staff","/reserve/availableTime"
+            ,"/customer/branches","/foods","/staff","/reserve/availableTime",
+            "/account/forgotPassword/validateOtp","/account/{id}/forgotPassword"
     };
     String[] GET_PUBLIC_ENDPOINT ={
                 "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
