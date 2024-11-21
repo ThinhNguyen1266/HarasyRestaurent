@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import EditReservationModal from "../components/EditReservationModal";
 import useMenuApi from "../hooks/api/useMenuApi";
-
+import useAuth from "../hooks/useAuth";
 const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
   const getStatusColor = (status) => {
     switch (status) {
@@ -60,7 +60,9 @@ const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
 };
 
 const ReservationsPage = () => {
-  const { getMenubyBranchID, getRerservationCus, getReservationType, getAvailableTablelist} =
+  const{user}=useAuth()
+
+  const { getMenubyBranchID, getRerservationCus, getReservationType, getAvailableTablelist, getCustomerProfileByPhone,addReservation} =
     useMenuApi();
   const [page, setPage] = useState(0);
   const [searchPhone, setSearchPhone] = useState("");
@@ -111,9 +113,6 @@ const ReservationsPage = () => {
       toast.error(`Failed to fetch reservation types: ${error.message}`);
     },
   });
-  console.log(reservationData);
-  console.log(foodData);
-  console.log(type);
   const allReservations = reservationData.content.map((res) => ({
     id: res.id,
     status: res.status,
@@ -170,11 +169,12 @@ const ReservationsPage = () => {
   };
 
   const handleCloseModal = () => {
-    queryClient.invalidateQueries("reservation");
+    queryClient.invalidateQueries("reservationData");
     setSelectedReservation(null);
   };
 
   const handleCloseCreateModal = () => {
+    queryClient.invalidateQueries("reservationData");
     setIsCreateModalOpen(false);
   };
 
@@ -255,9 +255,13 @@ const ReservationsPage = () => {
           />
         )}
         <CreateReservationModal
+          userId={user.id}
+          branchid={user.branchId}
           foodData={foodData}
           isOpen={isCreateModalOpen}
           onClose={handleCloseCreateModal}
+          addReservation={addReservation}
+          getCustomerProfileByPhone={getCustomerProfileByPhone}
           reservationType={type}
           type={type}
           availableTable={getAvailableTablelist}

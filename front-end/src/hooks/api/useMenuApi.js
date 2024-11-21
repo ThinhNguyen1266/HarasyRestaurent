@@ -24,6 +24,58 @@ const useMenuApi = () => {
     return response.data;
   };
 
+  const addReservation = async (reservationData) => {
+    try {
+      // Ensure that amountGuest is always a number
+      const amountGuest = Number(reservationData.amountGuest) || 0; // Convert to number, default to 0 if invalid
+
+      // Construct the payload as per the given format
+      const payload = {
+        branchId: reservationData.branchId,
+        tableIds: reservationData.tableIds,
+        customer: {
+          customerId: reservationData.customer.customerId||"",
+          name: reservationData.customer.name||"",
+          email: reservationData.customer.email||"",
+        },
+        date: reservationData.date,
+        time: reservationData.time,
+        amountGuest, // Use the sanitized number value for amountGuest
+        typeId: reservationData.typeId,
+        order: {
+          branchId: reservationData.order.branchId,
+          tableIds: reservationData.order.tableIds,
+          staffId: reservationData.order.staffId,
+          customer: {
+            customerId: reservationData.customer.customerId||"",
+            newCustomer:{name: reservationData.customer.name||"",
+              email: reservationData.customer.email||"",}
+            
+          },
+          orderItems: {
+            creates: reservationData.order.orderItems.creates,
+            updates: reservationData.order.orderItems.updates,
+          },
+          note: reservationData.order.note || "",
+        },
+        name: reservationData.name,
+        email: reservationData.email,
+      };
+
+      
+      // Send the POST request
+      const response = await axiosPrivate.post("/reserve", payload);
+
+      return response.data; // Return the successful response
+    } catch (error) {
+      console.error(
+        "Error adding reservation:",
+        error.response?.data || error.message
+      );
+      throw error; // Re-throw for upstream error handling
+    }
+  };
+
   const getReservationType = async () => {
     try {
       const reservationType = await axiosPrivate.get(`/reserve/type`);
@@ -35,28 +87,28 @@ const useMenuApi = () => {
 
   const getRerservationCus = async (page) => {
     try {
-        console.log(`/branch/${user.branchId}/reserve`);
-        
-      const cusReservation = await axiosPrivate.get(`/branch/${user.branchId}/reserve`, {
-        params: { page },
-      });
-      console.log(cusReservation);
-      
+
+      const cusReservation = await axiosPrivate.get(
+        `/branch/${user.branchId}/reserve`,
+        {
+          params: { page },
+        }
+      );
+
       return await cusReservation;
     } catch (error) {
       throw error;
     }
   };
   const getAvailableTablelist = async (request) => {
-    try {      
-      console.log("req api ", request);
-      
-      const tableData = (await axiosPrivate.post(`/reserve/availableTable`,request));
-      console.log("table data:", tableData); 
+    try {
+
+      const tableData = await axiosPrivate.post(
+        `/reserve/availableTable`,
+        request
+      );
       return tableData;
     } catch (error) {
-      console.error("Error fetching table data:", error);
-      throw error;
     }
   };
 
@@ -64,10 +116,7 @@ const useMenuApi = () => {
     try {
       const branchId = user?.branchId;
       if (!branchId) throw new Error("Branch ID not found");
-      // Thêm tham số includeAll vào URL
-      console.log(`/branch/${branchId}/menus`)
       const response = await axiosPrivate.get(`/branch/${branchId}/menus`);
-      console.log(`/branch ${response}`)
       return response;
     } catch (error) {
       console.error(`Failed to fetch menus for branch with ID :`, error);
@@ -179,7 +228,8 @@ const useMenuApi = () => {
     updateOrder,
     getRerservationCus,
     getReservationType,
-    getAvailableTablelist
+    getAvailableTablelist,
+    addReservation,
   };
 };
 
