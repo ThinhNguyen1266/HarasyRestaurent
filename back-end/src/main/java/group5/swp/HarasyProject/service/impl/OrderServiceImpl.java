@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -111,5 +112,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Object[]> getBranchesTotalRevenueInMonth() {
         return orderRepository.getBranchesTotalRevenueInMonth();
+    }
+
+    @Override
+    public List<Object[]> getBestSellers() {
+        Pageable pageable = PageRequest.of(0, 5);
+        return orderRepository.getBestSellers(pageable);
     }
 }
