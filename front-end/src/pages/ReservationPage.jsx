@@ -30,8 +30,9 @@ const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
         style={{ backgroundColor: getStatusColor(reservation.status) }}
       ></div>
       <div className="reservation-details">
-        <p>
-          <strong>Tables:</strong>
+       
+          <strong>Reservation No.</strong>
+          {reservation.id}
           <ul>
             {reservation.table.map((table) => (
               <li key={table}>Table {table}</li>
@@ -40,8 +41,9 @@ const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
           <br />
           <strong>Book date - time:</strong> {reservation.date} <br />
           <strong>Customer name:</strong> {reservation.customer} <br />
-          <strong>Phone number:</strong> {reservation.phone}
-        </p>
+          <strong>Phone number:</strong> {reservation.phone}<br />
+          <strong>Type:</strong> {reservation.type}
+       
       </div>
       <button
         className="detail-button"
@@ -62,7 +64,8 @@ const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
 const ReservationsPage = () => {
   const{user}=useAuth()
 
-  const { getMenubyBranchID, getRerservationCus, getReservationType, getAvailableTablelist, getCustomerProfileByPhone,addReservation} =
+  const { getMenubyBranchID, getRerservationCus, getReservationType, getAvailableTablelist,editReservationOrder
+    , getCustomerProfileByPhone,addReservation} =
     useMenuApi();
   const [page, setPage] = useState(0);
   const [searchPhone, setSearchPhone] = useState("");
@@ -131,8 +134,9 @@ const ReservationsPage = () => {
     price: res.order.total.toLocaleString(),
     guests: res.amountGuest,
     type: res.type,
+    orderId: res.order.id
   }));
-
+  
   const filteredReservations = useMemo(() => {
     let result = allReservations;
     if (searchPhone.trim()) {
@@ -271,6 +275,7 @@ const ReservationsPage = () => {
             isOpen={isEditModalOpen}
             onClose={() => setIsEditModalOpen(false)}
             reservation={editReservation}
+            editReservationOrder={editReservationOrder}
             foodData={foodData}
           />
         )}

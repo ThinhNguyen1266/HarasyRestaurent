@@ -35,8 +35,8 @@ const useMenuApi = () => {
         tableIds: reservationData.tableIds,
         customer: {
           customerId: reservationData.customer.customerId||"",
-          name: reservationData.customer.name||"",
-          email: reservationData.customer.email||"",
+          newCustomer:{ fullName: reservationData.customer.name||"",
+          email: reservationData.customer.email||"",}
         },
         date: reservationData.date,
         time: reservationData.time,
@@ -45,21 +45,13 @@ const useMenuApi = () => {
         order: {
           branchId: reservationData.order.branchId,
           tableIds: reservationData.order.tableIds,
-          staffId: reservationData.order.staffId,
-          customer: {
-            customerId: reservationData.customer.customerId||"",
-            newCustomer:{name: reservationData.customer.name||"",
-              email: reservationData.customer.email||"",}
-            
-          },
+          staffId: reservationData.order.staffId,          
           orderItems: {
             creates: reservationData.order.orderItems.creates,
             updates: reservationData.order.orderItems.updates,
           },
           note: reservationData.order.note || "",
         },
-        name: reservationData.name,
-        email: reservationData.email,
       };
 
       
@@ -81,9 +73,9 @@ const useMenuApi = () => {
       const reservationType = await axiosPrivate.get(`/reserve/type`);
       return await reservationType;
     } catch (error) {
-      throw error;
     }
   };
+  
 
   const getRerservationCus = async (page) => {
     try {
@@ -117,14 +109,42 @@ const useMenuApi = () => {
       const branchId = user?.branchId;
       if (!branchId) throw new Error("Branch ID not found");
       const response = await axiosPrivate.get(`/branch/${branchId}/menus`);
-      console.log("ADd api", response);
       return response;
     } catch (error) {
       console.error(`Failed to fetch menus for branch with ID :`, error);
       throw error;
     }
   };
+  const editReservationOrder = async (request) => {
+    try {
 
+      // Construct the payload as per the given format
+      const payload = {
+        
+        order: {
+          branchId: request.order.branchId,
+          tableIds: request.order.tableIds,
+          staffId: request.order.staffId,          
+          orderItems: {
+            creates: request.order.orderItems.creates,
+            updates: request.order.orderItems.updates,
+          },
+          note: request.order.note || "",
+        },
+      };
+      
+      // Send the POST request
+      const response = await axiosPrivate.post(`/reserve/${request.id}`,{payload});
+
+      return response.data; // Return the successful response
+    } catch (error) {
+      console.error(
+        "Error adding reservation:",
+        error.response?.data || error.message
+      );
+      throw error; // Re-throw for upstream error handling
+    }
+  };
   const deleteFoodFromMenu = async (menuId, foodIds) => {
     try {
       const response = await axiosPrivate.delete(`/menu/${menuId}/foods`, {
@@ -248,6 +268,7 @@ const useMenuApi = () => {
     getAvailableTablelist,
     addReservation,
     deleteFoodFromMenu,
+    editReservationOrder
   };
 };
 

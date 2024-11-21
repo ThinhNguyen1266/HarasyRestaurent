@@ -43,7 +43,7 @@ public interface BusinessManagementService {
     ApiResponse<Page<ReservationResponse>> getAllReservationsInBranch(Pageable pageable, Boolean isHistory, int branchId);
 
     ApiResponse<Page<ReservationResponse>> getAllCusReservations(Pageable pageable, int customerId);
-
+     ApiResponse<List<ReservationTypeResonse>> getAllReservationTypes();
     ApiResponse<ReservationResponse> getReservation(int id);
 
     ApiResponse<ReservationResponse> updateReservation(ReservationRequest request, int id);
