@@ -2,10 +2,12 @@ package group5.swp.HarasyProject.controller;
 
 
 import group5.swp.HarasyProject.dto.request.account.*;
+import group5.swp.HarasyProject.dto.request.auth.OtpRequest;
 import group5.swp.HarasyProject.dto.response.ApiResponse;
 import group5.swp.HarasyProject.dto.response.account.CustomerProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.ProfileResponse;
 import group5.swp.HarasyProject.dto.response.account.RegisResponse;
+import group5.swp.HarasyProject.dto.response.auth.OtpResponse;
 import group5.swp.HarasyProject.dto.response.staff.StaffResponse;
 import group5.swp.HarasyProject.service.AccountService;
 import lombok.AccessLevel;
@@ -53,7 +55,17 @@ public class AccountController  {
     }
     @PostMapping("/account/{id}/changePassword")
     public ApiResponse<?> changePassword(@PathVariable int id, @RequestBody ChangePasswordRequest request){
-        return null;
+        return accountService.changePassword(id,request);
+    }
+
+    @PostMapping("/account/forgotPassword/validateOtp")
+    public ApiResponse<OtpResponse> validateOtpForgotPassword(@RequestBody OtpRequest otpRequest){
+        return accountService.validateOtpForgotPassword(otpRequest);
+    }
+
+    @PostMapping("/account/forgotPassword")
+    public ApiResponse<?> forgotPassword( @RequestBody ForgotPasswordRequest request){
+        return accountService.forgotPassword(request);
     }
 
 }

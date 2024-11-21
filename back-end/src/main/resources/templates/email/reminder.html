@@ -2,10 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservation Reminder</title>
 </head>
-<body>
-    Hey {{username}} you have a reservation in about 30 minutes later.
-    dont be late we will cancel your table if you late more than 15 minutes.
+<body style="margin: 0; padding: 0; background-color: #121212; color: #ffffff; font-family: Arial, sans-serif;">
+
+    <!-- Container -->
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="
+        max-width: 600px;
+        background-color: #1e1e1e;
+        margin: 40px auto;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        overflow: hidden;">
+        <!-- Header -->
+        <tr>
+            <td align="center" style="
+                background: linear-gradient(90deg, #000000, #292929);
+                padding: 20px;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;">
+                <h1 style="
+                    margin: 0;
+                    font-size: 26px;
+                    color: #ff9500;
+                    font-weight: bold;
+                    letter-spacing: 1.5px;">
+                    Reservation Reminder
+                </h1>
+            </td>
+        </tr>
+
+        <!-- Content -->
+        <tr>
+            <td style="padding: 40px 30px; text-align: center; color: #d1d1d1;">
+                <h2 style="margin: 0; color: #ff9500; font-size: 22px; font-weight: bold;">Hello, {{username}}!</h2>
+                <p style="font-size: 16px; line-height: 1.8; margin: 20px 0; color: #bbbbbb;">
+                    Your reservation is scheduled for <strong style="color: #ff9500;">30 minutes from now</strong>.
+                    Please arrive on time to enjoy your dining experience.
+                </p>
+                <p style="font-size: 16px; line-height: 1.8; margin: 20px 0; color: #bbbbbb;">
+                    If you are more than <strong style="color: #ff9500;">15 minutes late</strong>, your table may be released.
+                </p>
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+            <td align="center" style="
+                background-color: #181818;
+                padding: 15px;
+                color: #999999;
+                font-size: 14px;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                border-top: 1px solid #333333;">
+                &copy; 2024 Harasy Restaurant | All Rights Reserved
+            </td>
+        </tr>
+    </table>
+
 </body>
 </html>

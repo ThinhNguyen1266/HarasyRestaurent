@@ -6,141 +6,71 @@ import Sidebar from "../components/Sidebar";
 import "../assets/styles/ChefMenu.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const staticMenuData = {
-  categories: [
-    {
-      id: 1,
-      name: "Appetizers",
-      items: [
-        {
-          id: 101,
-          name: "Crispy Calamari",
-          price: "$12.99",
-          description: "Tender calamari rings, lightly breaded and fried until golden",
-          image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0",
-          available: true,
-        },
-        {
-          id: 102,
-          name: "Bruschetta",
-          price: "$8.99",
-          description: "Toasted bread topped with fresh tomatoes, garlic, and basil",
-          image: "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f",
-          available: true,
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Main Course",
-      items: [
-        {
-          id: 201,
-          name: "Grilled Salmon",
-          price: "$24.99",
-          description: "Fresh Atlantic salmon with herbs and lemon butter sauce",
-          image: "https://images.unsplash.com/photo-1534604973900-c43ab4c2e0ab",
-          available: true,
-        },
-        {
-          id: 202,
-          name: "Beef Tenderloin",
-          price: "$29.99",
-          description: "Premium cut beef served with roasted vegetables",
-          image: "https://images.unsplash.com/photo-1558030006-450675393462",
-          available: false,
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "Desserts",
-      items: [
-        {
-          id: 301,
-          name: "Chocolate Lava Cake",
-          price: "$8.99",
-          description: "Warm chocolate cake with a molten center",
-          image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c",
-          available: true,
-        },
-        {
-          id: 302,
-          name: "Tiramisu",
-          price: "$7.99",
-          description: "Classic Italian dessert with coffee-soaked ladyfingers",
-          image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9",
-          available: true,
-        },
-      ],
-    },
-  ],
-};
+import useAuth from "../hooks/useAuth";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import useFoodAPi from "../hooks/api/useFoodAPi";
 
 const ChefMenu = () => {
-  const [menuData, setMenuData] = useState(staticMenuData);
+  const { user } = useAuth();
+  const { updateFoodStatus, getMenubyBranchID } = useFoodAPi();
+  const branchId = user ? user.branchId : null;
+  const queryClient = useQueryClient();
+
+  // Fetch menu items
+  const { data: menus, isLoading: isMenusLoading } = useQuery({
+    queryKey: ["menus", branchId],
+    queryFn: () => getMenubyBranchID(branchId, true),
+    onError: (error) => toast.error(`Failed to fetch menu: ${error.message}`),
+  });
+
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setExpandedCategories([]);
-    } else {
-      const matchingCategories = menuData.categories
-        .filter((category) =>
-          category.items.some((item) =>
+    } else if (menus?.length > 0) {
+      const matchingCategories = menus
+        .filter((menu) =>
+          menu.menuItems.some((item) =>
             item.name.toLowerCase().includes(searchTerm.toLowerCase())
           )
         )
-        .map((category) => category.id);
+        .map((menu) => menu.id);
       setExpandedCategories(matchingCategories);
     }
-  }, [searchTerm, menuData]);
+  }, [searchTerm, menus]);
 
   const toggleCategory = (categoryId) => {
     setExpandedCategories((prev) =>
-      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId]
     );
   };
 
-  const toggleItemStatus = (categoryId, itemId) => {
-    setMenuData((prev) => {
-      const updatedCategories = prev.categories.map((category) =>
-        category.id === categoryId
-          ? {
-              ...category,
-              items: category.items.map((item) =>
-                item.id === itemId ? { ...item, available: !item.available } : item
-              ),
-            }
-          : category
-      );
-      return { ...prev, categories: updatedCategories };
-    });
+  // Handle status toggle
+  const mutation = useMutation({
+    mutationFn: updateFoodStatus,
+    onSuccess: () => {
+      toast.success("Food status updated successfully");
+      queryClient.invalidateQueries(["menus", branchId]);
+    },
+    onError: (error) => {
+      toast.error(`Failed to update food status: ${error.message}`);
+    },
+  });
 
-    setTimeout(() => {
-      const updatedItem = menuData.categories
-        .find((category) => category.id === categoryId)
-        .items.find((item) => item.id === itemId);
-
-      if (updatedItem && updatedItem.available) {
-        toast.error(`${updatedItem.name} is now Unavailable!`);
-      } else if (updatedItem) {
-        toast.success(`${updatedItem.name} is now Available!`);
-      }
-    }, 0);
+  const handleFoodSwitch = (id, currentStatus) => {
+    const newStatus = currentStatus === "AVAILABLE" ? "INACTIVE" : "ACTIVE";
+    mutation.mutate({ foodId: id, status: newStatus });
   };
 
-  const filteredMenuData = {
-    ...menuData,
-    categories: menuData.categories.map((category) => ({
-      ...category,
-      items: category.items.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    })),
-  };
+  const filteredMenus = menus?.filter((menu) =>
+    menu.menuItems.some((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
   return (
     <div className="chef-menu-main">
@@ -163,54 +93,72 @@ const ChefMenu = () => {
         </div>
 
         <div className="chef-menu-accordion" id="menuAccordion">
-          {filteredMenuData.categories.map((category) => (
-            <div key={category.id} className="chef-menu-accordion-item">
-              <h2 className="chef-menu-accordion-header">
-                <button
-                  className="chef-menu-accordion-button"
-                  type="button"
-                  onClick={() => toggleCategory(category.id)}
-                >
-                  {category.name}
-                </button>
-              </h2>
+          {!isMenusLoading && filteredMenus?.length > 0 ? (
+            filteredMenus.map((menu) => (
+              <div key={menu.id} className="chef-menu-accordion-item">
+                <h2 className="chef-menu-accordion-header">
+                  <button
+                    className="chef-menu-accordion-button"
+                    type="button"
+                    onClick={() => toggleCategory(menu.id)}
+                  >
+                    {menu.type}
+                  </button>
+                </h2>
 
-              {expandedCategories.includes(category.id) && (
-                <div className="chef-menu-accordion-body">
-                  {category.items.map((item) => (
-                    <div key={item.id} className="chef-menu-item">
-                      <img src={item.image} alt={item.name} className="chef-menu-item-image" />
-                      <div className="chef-menu-item-details">
-                        <h5>{item.name}</h5>
-                        <p className="chef-menu-item-desc">{item.description}</p>
-                        <p className="chef-menu-item-price">{item.price}</p>
-                      </div>
-                      <div className="chef-menu-item-status">
-                        {item.available ? (
-                          <FaCheckCircle className="chef-menu-status-icon text-success" />
-                        ) : (
-                          <FaTimesCircle className="chef-menu-status-icon text-danger" />
-                        )}
-                        <span className={item.available ? "text-success" : "text-danger"}>
-                          {item.available ? "Available" : "Unavailable"}
-                        </span>
-                        <button
-                          onClick={() => toggleItemStatus(category.id, item.id)}
-                          className={`chef-menu-toggle-button ${
-                            item.available ? "btn-outline-danger" : "btn-outline-success"
-                          }`}
-                        >
-                          {item.available ? "Mark Unavailable" : "Mark Available"}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+                {expandedCategories.includes(menu.id) && (
+                  <div className="chef-menu-accordion-body">
+                    {menu.menuItems
+                      .filter((item) =>
+                        item.name
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                      )
+                      .map((item) => (
+                        <div key={item.id} className="chef-menu-item">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="chef-menu-item-image"
+                          />
+                          <div className="chef-menu-item-details">
+                            <h5>{item.name}</h5>
+                            <p className="chef-menu-item-desc">
+                              {item.description}
+                            </p>
+                            <p className="chef-menu-item-price">{item.price}</p>
+                          </div>
+                          <button
+                            onClick={() =>
+                              handleFoodSwitch(item.foodId, item.status)
+                            }
+                            className={`chef-menu-status-btn ${
+                              item.status === "AVAILABLE"
+                                ? "btn-success"
+                                : "btn-danger"
+                            }`}
+                          >
+                            {item.status === "AVAILABLE" ? (
+                              <FaCheckCircle />
+                            ) : (
+                              <FaTimesCircle />
+                            )}
+                            {item.status === "AVAILABLE"
+                              ? "AVAILABLE"
+                              : "UNAVAILABLE"}
+                          </button>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div>No menu items found.</div>
+          )}
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

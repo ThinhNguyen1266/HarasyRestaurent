@@ -22,6 +22,7 @@ public enum ErrorCode {
     ACCOUNT_NOT_ACTIVE(5005, "account not active", HttpStatus.UNAUTHORIZED),
     WRONG_PASSWORD(5006, "wrong password", HttpStatus.UNAUTHORIZED),
     PASSWORD_NOT_MATCH(5007, "password not match", HttpStatus.UNAUTHORIZED),
+    HAVE_NO_SESSION_TO_FORGOT_PASSWORD(5008, "has no session", HttpStatus.UNAUTHORIZED),
 
     //NOT FOUND
     ACCOUNT_NOT_FOUND(3000, "account not found", HttpStatus.NOT_FOUND),
@@ -41,7 +42,7 @@ public enum ErrorCode {
     TABLE_EXISTED(4000, "table already exist", HttpStatus.CONFLICT),
     BRANCH_EXISTED(4001,"branch name is duplicate",HttpStatus.CONFLICT),
     EMAIL_EXISTED(4002,"Email is already existed",HttpStatus.CONFLICT),
-
+    USERNAME_EXISTED(4003,"Username is already existed",HttpStatus.CONFLICT),
     //SPECIAL
     ORDER_HAVE_NO_TABLE(2000,"cannot create order with no table",HttpStatus.BAD_REQUEST),
     ORDER_WAS_CLOSED(2001,"order was closed",HttpStatus.CONFLICT),

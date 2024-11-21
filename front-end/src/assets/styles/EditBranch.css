@@ -16,3 +16,25 @@
 .menu-type:hover {
   background-color: #65819c;
 }
+.table-container {
+  max-height: 200px; /* Adjust height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  border: 1px solid #ccc; /* Optional: Add border for visual separation */
+  padding: 10px; /* Optional: Add padding for inner spacing */
+  background-color: #1a1a1a; /* Optional: Match form's dark theme */
+  border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+/* Customize scrollbar appearance (Optional) */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #555; /* Thumb color */
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background-color: #777;
+}

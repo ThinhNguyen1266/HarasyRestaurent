@@ -25,6 +25,7 @@ import group5.swp.HarasyProject.repository.StaffAccountRepository;
 import group5.swp.HarasyProject.service.AccountService;
 import group5.swp.HarasyProject.service.MailService;
 import group5.swp.HarasyProject.service.OtpService;
+import group5.swp.HarasyProject.service.RedisService;
 import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
 
     OtpService otpService;
 
-    RedisServiceImpl redisService;
+    RedisService redisService;
 
     MailService mailService;
 
@@ -67,6 +68,8 @@ public class AccountServiceImpl implements AccountService {
     public ApiResponse<RegisResponse> customerRegis(RegisCustomerRequest request) throws IOException, MessagingException {
         AccountEntity accountEntity = accountMapper.regisCusToAccount(request);
         accountEntity.setPassword(passwordEncoder.encode(accountEntity.getPassword()));
+        if (accountRepository.existsByEmail(request.getEmail())) throw new AppException(ErrorCode.EMAIL_EXISTED);
+        if (accountRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USERNAME_EXISTED);
         accountEntity.setCustomer(new CustomerAccountEntity());
         accountRepository.save(accountEntity);
         EmailRequest emailRequest = EmailRequest.builder().to(request.getEmail()).subject("Your OTP").build();
@@ -93,6 +96,23 @@ public class AccountServiceImpl implements AccountService {
                 accountRepository.save(accountEntity);
             } else throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
         } else throw new AppException(ErrorCode.WRONG_PASSWORD);
+        return ApiResponse.builder().build();
+    }
+
+    @Override
+    public ApiResponse<?> forgotPassword(ForgotPasswordRequest request) {
+        AccountEntity accountEntity = accountRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        boolean haveSession = redisService.checkForgotPasswordSession(accountEntity.getEmail());
+        if (!haveSession)
+            throw new AppException(ErrorCode.HAVE_NO_SESSION_TO_FORGOT_PASSWORD);
+        else {
+            if(request.getNewPassword().equals(request.getConfirmPassword())) {
+                accountEntity.setPassword(passwordEncoder.encode(request.getNewPassword()));
+                accountRepository.save(accountEntity);
+            }else throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
         return ApiResponse.builder().build();
     }
 
@@ -129,6 +149,17 @@ public class AccountServiceImpl implements AccountService {
             redisService.deleteOtp(otpRequest.getEmail());
             accountRepository.save(account);
             return ApiResponse.<OtpResponse>builder().data(OtpResponse.builder().message("Successfully verified OTP, you can sign in now!").username(account.getUsername()).build()).build();
+        } else throw new AppException(ErrorCode.INVALID_OTP);
+    }
+
+    @Override
+    public ApiResponse<OtpResponse> validateOtpForgotPassword(OtpRequest otpRequest) {
+        if (otpService.validateOtp(otpRequest)) {
+            AccountEntity account = accountRepository
+                    .findByEmail(otpRequest.getEmail()).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+            redisService.deleteOtp(otpRequest.getEmail());
+            redisService.addForgotPasswordSession(otpRequest.getEmail());
+            return ApiResponse.<OtpResponse>builder().data(OtpResponse.builder().message("Successfully verified OTP, you can change password now!").username(account.getUsername()).build()).build();
         } else throw new AppException(ErrorCode.INVALID_OTP);
     }
 

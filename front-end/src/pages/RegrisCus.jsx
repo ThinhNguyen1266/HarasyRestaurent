@@ -71,24 +71,23 @@ const RegrisCus = () => {
     <div className="background-quickregris-container">
       <div className="blur-overlay">
         <h1 className="text-white text-center mb-4">Registration </h1>
-
-        <Form.Group controlId="email" className="mb-3">
-          <Form.Label className="text-white p-1">Email</Form.Label>
-          <Form.Control
-            className="quickregris-input"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            isInvalid={!!errors.email}
-          />
-
-          <Form.Control.Feedback type="invalid">
-            {errors.email}
-          </Form.Control.Feedback>
-        </Form.Group>
-
         <Form onSubmit={handleSubmit} noValidate>
+          <Form.Group controlId="email" className="mb-3">
+            <Form.Label className="text-white p-1">Email</Form.Label>
+            <Form.Control
+              className="quickregris-input"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              isInvalid={!!errors.email}
+            />
+
+            <Form.Control.Feedback type="invalid">
+              {errors.email}
+            </Form.Control.Feedback>
+          </Form.Group>
+
           <Form.Group controlId="fullName" className="mb-3">
             <Form.Label className="text-white p-1">FullName</Form.Label>
             <Form.Control

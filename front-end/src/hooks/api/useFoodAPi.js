@@ -67,7 +67,38 @@ const useFoodAPi = () => {
     }
   };
 
-  return { getFoodlist, createFood, getFoodById, updateFood, deleteFood };
+  const getMenubyBranchID = async (id) => {
+    try {
+      // Thêm tham số includeAll vào URL
+      const response = await axiosPrivate.get(`/branch/${id}/menus`);
+      console.log("response", response);
+      return response;
+    } catch (error) {
+      console.error(`Failed to fetch menus for branch with ID ${id}:`, error);
+      throw error;
+    }
+  };
+  const updateFoodStatus = async ({ foodId, status }) => {
+    try {
+      const response = await axiosPrivate.put(`/food/${foodId}`, {
+        status,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating table status:", error);
+      throw error;
+    }
+  };
+
+  return {
+    getFoodlist,
+    createFood,
+    getFoodById,
+    updateFood,
+    deleteFood,
+    getMenubyBranchID,
+    updateFoodStatus,
+  };
 };
 
 export default useFoodAPi;

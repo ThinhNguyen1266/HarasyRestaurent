@@ -17,4 +17,8 @@ public interface RedisService {
 
     void deleteOtp(String email);
 
+    void addForgotPasswordSession(String email);
+    boolean checkForgotPasswordSession(String email);
+    void deleteForgotPasswordSession(String email);
+
 }
