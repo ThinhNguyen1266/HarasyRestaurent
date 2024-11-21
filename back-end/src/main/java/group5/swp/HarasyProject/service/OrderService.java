@@ -12,21 +12,36 @@ import java.util.List;
 @Service
 public interface OrderService {
     Page<OrderEntity> getAllOrders(Pageable pageable);
+
     Page<OrderEntity> getOrdersByBranchId(int branchId, Pageable pageable);
+
     Page<OrderEntity> getOrdersByCustomerId(int customerId, Pageable pageable);
+
     List<OrderEntity> getBranchOrdersInTime(int branchId);
+
     OrderEntity getOrderById(int id);
+
     OrderEntity save(OrderEntity order);
+
     OrderResponse toResponse(OrderEntity order);
-    public Long getRevenueByDay(LocalDate specificDate);
 
-    public List<Object[]> getDailyRevenueInMonth(int month, int year);
+    Long getRevenueByDay(LocalDate specificDate);
 
-    public Long getRevenueByMonth(int month, int year);
+    List<Object[]> getDailyRevenueInMonth(int month, int year);
 
-    public List<Object[]> getMonthlyRevenueInYear(int year);
+    Long getRevenueByMonth(int month, int year);
 
-    public Long getRevenueByYear(int year);
+    List<Object[]> getMonthlyRevenueInYear(int year);
 
-    public List<Object[]> getTotalRevenueForAllYears();
+    Long getRevenueByYear(int year);
+
+    List<Object[]> getTotalRevenueForAllYears();
+
+    Long getRevenueAll();
+
+    Integer getTotalOrders();
+
+    List<Object[]> getBranchesTotalRevenue();
+
+    List<Object[]> getBranchesTotalRevenueInMonth();
 }
