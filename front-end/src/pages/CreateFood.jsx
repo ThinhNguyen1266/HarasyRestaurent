@@ -71,6 +71,21 @@ const CreateFood = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (formData.name.length > 50) {
+      toast.error("Food Name cannot exceed 50 characters.");
+      return;
+    }
+
+    if (isNaN(formData.price) || Number(formData.price) <= 0) {
+      toast.error("Price must be a valid positive number.");
+      return;
+    }
+
+    if (isNaN(formData.pointsPrice) || Number(formData.pointsPrice) < 0) {
+      toast.error("Points Price must be a valid non-negative number.");
+      return;
+    }
+
     if (formData.imageFile) {
       uploadImageMutate.mutate(formData.imageFile);
     } else {

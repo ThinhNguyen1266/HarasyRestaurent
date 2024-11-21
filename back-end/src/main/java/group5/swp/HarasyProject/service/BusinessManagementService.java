@@ -68,4 +68,6 @@ public interface BusinessManagementService {
 
     List<Object[]> getBranchesTotalRevenue();
     List<Object[]> getBranchesTotalRevenueInMonth();
+
+    List<Object[]> getBestSeller();
 }

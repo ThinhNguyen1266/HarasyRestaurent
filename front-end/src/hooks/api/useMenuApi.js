@@ -238,13 +238,11 @@ const useMenuApi = () => {
             (item) => item.foodId && item.quantity > 0 && item.status
           ),
         },
+        cooked: updatedOrder?.cooked || 0, // Pass cooked value
         note: updatedOrder?.note || "",
       };
 
-      console.log("Payload for updateOrder:", JSON.stringify(payload, null, 2));
-
       const response = await axiosPrivate.put(`/order/${id}`, payload);
-      console.log("Order updated successfully:", response);
       return response;
     } catch (error) {
       console.error(
