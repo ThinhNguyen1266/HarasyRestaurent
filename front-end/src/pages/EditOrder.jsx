@@ -23,6 +23,7 @@ function EditOrder() {
   const [cartItems, setCartItems] = useState({});
   const [orderNote, setOrderNote] = useState("");
   const [status, setSatus] = useState("");
+
   const { id } = useParams();
   const queryClient = useQueryClient();
 
@@ -38,6 +39,7 @@ function EditOrder() {
       toast.error(`Error fetching order: ${error.message}`);
     },
   });
+  const [cooked, setCooked] = useState(order?.cooked || 0);
 
   useEffect(() => {
     if (order) {
@@ -108,9 +110,29 @@ function EditOrder() {
     );
   };
 
+  const handleStatusChange = (foodId, newStatus) => {
+    setCartItems((prev) => ({
+      ...prev,
+      [foodId]: {
+        ...prev[foodId],
+        status: newStatus, // Update the status of the specific food item
+      },
+    }));
+  };
+
+  const handleCookedChange = (foodId, newCookedValue) => {
+    setCartItems((prev) => ({
+      ...prev,
+      [foodId]: {
+        ...prev[foodId],
+        cooked: newCookedValue, // Update the cooked value
+      },
+    }));
+  };
+
   // Submit updated order
   const handleUpdateOrder = () => {
-    const validStatuses = ["PENDING", "COOKED"]; // Các trạng thái hợp lệ
+    const validStatuses = ["PENDING", "COOKING", "COOKED"]; // Các trạng thái hợp lệ
 
     const creates = Object.entries(cartItems)
       .filter(([foodId, quantity]) => {
@@ -132,6 +154,7 @@ function EditOrder() {
         foodId: item.foodId,
         quantity: cartItems[item.foodId],
         status: validStatuses.includes(item.status) ? item.status : "PENDING",
+        cooked: item.cooked,
       }));
 
     const updatedOrder = {
@@ -141,19 +164,10 @@ function EditOrder() {
       },
       note: orderNote,
     };
-
+    console.log("update", updates);
     mutation.mutate({ id, updatedOrder });
   };
 
-  const updateItemStatus = (foodId, newStatus) => {
-    setCartItems((prev) => ({
-      ...prev,
-      [foodId]: {
-        ...prev[foodId],
-        status: newStatus,
-      },
-    }));
-  };
   const selectedItems = order?.orderItems.map((item) => ({
     ...item,
     totalPrice: item.price * (cartItems[item.foodId] || item.quantity),
@@ -168,6 +182,18 @@ function EditOrder() {
         .filter((food) => food.status === "AVAILABLE")
         .sort((a, b) => a.id - b.id),
     }));
+
+  const handleUpdatePaymentStatus = async (orderId, newStatus) => {
+    try {
+      const updatedOrder = {
+        paymentStatus: newStatus, // Chỉ cần truyền `paymentStatus`
+      };
+      await updateOrder(orderId, updatedOrder);
+      toast.success("Payment status updated successfully!");
+    } catch (error) {
+      toast.error(`Failed to update payment status: ${error.message}`);
+    }
+  };
 
   if (isOrderLoading || isMenuLoading) return <p>Loading...</p>;
   if (orderError) return <p>Error fetching order: {orderError.message}</p>;
@@ -195,138 +221,222 @@ function EditOrder() {
           </Form>
         </Col>
       </Row>
-
-      <Row>
-        <Col md={8}>
-          {groupedMenuItems.map((menu) => (
-            <div key={menu.id} className="mb-4">
-              <h4 className="text-white">{menu.type}</h4>
-              <Row>
-                {menu.foods.map((item) => (
-                  <Col key={item.foodId} sm={12} md={6}>
-                    <div className="menu-item bg-dark text-white rounded d-flex justify-content-between align-items-center p-3">
-                      <div>
-                        <span className="menu-item-name">{item.name}</span>
-                        <br />
-                        <small className="text-white">
-                          Price: {item.price}
-                        </small>
+      {user.role === "WAITER" && (
+        <Row>
+          <Col md={8}>
+            {groupedMenuItems.map((menu) => (
+              <div key={menu.id} className="mb-4">
+                <h4 className="text-white">{menu.type}</h4>
+                <Row>
+                  {menu.foods.map((item) => (
+                    <Col key={item.foodId} sm={12} md={6}>
+                      <div className="menu-item bg-dark text-white rounded d-flex justify-content-between align-items-center p-3">
+                        <div>
+                          <span className="menu-item-name">{item.name}</span>
+                          <br />
+                          <small className="text-white">
+                            Price: {item.price}
+                          </small>
+                        </div>
+                        <div className="menu-item-actions d-flex align-items-center">
+                          {!selectedItems.some(
+                            (selectedItem) =>
+                              selectedItem.foodId === item.foodId
+                          ) && (
+                            <>
+                              <Button
+                                variant="outline-success"
+                                size="sm"
+                                onClick={() => addToCart(item)}
+                                className="mx-2"
+                              >
+                                Add
+                              </Button>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => removeFromCart(item)}
+                                className="mx-2"
+                              >
+                                Remove
+                              </Button>
+                            </>
+                          )}
+                          <Badge bg="primary" className="mx-2">
+                            x{getCurrentQuantity(item.foodId)}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="menu-item-actions d-flex align-items-center">
-                        {!selectedItems.some(
-                          (selectedItem) => selectedItem.foodId === item.foodId
-                        ) && (
-                          <>
-                            <Button
-                              variant="outline-success"
-                              size="sm"
-                              onClick={() => addToCart(item)}
-                              className="mx-2"
-                            >
-                              Add
-                            </Button>
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => removeFromCart(item)}
-                              className="mx-2"
-                            >
-                              Remove
-                            </Button>
-                          </>
-                        )}
-                        <Badge bg="primary" className="mx-2">
-                          x{getCurrentQuantity(item.foodId)}
-                        </Badge>
-                      </div>
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          ))}
-        </Col>
-        <Col md={4} className="text-white">
-          <h2>Order Details # {order.id}</h2>
-          <p>
-            <strong>Payment Status:</strong> {order.paymentStatus}
-          </p>
-          <p>
-            <strong>
-              Tables: {order.tables.map((t) => t.number).join(", ")}{" "}
-            </strong>
-          </p>
-          <p>
-            <strong>Staff:</strong> {order.staff.name}
-          </p>
-          <p>
-            <strong>Customer:</strong> {order.customer.name}
-          </p>
-
-          <h3>Selected Items</h3>
-          <ListGroup>
-            {selectedItems.map((item) => (
-              <ListGroup.Item
-                key={item.foodId}
-                className="d-flex justify-content-between align-items-center"
-              >
-                <div>
-                  <strong>{item.name}</strong>
-                  <br />
-                  <div className="d-flex align-items-center">
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      onClick={() => removeFromCart(item.foodId)}
-                      disabled={item.quantity === 1} // Ngăn giảm về dưới 1
-                      className="me-2"
-                    >
-                      -
-                    </Button>
-                    <Form.Control
-                      type="number"
-                      value={item.quantity}
-                      min={1}
-                      onChange={(e) => {
-                        const newQuantity = parseInt(e.target.value, 10) || 1;
-                        addToCart(item, newQuantity - item.quantity); // Cập nhật chênh lệch
-                      }}
-                      style={{ width: "60px", textAlign: "center" }}
-                    />
-                    <Button
-                      variant="outline-success"
-                      size="sm"
-                      onClick={() => addToCart(item)}
-                      className="ms-2"
-                    >
-                      +
-                    </Button>
-                  </div>
-                </div>
-                <div>${item.totalPrice.toFixed(2)}</div>
-              </ListGroup.Item>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
             ))}
-          </ListGroup>
+          </Col>
 
-          <Form.Group className="mt-4">
-            <Form.Label>Order Note</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={orderNote}
-              onChange={(e) => setOrderNote(e.target.value)} // Cập nhật orderNote khi nhập
-              placeholder="Add a note..."
-            />
-          </Form.Group>
-          <Button
-            variant="success"
-            className="mt-3"
-            onClick={handleUpdateOrder}
-          >
-            Update Order
-          </Button>
-        </Col>
-      </Row>
+          <Col md={4} className="text-white">
+            <h2>Order Details # {order.id}</h2>
+
+            <p>
+              <strong>Payment Status:</strong> {order.paymentStatus}{" "}
+              {order.paymentStatus === "PENDING" && (
+                <Button
+                  variant="success"
+                  onClick={() => handleUpdatePaymentStatus(order.id, "PAYED")}
+                >
+                  Mark as PAYED
+                </Button>
+              )}
+            </p>
+
+            <p>
+              <strong>
+                Tables: {order.tables.map((t) => t.number).join(", ")}{" "}
+              </strong>
+            </p>
+            <p>
+              <strong>Staff:</strong> {order.staff.name}
+            </p>
+            <p>
+              <strong>Customer:</strong> {order.customer.name}
+            </p>
+
+            <h3>Selected Items</h3>
+            <ListGroup>
+              {selectedItems.map((item) => (
+                <ListGroup.Item
+                  key={item.foodId}
+                  className="d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <strong>{item.name}</strong>
+                    <br />
+                    <div className="d-flex align-items-center">
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => removeFromCart(item.foodId)}
+                        disabled={item.quantity === 1} // Ngăn giảm về dưới 1
+                        className="me-2"
+                      >
+                        -
+                      </Button>
+                      <Form.Control
+                        type="number"
+                        value={item.quantity}
+                        min={1}
+                        onChange={(e) => {
+                          const newQuantity = parseInt(e.target.value, 10) || 1;
+                          addToCart(item, newQuantity - item.quantity); // Cập nhật chênh lệch
+                        }}
+                        style={{ width: "60px", textAlign: "center" }}
+                      />
+                      <Button
+                        variant="outline-success"
+                        size="sm"
+                        onClick={() => addToCart(item)}
+                        className="ms-2"
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </div>
+                  <div>${item.totalPrice.toFixed(2)}</div>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+
+            <Form.Group className="mt-4">
+              <Form.Label>Order Note</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={orderNote}
+                onChange={(e) => setOrderNote(e.target.value)} // Cập nhật orderNote khi nhập
+                placeholder="Add a note..."
+              />
+            </Form.Group>
+            <Button
+              variant="success"
+              className="mt-3"
+              onClick={handleUpdateOrder}
+            >
+              Update Order
+            </Button>
+          </Col>
+        </Row>
+      )}
+
+      {/* Chef-only Section */}
+      {user.role === "CHEF" && (
+        <Row className="mb-4">
+          <Col className="text-white">
+            <h2>Order Details # {order.id}</h2>
+            <ListGroup variant="flush">
+              {order.orderItems.map((item) => (
+                <ListGroup.Item
+                  key={item.foodId}
+                  className="bg-dark text-white mb-2 rounded"
+                >
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5>{item.name}</h5>
+                      <p>
+                        Quantity: {item.quantity} <br />
+                        Status:{" "}
+                        <Badge
+                          bg={item.status === "COOKED" ? "success" : "warning"}
+                        >
+                          {item.status}
+                        </Badge>
+                        <br />
+                        Cooked:{" "}
+                        <Badge bg={item.cooked ? "primary" : "secondary"}>
+                          {item.cooked ? "Yes" : "No"}
+                        </Badge>
+                      </p>
+                    </div>
+                    <div>
+                      {/* Status dropdown */}
+                      <Form.Select
+                        size="sm"
+                        className="mb-2"
+                        value={item.status}
+                        onChange={(e) =>
+                          handleStatusChange(item.foodId, e.target.value)
+                        }
+                      >
+                        <option value="COOKING">Cooking</option>
+                        <option value="COOKED">Cooked</option>
+                        <option value="PENDING">Pending</option>
+                      </Form.Select>
+
+                      {/* Cooked number input */}
+                      <input
+                        type="number"
+                        value={cartItems[item.foodId]?.cooked || 0}
+                        onChange={(e) =>
+                          handleCookedChange(item.foodId, e.target.value)
+                        }
+                        min={0} // Ensure it’s non-negative
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+            <Button
+              variant="primary"
+              className="mt-3"
+              onClick={handleUpdateOrder}
+              disabled={mutation.isLoading}
+            >
+              Update Order
+            </Button>
+          </Col>
+        </Row>
+      )}
 
       <ToastContainer />
     </Container>
