@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -45,6 +45,12 @@ const BranchManagement = () => {
             <div key={branch.id} className="col-md-4">
               <div
                 className="card h-100"
+                style={{
+                  backgroundColor: "#141414", // New background color
+                  color: "white", // Ensure text is readable
+                  borderRadius: "10px", // Optional: Add rounded corners
+                  border: "1px solid #333", // Optional: Add a border
+                }}
                 onClick={() => navigate(`/branch/${branch.branchInfo.id}`)}
               >
                 <img
@@ -73,6 +79,20 @@ const BranchManagement = () => {
                       ? "Active"
                       : "Inactive"}
                   </span>
+                </div>
+                <div className="card-footer d-flex justify-content-end">
+                  <button
+                    onClick={() => navigate(`/branch/${branch.branchInfo.id}`)}
+                    className="btn btn-warning btn-sm me-2"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    // onClick={() => handleDelete(branch.branchInfo.id)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    <FaTrash />
+                  </button>
                 </div>
               </div>
             </div>

@@ -21,8 +21,9 @@ function EditOrder() {
   const { getMenubyBranchID, getOrderByID, updateOrder } = useMenuApi();
   const [searchTerm, setSearchTerm] = useState("");
   const [cartItems, setCartItems] = useState({});
+  const [cartItems2, setCartItems2] = useState({});
+
   const [orderNote, setOrderNote] = useState("");
-  const [status, setSatus] = useState("");
 
   const { id } = useParams();
   const queryClient = useQueryClient();
@@ -39,7 +40,6 @@ function EditOrder() {
       toast.error(`Error fetching order: ${error.message}`);
     },
   });
-  const [cooked, setCooked] = useState(order?.cooked || 0);
 
   useEffect(() => {
     if (order) {
@@ -111,7 +111,7 @@ function EditOrder() {
   };
 
   const handleStatusChange = (foodId, newStatus) => {
-    setCartItems((prev) => ({
+    setCartItems2((prev) => ({
       ...prev,
       [foodId]: {
         ...prev[foodId],
@@ -121,7 +121,7 @@ function EditOrder() {
   };
 
   const handleCookedChange = (foodId, newCookedValue) => {
-    setCartItems((prev) => ({
+    setCartItems2((prev) => ({
       ...prev,
       [foodId]: {
         ...prev[foodId],
@@ -165,6 +165,44 @@ function EditOrder() {
       note: orderNote,
     };
     console.log("update", updates);
+    mutation.mutate({ id, updatedOrder });
+  };
+
+  const handleUpdateOrder2 = () => {
+    const creates = Object.entries(cartItems2)
+      .filter(([foodId, quantity]) => {
+        return (
+          !order.orderItems.some(
+            (item) => item.foodId === parseInt(foodId, 10)
+          ) && quantity > 0 // Chỉ thêm nếu quantity > 0
+        );
+      })
+      .map(([foodId, quantity]) => ({
+        foodId: parseInt(foodId, 10),
+        quantity,
+        status: "PENDING", // Mặc định là PENDING khi thêm mới
+      }));
+
+    const updates = Object.entries(cartItems2)
+      .filter(([foodId, payload]) => {
+        return order.orderItems.some(
+          (item) => item.foodId === parseInt(foodId, 10)
+        );
+      })
+      .map(([foodId, payload]) => ({
+        foodId: foodId,
+        quantity: payload.quantity,
+        status: payload.status,
+        cooked: payload.cooked,
+      }));
+
+    const updatedOrder = {
+      orderItems: {
+        creates,
+        updates,
+      },
+      note: orderNote,
+    };
     mutation.mutate({ id, updatedOrder });
   };
 
@@ -401,7 +439,7 @@ function EditOrder() {
                       <Form.Select
                         size="sm"
                         className="mb-2"
-                        value={item.status}
+                        value={cartItems2[item.foodId]?.status || item.status}
                         onChange={(e) =>
                           handleStatusChange(item.foodId, e.target.value)
                         }
@@ -414,11 +452,12 @@ function EditOrder() {
                       {/* Cooked number input */}
                       <input
                         type="number"
-                        value={cartItems[item.foodId]?.cooked || 0}
+                        value={cartItems2[item.foodId]?.cooked || item.cooked}
                         onChange={(e) =>
                           handleCookedChange(item.foodId, e.target.value)
                         }
-                        min={0} // Ensure it’s non-negative
+                        min={0}
+                        max={item.quantity}
                         className="form-control"
                       />
                     </div>
@@ -429,7 +468,7 @@ function EditOrder() {
             <Button
               variant="primary"
               className="mt-3"
-              onClick={handleUpdateOrder}
+              onClick={handleUpdateOrder2}
               disabled={mutation.isLoading}
             >
               Update Order

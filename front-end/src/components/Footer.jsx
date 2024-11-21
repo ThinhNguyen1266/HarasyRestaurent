@@ -29,7 +29,6 @@ function Footer() {
             <div className="footer-policies">
               <Link to="#">Accessibility</Link> |
               <Link to="#"> Privacy Policy</Link> |
-              <Link to="#"> Cookie Policy</Link> |
               <Link to="#"> Terms & Conditions</Link>
             </div>
           </div>
