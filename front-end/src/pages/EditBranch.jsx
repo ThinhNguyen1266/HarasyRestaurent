@@ -9,6 +9,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "../assets/styles/EditBranch.css";
 import MenuDetailModal from "../components/MenuDetailModal";
 import { FaTrash } from "react-icons/fa";
+import useAuth from "../hooks/useAuth";
 
 const EditBranch = () => {
   const handleDelete = (branchId) => {
@@ -32,7 +33,7 @@ const EditBranch = () => {
     getMenubyBranchID,
     deleteBranch,
   } = useBranchApi();
-
+  const { user } = useAuth();
   const { data: menus, isLoading: isMenusLoading } = useQuery({
     queryKey: ["menus", branchId],
     queryFn: () => getMenubyBranchID(branchId, true),
@@ -78,7 +79,6 @@ const EditBranch = () => {
 
   useEffect(() => {
     if (branchData) {
-      console.log("Branch data after reload:", branchData);
       setFormData({
         ...branchData.branchInfo,
         managerId: branchData.branchInfo.managerId || "",
@@ -124,24 +124,25 @@ const EditBranch = () => {
           .filter(
             (hour) =>
               hour.dayOfWeek && hour.openingTime && hour.closingTime && !hour.id
-          ) // Chỉ tạo mới nếu không có id
+          )
           .map((hour) => ({
             dayOfWeek: hour.dayOfWeek,
-            openingTime: `${hour.openingTime}:00`,
-            closingTime: `${hour.closingTime}:00`,
+            openingTime: hour.openingTime.slice(0, 5) + ":00", // Chỉ giờ và phút
+            closingTime: hour.closingTime.slice(0, 5) + ":00", // Chỉ giờ và phút
           })),
         updates: formData.workingHours
           .filter(
             (hour) =>
               hour.id && hour.dayOfWeek && hour.openingTime && hour.closingTime
-          ) // Chỉ cập nhật nếu có id
+          )
           .map((hour) => ({
-            id: hour.id, // Thêm id để xác định đối tượng cần cập nhật
+            id: hour.id,
             dayOfWeek: hour.dayOfWeek,
-            openingTime: `${hour.openingTime}:00`,
-            closingTime: `${hour.closingTime}:00`,
+            openingTime: hour.openingTime.slice(0, 5) + ":00", // Chỉ giờ và phút
+            closingTime: hour.closingTime.slice(0, 5) + ":00", // Chỉ giờ và phút
           })),
       },
+
       tables: {
         creates: formData.tables
           .filter((table) => table.number && table.capacity && !table.id) // Chỉ tạo mới nếu không có id
@@ -175,7 +176,7 @@ const EditBranch = () => {
     };
 
     // Kiểm tra payload
-    console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
+    console.log("Data Nhan duoc:", JSON.stringify(payload, null, 2));
 
     // Gửi payload đến API
     saveBranchMutate.mutate(payload);
@@ -247,6 +248,12 @@ const EditBranch = () => {
   return (
     <div className="container my-4">
       <h1 className="text-white">Edit Branch</h1>
+      <button
+        onClick={() => navigate(`/branch/${branchData.branchInfo.id}/orders`)}
+        className="btn btn-primary mt-4  "
+      >
+        View Order
+      </button>
       <form onSubmit={handleSubmit}>
         <div className="row">
           {/* Column 1 */}
@@ -516,13 +523,14 @@ const EditBranch = () => {
           <FaTrash />
           Delete
         </button>
-
-        <button
-          onClick={() => navigate("/branch")}
-          className="btn btn-secondary mt-4  "
-        >
-          Back
-        </button>
+        {user?.role === "ADMIN" && (
+          <button
+            onClick={() => navigate("/branch")}
+            className="btn btn-secondary mt-4  "
+          >
+            Back
+          </button>
+        )}
       </form>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>

@@ -22,6 +22,7 @@ function EditOrder() {
   const [searchTerm, setSearchTerm] = useState("");
   const [cartItems, setCartItems] = useState({});
   const [orderNote, setOrderNote] = useState("");
+  const [status, setSatus] = useState("");
   const { id } = useParams();
   const queryClient = useQueryClient();
 
@@ -40,7 +41,7 @@ function EditOrder() {
 
   useEffect(() => {
     if (order) {
-      setOrderNote(order.note || ""); // Đặt note từ order vào orderNote
+      setOrderNote(order.note || ""); // Set note from order to orderNote
     }
   }, [order]);
 
@@ -77,9 +78,10 @@ function EditOrder() {
   const handleSearch = (e) => setSearchTerm(e.target.value);
 
   const addToCart = (item, quantity = 1) => {
+    console.log("itemid", item.foodId); // Log foodId, not id
     setCartItems((prev) => ({
       ...prev,
-      [item.id]: getCurrentQuantity(item.id) + quantity,
+      [item.foodId]: getCurrentQuantity(item.foodId) + quantity, // Use foodId as the key
     }));
   };
 
@@ -108,15 +110,20 @@ function EditOrder() {
 
   // Submit updated order
   const handleUpdateOrder = () => {
+    const validStatuses = ["PENDING", "COOKED"]; // Các trạng thái hợp lệ
+
     const creates = Object.entries(cartItems)
       .filter(([foodId, quantity]) => {
-        return !order.orderItems.some(
-          (item) => item.foodId === parseInt(foodId, 10)
+        return (
+          !order.orderItems.some(
+            (item) => item.foodId === parseInt(foodId, 10)
+          ) && quantity > 0 // Chỉ thêm nếu quantity > 0
         );
       })
       .map(([foodId, quantity]) => ({
         foodId: parseInt(foodId, 10),
         quantity,
+        status: "PENDING", // Mặc định là PENDING khi thêm mới
       }));
 
     const updates = order.orderItems
@@ -124,6 +131,7 @@ function EditOrder() {
       .map((item) => ({
         foodId: item.foodId,
         quantity: cartItems[item.foodId],
+        status: validStatuses.includes(item.status) ? item.status : "PENDING",
       }));
 
     const updatedOrder = {
@@ -137,6 +145,16 @@ function EditOrder() {
     mutation.mutate({ id, updatedOrder });
   };
 
+  const updateItemStatus = (foodId, newStatus) => {
+    setCartItems((prev) => ({
+      ...prev,
+      [foodId]: {
+        ...prev[foodId],
+        status: newStatus,
+      },
+    }));
+  };
+
   const groupedMenuItems = menuData
     ?.filter((menu) => menu.status === "AVAILABLE")
     .map((menu) => ({
@@ -145,18 +163,6 @@ function EditOrder() {
         .filter((food) => food.status === "AVAILABLE")
         .sort((a, b) => a.id - b.id),
     }));
-
-  const filteredMenuItems =
-    groupedMenuItems
-      ?.flatMap((menu) =>
-        menu.foods.map((food) => ({
-          ...food,
-          menuType: menu.type,
-        }))
-      )
-      .filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      ) || [];
 
   if (isOrderLoading || isMenuLoading) return <p>Loading...</p>;
   if (orderError) return <p>Error fetching order: {orderError.message}</p>;
@@ -192,7 +198,7 @@ function EditOrder() {
               <h4 className="text-white">{menu.type}</h4>
               <Row>
                 {menu.foods.map((item) => (
-                  <Col key={item.id} sm={12} md={6}>
+                  <Col key={item.foodId} sm={12} md={6}>
                     <div className="menu-item bg-dark text-white rounded d-flex justify-content-between align-items-center p-3">
                       <div>
                         <span className="menu-item-name">{item.name}</span>
@@ -213,14 +219,14 @@ function EditOrder() {
                         <Button
                           variant="outline-danger"
                           size="sm"
-                          onClick={() => removeFromCart(item.id)}
-                          disabled={getCurrentQuantity(item.id) === 0}
+                          onClick={() => removeFromCart(item.foodId)}
+                          disabled={getCurrentQuantity(item.foodId) === 0}
                           className="me-2"
                         >
                           Remove
                         </Button>
                         <Badge bg="secondary" className="mx-2">
-                          x{getCurrentQuantity(item.id)}
+                          x{getCurrentQuantity(item.foodId)}
                         </Badge>
                       </div>
                     </div>
@@ -232,7 +238,6 @@ function EditOrder() {
         </Col>
         <Col md={4} className="text-white">
           <h2>Order Details # {order.id}</h2>
-
           <p>
             <strong>Payment Status:</strong> {order.paymentStatus}
           </p>
@@ -241,7 +246,6 @@ function EditOrder() {
               Tables: {order.tables.map((t) => t.number).join(", ")}{" "}
             </strong>
           </p>
-
           <p>
             <strong>Staff:</strong> {order.staff.name}
           </p>
@@ -255,6 +259,13 @@ function EditOrder() {
               <li key={item.foodId}>
                 <strong>{item.name}</strong> - {item.quantity} x ${item.price} =
                 ${item.total}
+                <Button
+                  variant="success"
+                  className="mt-4 w-100"
+                  onClick={handleUpdateOrder}
+                >
+                  Update Order
+                </Button>
               </li>
             ))}
           </ul>
@@ -263,7 +274,7 @@ function EditOrder() {
             <Form.Control
               as="textarea"
               rows={3}
-              value={orderNote} // Gán giá trị từ trạng thái orderNote
+              value={orderNote}
               onChange={(e) => setOrderNote(e.target.value)} // Cập nhật orderNote khi nhập
               placeholder="Add a note..."
             />
@@ -272,13 +283,13 @@ function EditOrder() {
             variant="success"
             className="mt-3"
             onClick={handleUpdateOrder}
-            disabled={mutation.isLoading}
           >
-            {mutation.isLoading ? "Updating..." : "Update Order"}
+            Update Order
           </Button>
         </Col>
       </Row>
-      <ToastContainer position="top-right" autoClose={3000} />
+
+      <ToastContainer />
     </Container>
   );
 }

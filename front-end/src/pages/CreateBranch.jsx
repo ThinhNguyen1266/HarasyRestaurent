@@ -44,7 +44,7 @@ const CreateBranch = () => {
     imageFile: null,
     phone: "",
     managerId: "",
-    status: "INACTIVE",
+    status: "",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
     tables: [{ number: "", capacity: "", status: "AVAILABLE" }],
     menus: [{ type: "" }],
@@ -69,6 +69,11 @@ const CreateBranch = () => {
   };
 
   const handleCreateBranch = (imageUrl) => {
+    // Validate working hours before submission
+    const validWorkingHours = formData.workingHours.filter(
+      (hour) => hour.dayOfWeek && hour.openingTime && hour.closingTime
+    );
+
     const payload = {
       name: formData.name,
       location: formData.location,
@@ -76,7 +81,7 @@ const CreateBranch = () => {
       phone: formData.phone,
       managerId: formData.managerId,
       status: formData.status,
-      workingHours: formData.workingHours.map((hour) => ({
+      workingHours: validWorkingHours.map((hour) => ({
         dayOfWeek: hour.dayOfWeek,
         openingTime:
           hour.openingTime.length === 5

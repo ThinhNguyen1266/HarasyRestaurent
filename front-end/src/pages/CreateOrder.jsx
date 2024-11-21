@@ -6,34 +6,31 @@ import {
   Form,
   Button,
   Badge,
-  ListGroup,
+  Card,
 } from "react-bootstrap";
-import { FaSearch, FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaSearch } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import useMenuApi from "../hooks/api/useMenuApi";
-
 import "../assets/styles/MenuOrder.css";
 import useAuth from "../hooks/useAuth";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast, ToastContainer } from "react-toastify";
 
 function CreateMenu() {
   const { user } = useAuth();
   const { getMenubyBranchID, createOrder, getCustomerProfileByPhone } =
     useMenuApi();
-  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [cartItems, setCartItems] = useState({});
   const [orderNote, setOrderNote] = useState("");
-  const [customerId, setCustomerId] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [email, setEmail] = useState(""); // State for email input
-  const [fullName, setFullName] = useState(""); // State for fullName input
+  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [customerId, setCustomerId] = useState("");
   const [isNewCustomer, setIsNewCustomer] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Receive the table IDs passed from the TableList page
   const tableIds = location.state?.tableIds || [];
 
   const {
@@ -47,6 +44,7 @@ function CreateMenu() {
       console.error(`Failed to fetch menus: ${error.message}`);
     },
   });
+
   const handleCustomerSearch = async () => {
     if (!customerPhone) {
       toast.error("Please enter a phone number to search.");
@@ -54,22 +52,18 @@ function CreateMenu() {
     }
 
     try {
-      // Fetch customer profile by phone
       const response = await getCustomerProfileByPhone(customerPhone);
-
       if (response && response.length > 0) {
-        const customer = response[0]; // Assuming the first result is the desired customer
+        const customer = response[0];
         setCustomerId(customer.customerId);
         setIsNewCustomer(false);
         toast.success(`Customer found: ${customer.fullName}`);
       } else {
         toast.warning("No customer found with the given phone number.");
         setIsNewCustomer(true);
-        console.log("isnewcus: ", isNewCustomer);
       }
     } catch (error) {
       toast.error("Error fetching customer profile.");
-
       console.error(error);
     }
   };
@@ -79,9 +73,10 @@ function CreateMenu() {
   };
 
   const addToCart = (item) => {
+    const foodId = item.foodId; // Use foodId here instead of item.id
     setCartItems((prev) => ({
       ...prev,
-      [item.id]: (prev[item.id] || 0) + 1,
+      [foodId]: (prev[foodId] || 0) + 1,
     }));
   };
 
@@ -97,18 +92,13 @@ function CreateMenu() {
     });
   };
 
-  const handleNoteChange = (e) => {
-    setOrderNote(e.target.value);
-  };
-
-  // Filter and group menu items by type and sort foods by ID
   const groupedMenuItems = menuData
-    ?.filter((menu) => menu.status === "AVAILABLE") // Filter available menus
+    ?.filter((menu) => menu.status === "AVAILABLE")
     .map((menu) => ({
       ...menu,
       foods: menu.menuItems
-        .filter((food) => food.status === "AVAILABLE") // Filter available foods
-        .sort((a, b) => a.id - b.id), // Sort foods by id
+        .filter((food) => food.status === "AVAILABLE")
+        .sort((a, b) => a.foodId - b.foodId), // Use foodId here if necessary
     }));
 
   const filteredMenuItems =
@@ -116,33 +106,12 @@ function CreateMenu() {
       ?.flatMap((menu) =>
         menu.menuItems.map((food) => ({
           ...food,
-          menuType: menu.type, // Add menu type to food
+          menuType: menu.type,
         }))
       )
       .filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      ) || []; // Ensure it returns an empty array if no data
-
-  const totalItems = Object.values(cartItems).reduce(
-    (sum, quantity) => sum + quantity,
-    0
-  );
-
-  const goToSelectTable = () => {
-    // Pass the order details and table IDs to the next step
-    navigate("/selecttable", { state: { tableIds, cartItems, orderNote } });
-  };
-
-  //call api create order
-  const saveOrderMutate = useMutation({
-    mutationFn: createOrder,
-    onSuccess: () => {
-      toast.success("Order created successfully!");
-    },
-    onError: (error) => {
-      toast.error(`Failed to create order: ${error.message}`);
-    },
-  });
+      ) || [];
 
   const handleConfirmOrder = () => {
     if (!Object.keys(cartItems).length) {
@@ -166,13 +135,13 @@ function CreateMenu() {
         foodId: parseInt(foodId, 10),
         quantity,
       })),
-      updates: [], // Add any updates logic if needed
+      updates: [],
     };
 
     const orderData = {
       branchId: user.branchId,
       tableIds: tableIds,
-      staffId: user.id, // Assuming staffId is available from `user`
+      staffId: user.id,
       customer: customerData,
       orderItems,
       note: orderNote,
@@ -181,6 +150,16 @@ function CreateMenu() {
     saveOrderMutate.mutate(orderData);
     console.log("orderData: ", JSON.stringify(orderData, null, 2));
   };
+
+  const saveOrderMutate = useMutation({
+    mutationFn: createOrder,
+    onSuccess: () => {
+      toast.success("Order created successfully!");
+    },
+    onError: (error) => {
+      toast.error(`Failed to create order: ${error.message}`);
+    },
+  });
 
   if (isLoading) return <p className="text-white">Loading...</p>;
   if (error) return <p className="text-white">Error: {error.message}</p>;
@@ -213,10 +192,9 @@ function CreateMenu() {
           {groupedMenuItems.map((menu) => (
             <div key={menu.id} className="mb-4">
               <h4 className="text-white">{menu.type}</h4>
-              {/* Menu Type as h3 */}
               <Row>
                 {menu.foods.map((item) => (
-                  <Col key={item.id} sm={12} md={6}>
+                  <Col key={item.foodId} sm={12} md={6}>
                     <div className="menu-item bg-dark text-white rounded d-flex justify-content-between align-items-center p-3">
                       <div>
                         <span className="menu-item-name">{item.name}</span>
@@ -234,17 +212,17 @@ function CreateMenu() {
                         >
                           Add
                         </Button>
-                        {cartItems[item.id] && (
+                        {cartItems[item.foodId] && (
                           <>
                             <Button
                               variant="outline-danger"
                               size="sm"
-                              onClick={() => removeFromCart(item.id)}
+                              onClick={() => removeFromCart(item.foodId)}
                             >
                               Remove
                             </Button>
                             <Badge bg="secondary" className="ms-2">
-                              x{cartItems[item.id]}
+                              x{cartItems[item.foodId]}
                             </Badge>
                           </>
                         )}
@@ -260,15 +238,12 @@ function CreateMenu() {
         <Col md={4}>
           <div className="bg-dark text-white p-4 rounded">
             <h4 className="mb-3">Confirm Order</h4>
-            <div className="mb-3">
-              <label className="form-label text-white">Customer Phone: </label>
-              <input
+            <Form.Group className="mb-3">
+              <Form.Label>Customer Phone</Form.Label>
+              <Form.Control
                 type="text"
-                name="customerPhone"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
-                className="form-control"
-                required
               />
               <Button
                 variant="outline-primary"
@@ -277,78 +252,67 @@ function CreateMenu() {
               >
                 <FaSearch /> Search
               </Button>
-            </div>
-            {isNewCustomer && (
-              <div className="mb-3">
-                <label className="form-label text-white">Email: </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="form-control"
-                  required
-                />
-                <label className="form-label text-white">Full Name: </label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="form-control"
-                  required
-                />
-              </div>
-            )}
-            {!isNewCustomer && (
-              <p className="text-white">Customer ID: {customerId}</p>
-            )}
-            <p className="text-white">Selected Tables: {tableIds.join(", ")}</p>
-            {totalItems > 0 ? (
-              <ListGroup variant="flush">
-                {Object.entries(cartItems).map(([itemId, quantity]) => {
-                  const item = filteredMenuItems.find(
-                    (item) => item.id === parseInt(itemId)
-                  );
-                  return (
-                    <ListGroup.Item
-                      key={itemId}
-                      className="d-flex justify-content-between align-items-center bg-dark text-white border-0 py-2 px-3 mb-2 rounded shadow-sm"
-                      style={{ border: "1px solid #444" }}
-                    >
-                      <div>
-                        <FaCheckCircle className="text-success me-2" />
-                        <span>{item.name}</span> <br />
-                        <small className="text-white">
-                          Price: {item.price}
-                        </small>
-                      </div>
-                      <Badge bg="info" pill>
-                        x{quantity}
-                      </Badge>
-                    </ListGroup.Item>
-                  );
-                })}
+            </Form.Group>
+            <strong>CustomerID: {customerId}</strong>
 
-                <Form.Group className="mt-3">
-                  <Form.Label className="text-white">Order Note</Form.Label>
+            {isNewCustomer && (
+              <>
+                <Form.Group className="mb-3">
+                  <Form.Label>Email</Form.Label>
                   <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={orderNote}
-                    onChange={handleNoteChange}
-                    placeholder="Add any special instructions for your order"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </Form.Group>
-                <Button
-                  variant="success"
-                  className="mt-3 w-100"
-                  onClick={handleConfirmOrder}
-                >
-                  Confirm
-                </Button>
-              </ListGroup>
-            ) : (
-              <p className="text-white">No items selected</p>
+                <Form.Group className="mb-3">
+                  <Form.Label>Full Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
+                </Form.Group>
+              </>
             )}
+            {Object.entries(cartItems).length > 0 ? (
+              Object.entries(cartItems).map(([foodId, quantity]) => {
+                const foodItem = filteredMenuItems.find(
+                  (item) => item.foodId === parseInt(foodId)
+                );
+                return foodItem ? (
+                  <Card key={foodId} className="mb-3 text-white">
+                    <Card.Body className="d-flex justify-content-between align-items-center">
+                      <div className="d-flex">
+                        <Card.Title className="mb-0">
+                          {foodItem.name}
+                        </Card.Title>
+                        <span className="ms-2">(x{quantity})</span>
+                      </div>
+                      <div>
+                        <FaCheckCircle className="text-success fs-3" />
+                      </div>
+                    </Card.Body>
+                  </Card>
+                ) : null;
+              })
+            ) : (
+              <p>Your cart is empty.</p>
+            )}
+
+            <Form.Group className="mb-3">
+              <Form.Label>Order Note</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={orderNote}
+                onChange={(e) => setOrderNote(e.target.value)}
+              />
+            </Form.Group>
+
+            <Button variant="success" onClick={handleConfirmOrder}>
+              Confirm Order
+            </Button>
           </div>
         </Col>
       </Row>

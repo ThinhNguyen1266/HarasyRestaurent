@@ -122,24 +122,21 @@ const useMenuApi = () => {
 
   const updateOrder = async (id, updatedOrder) => {
     try {
-      // Ensure proper payload format based on API requirements
       const payload = {
         orderItems: {
           creates: (updatedOrder?.orderItems?.creates || []).filter(
             (item) => item.foodId && item.quantity > 0
-          ), // Ensure valid foodId and quantity for new items
+          ),
           updates: (updatedOrder?.orderItems?.updates || []).filter(
-            (item) => item.foodId && item.quantity > 0 // Ensure valid foodId and quantity for updates
+            (item) => item.foodId && item.quantity > 0 && item.status
           ),
         },
-        note: updatedOrder?.note || "", // If no new note, preserve existing note
+        note: updatedOrder?.note || "",
       };
 
-      console.log("Payload for updateOrder:", payload);
+      console.log("Payload for updateOrder:", JSON.stringify(payload, null, 2));
 
-      // Call the API with the updated payload
       const response = await axiosPrivate.put(`/order/${id}`, payload);
-
       console.log("Order updated successfully:", response);
       return response;
     } catch (error) {

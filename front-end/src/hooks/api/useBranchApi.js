@@ -68,20 +68,25 @@ const useBranchApi = () => {
 
   const createBranch = async (newBranch) => {
     try {
+      // Preparing the workingHours data (filtered)
+      const filteredWorkingHours = newBranch.workingHours.filter(
+        (hour) => hour.dayOfWeek && hour.openingTime && hour.closingTime
+      );
+
       const payload = {
         branchInfo: {
           name: newBranch.name,
           location: newBranch.location,
           image: newBranch.image,
           phone: newBranch.phone,
-
           managerId: newBranch.managerId,
           status: newBranch.status,
-          workingHours: newBranch.workingHours.filter(
-            (hour) => hour.dayOfWeek && hour.openingTime && hour.closingTime
-          ),
         },
-        workingHours: {},
+        // Including workingHours only if it's not empty
+        workingHours:
+          filteredWorkingHours.length > 0
+            ? { creates: filteredWorkingHours }
+            : undefined,
         tables: {
           creates: newBranch.tables.filter(
             (table) => table.number && table.capacity
@@ -91,11 +96,14 @@ const useBranchApi = () => {
           creates: newBranch.menus.filter((menu) => menu.type),
         },
       };
+
+      // Remove any keys with null or empty values
       const filteredPayload = Object.fromEntries(
         Object.entries(payload).filter(([_, v]) => v != null && v.length !== 0)
       );
 
-      const branch = (await axiosPrivate.post("/branch", filteredPayload)).data;
+      const branch = await axiosPrivate.post("/branch", filteredPayload);
+
       return branch;
     } catch (error) {
       console.error("Server error details:", error.response?.data);
@@ -105,12 +113,7 @@ const useBranchApi = () => {
 
   const updateBranch = async (updatedBranch) => {
     try {
-      const workingHours = Array.isArray(updatedBranch.workingHours)
-        ? updatedBranch.workingHours.filter(
-            (hour) => hour.dayOfWeek && hour.openingTime && hour.closingTime
-          )
-        : [];
-
+      // Tạo payload
       const payload = {
         branchInfo: {
           id: updatedBranch.branchInfo.id,
@@ -121,7 +124,10 @@ const useBranchApi = () => {
           managerId: updatedBranch.branchInfo.managerId,
           status: updatedBranch.branchInfo.status,
         },
-        workingHours: {}, // Assuming this is for another purpose
+        workingHours: {
+          creates: updatedBranch.workingHours.creates || [],
+          updates: updatedBranch.workingHours.updates || [],
+        },
         tables: {
           creates: updatedBranch.tables.creates || [],
           updates: updatedBranch.tables.updates || [],
@@ -132,12 +138,14 @@ const useBranchApi = () => {
         },
       };
 
-      // Sending the update request to the backend
+      // Gửi request update đến backend
       const branch = await axiosPrivate.put(
-        `/branch/${updatedBranch.branchInfo.id}`,
+        `/branch/${updatedBranch.branchInfo.id}`, // Ensure this endpoint is correct
         payload
-      ).data;
-      console.log("Branch data sent:", JSON.stringify(payload, null, 2));
+      );
+
+      console.log("Data truyen den API:", JSON.stringify(payload, null, 2));
+      console.log("Data API gui :", JSON.stringify(branch, null, 2));
       return branch;
     } catch (error) {
       console.error("Server error details:", error.response?.data);
@@ -162,6 +170,22 @@ const useBranchApi = () => {
           includeAll: includeAll,
         },
       });
+      console.log("response", response);
+      return response;
+    } catch (error) {
+      console.error(`Failed to fetch menus for branch with ID ${id}:`, error);
+      throw error;
+    }
+  };
+
+  const getOrderbyBranchID = async (id) => {
+    try {
+      const params = {
+        size: "6",
+      };
+      const response = await axiosPrivate.get(`/branch/${id}/orders`, {
+        params,
+      });
       return response;
     } catch (error) {
       console.error(`Failed to fetch menus for branch with ID ${id}:`, error);
@@ -180,6 +204,7 @@ const useBranchApi = () => {
     getBranchesHome,
     getBranchMenu,
     getMenubyBranchID,
+    getOrderbyBranchID,
   };
 };
 
