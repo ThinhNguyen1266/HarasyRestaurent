@@ -34,6 +34,7 @@ import WorkforceList from "./pages/WorkforceList";
 
 import CreateOrder from "./pages/CreateOrder";
 import EditOrder from "./pages/EditOrder";
+import ReservationsPage from "./pages/ReservationPage";
 import AddFoodInMenu from "./pages/AddFoodInMenu";
 import AllOrder from "./pages/AllOrder";
 function App() {
@@ -59,7 +60,10 @@ function App() {
         <Route path="/reservationdetails" element={<ConfirmReservation />} />
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
+        <Route path="/reservation" element={<ReservationsPage />} />
+
         <Route path="/profile/:id" element={<Profile />} />
+
         <Route element={<StaffLayout />}>
           <Route
             element={

@@ -20,6 +20,22 @@ const useTableApi = () => {
     }
   };
 
+  const getAvailableTablelist = async () => {
+    try {      
+      const tableData = (await axiosPrivate.post(`/reserve/availableTable`,{
+        "branchId": 1,
+        "date": "2024-12-30",
+        "time": "08:00",
+        "amountGuest": 4
+    })).data;
+      console.log("table data:", tableData); 
+      return tableData;
+    } catch (error) {
+      console.error("Error fetching table data:", error);
+      throw error;
+    }
+  };
+
   const updateTableStatus = async ({ tableId, status }) => {
     try {
       const response = await axiosPrivate.put(`/table/${tableId}`, {
@@ -32,7 +48,7 @@ const useTableApi = () => {
     }
   };
 
-  return { getTablelist, updateTableStatus };
+  return { getTablelist, updateTableStatus ,getAvailableTablelist};
 };
 
 export default useTableApi;
