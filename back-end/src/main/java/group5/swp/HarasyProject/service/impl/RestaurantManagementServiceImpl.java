@@ -192,6 +192,12 @@ public class RestaurantManagementServiceImpl implements RestaurantManagementServ
         return menuService.deleteMenu(menuId);
     }
 
+    @Override
+    public ApiResponse<?> deleteWorkingHour(int hourId) {
+        branchWorkingHourService.deleteWorkingHour(hourId);
+        return ApiResponse.builder().build();
+    }
+
     private void doUpdateIn(BranchRequest request, BranchEntity branch) {
         updateInBranchEntity(request, branch);
         addInBranchEntity(request, branch);
