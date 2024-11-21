@@ -32,12 +32,12 @@ const ReservationModal = ({ reservation, onClose }) => {
   if (!reservation) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="resmodal-overlay" onClick={onClose}>
       <div
-        className="modal-dialog modal-lg modal-content"
+        className="resmodal-dialog modal-lg modal-content"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="modal-title text-center">Reservation</h2>
+        <h2 className="resmodal-title text-center">Reservation</h2>
 
         <div className="modal-body">
           <div className="reservation-detail">
@@ -94,7 +94,7 @@ const ReservationModal = ({ reservation, onClose }) => {
                 <strong>Orders</strong>
               </div>
               <div className="col-8">
-                <ul className="order-list">
+                <ul className="resorder-list">
                   {reservation.orders.map((order, index) => (
                     <li key={index}>{order}</li>
                   ))}

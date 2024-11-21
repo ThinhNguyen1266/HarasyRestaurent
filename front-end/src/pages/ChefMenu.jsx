@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import useAuth from "../hooks/useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useFoodAPi from "../hooks/api/useFoodAPi";
+import { Button } from "react-bootstrap";
 
 const ChefMenu = () => {
   const { user } = useAuth();
@@ -74,7 +75,6 @@ const ChefMenu = () => {
 
   return (
     <div className="chef-menu-main">
-      <Sidebar />
       <ToastContainer />
       <div className="chef-menu-content">
         <div className="chef-menu-header text-center">
@@ -122,31 +122,36 @@ const ChefMenu = () => {
                             className="chef-menu-item-image"
                           />
                           <div className="chef-menu-item-details">
-                            <h5>{item.name}</h5>
-                            <p className="chef-menu-item-desc">
-                              {item.description}
-                            </p>
-                            <p className="chef-menu-item-price">{item.price}</p>
+                            <h2>{item.name}</h2>
                           </div>
-                          <button
+                          <h5 className="chef-menu-item-price">
+                            Price: {item.price}
+                          </h5>
+                          <Button
                             onClick={() =>
                               handleFoodSwitch(item.foodId, item.status)
                             }
-                            className={`chef-menu-status-btn ${
-                              item.status === "AVAILABLE"
-                                ? "btn-success"
-                                : "btn-danger"
-                            }`}
+                            variant={
+                              item.status === "AVAILABLE" ? "success" : "danger"
+                            }
+                            className="d-flex align-items-center"
+                            size="lg"
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: "1.1rem",
+                              borderRadius: "8px",
+                              padding: "10px 20px",
+                            }}
                           >
                             {item.status === "AVAILABLE" ? (
-                              <FaCheckCircle />
+                              <FaCheckCircle style={{ marginRight: "8px" }} />
                             ) : (
-                              <FaTimesCircle />
+                              <FaTimesCircle style={{ marginRight: "8px" }} />
                             )}
                             {item.status === "AVAILABLE"
                               ? "AVAILABLE"
                               : "UNAVAILABLE"}
-                          </button>
+                          </Button>
                         </div>
                       ))}
                   </div>

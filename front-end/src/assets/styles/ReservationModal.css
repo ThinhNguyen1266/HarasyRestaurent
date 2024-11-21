@@ -1,5 +1,5 @@
 /* Modal Overlay */
-.modal-overlay {
+.resmodal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,7 +13,7 @@
   }
   
   /* Modal Content */
-  .modal-dialog {
+  .resmodal-dialog {
     background-color: #1c1c1c;
     color: white;
     border-radius: 8px;
@@ -22,12 +22,8 @@
     padding: 20px; /* Added padding to the entire modal content */
   }
   
-  .modal-header {
-    border-bottom: none;
-    padding-bottom: 10px;
-  }
   
-  .modal-title {
+  .resmodal-title {
     text-align: center;
     font-size: 24px;
     margin: 10px 0;
@@ -46,7 +42,7 @@
     border-bottom: none;
   }
   
-  .order-list {
+  .resorder-list {
     padding-left: 0;
     columns: 2;
     font-size: 1rem;

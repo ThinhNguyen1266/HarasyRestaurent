@@ -10,7 +10,7 @@ const CustomerOrder = () => {
   const { getCustomerOrders } = useOrderApi();
 
   const [page, setPage] = useState(0); // Current page
-  const [size] = useState(); // Page size
+  const [size] = useState(6); // Page size
   const [selectedOrder, setSelectedOrder] = useState(null); // For Modal
   const { data, isLoading } = useQuery({
     queryKey: ["orderdata", page],
@@ -41,21 +41,25 @@ const CustomerOrder = () => {
       <h1 className="section-title">Order History</h1>
 
       {/* Order List */}
-      <div className="order-list">
+      <div className="order-list-customer">
         {isLoading ? (
           <p className="loading-text">Loading orders...</p>
         ) : orders.length === 0 ? (
           <p className="no-orders-text">No orders found.</p>
         ) : (
-          <div className="order-grid">
+          <div className="order-grid-customer">
             {orders.map((order) => (
-              <div key={order.id} className="order-card">
-                <div className="card-body">
-                  <h5 className="order-title">Order #{order.id}</h5>
-                  <p className="order-info">Branch: {order.branch.name}</p>
-                  <p className="order-info">Total: ${order.total}</p>
-                  <p className="order-info">Payment: {order.paymentStatus}</p>
-                  <p className="order-info">
+              <div key={order.id} className="order-card-customer">
+                <div className="card-body-customer">
+                  <h5 className="order-title-customer">Order #{order.id}</h5>
+                  <p className="order-info-custome">
+                    Branch: {order.branch.name}
+                  </p>
+                  <p className="order-info-custome">Total: ${order.total}</p>
+                  <p className="order-info-custome">
+                    Payment: {order.paymentStatus}
+                  </p>
+                  <p className="order-info-custome">
                     Tables:{" "}
                     {order.tables
                       .map((table) => `Table ${table.number}`)
@@ -98,7 +102,7 @@ const CustomerOrder = () => {
       {/* Modal for Order Items */}
       {selectedOrder && (
         <div className="modal-overlay">
-          <div className="modal-dialog">
+          <div className="cusmodal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">
