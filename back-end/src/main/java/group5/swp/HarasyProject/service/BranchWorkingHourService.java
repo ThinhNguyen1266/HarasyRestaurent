@@ -13,4 +13,5 @@ public interface BranchWorkingHourService {
     BranchWorkingHourEntity mapUpdateWorkingHour(BranchWorkingHourRequest updateHour,
                                                  BranchWorkingHourEntity workingHour);
     List<BranchWorkingHourEntity> mapWorkingHours(List<BranchWorkingHourRequest> workingHours);
+    void deleteWorkingHour(int hourId);
 }

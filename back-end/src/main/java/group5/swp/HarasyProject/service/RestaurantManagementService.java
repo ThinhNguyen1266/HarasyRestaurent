@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.List;
 
 @Service
@@ -44,4 +43,6 @@ public interface RestaurantManagementService {
     ApiResponse<?> deleteBranch(Integer branchId);
     ApiResponse<?> deleteTable(Integer tableId);
     ApiResponse<?> deleteMenu(Integer menuId);
+    ApiResponse<?> deleteWorkingHour(int hourId);
+
 }
