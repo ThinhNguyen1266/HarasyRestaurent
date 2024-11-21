@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,"/staff/{id}").hasAnyRole("ADMIN","BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.GET,  "/sorted").hasRole("BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/branch","/regis/staff").hasAnyRole("ADMIN","BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.PUT, "/branch/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/branch/{id}").hasAnyRole("ADMIN","BRANCH_MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/branch/{id}","/table/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/branch/{id}/tables").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/table/{id}").hasAnyRole("BRANCH_MANAGER","RECEPTIONIST","WAITER")

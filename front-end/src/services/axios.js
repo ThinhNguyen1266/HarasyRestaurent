@@ -10,7 +10,7 @@ const axiosPublic = axios.create({
 });
 
 export const axiosPrivate = axios.create({
-  timeout: 12000,   
+  timeout: 12000,
   header: {
     "Content-Type": "application/json",
   },
