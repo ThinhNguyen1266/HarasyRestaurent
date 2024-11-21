@@ -44,6 +44,9 @@ function NavigationBar() {
                     <Link to="/menu" className="nav-link">
                       MENU
                     </Link>
+                    <Link to="/customer/order" className="nav-link">
+                      ORDER HISTORY
+                    </Link>
                     <Link to="/contacts" className="nav-link">
                       CONTACTS
                     </Link>
