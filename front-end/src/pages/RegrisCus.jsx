@@ -21,6 +21,11 @@ const RegrisCus = () => {
     return emailRegex.test(email);
   };
 
+  const validateFullName = (fullName) => {
+    const fullNameRegex = /^[a-zA-Z\s]+$/;
+    return fullName.trim() !== "" && fullNameRegex.test(fullName);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -28,10 +33,17 @@ const RegrisCus = () => {
       [name]: value,
     }));
 
-    if (name === "email" && value) {
+    if (name === "email") {
       setErrors((prev) => ({
         ...prev,
         email: validateEmail(value) ? "" : "Please enter a valid email address",
+      }));
+    } else if (name === "fullName") {
+      setErrors((prev) => ({
+        ...prev,
+        fullName: validateFullName(value)
+          ? ""
+          : "Full name must contain only letters and spaces",
       }));
     }
   };
@@ -39,19 +51,35 @@ const RegrisCus = () => {
   const saveBranchMutate = useMutation({
     mutationFn: quickRegis,
     onSuccess: () => {
-      toast.success("Custome registed successfully!");
+      toast.success("Customer registered successfully!");
+      setFormData({ fullName: "", email: "" }); 
     },
     onError: (error) => {
-      toast.error(`Failed to regist customer: ${error.message}`);
+      toast.error(`Failed to register customer: ${error.message}`);
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setIsLoading(true); // Start loading indicator
+    const validationErrors = {};
+    if (!validateEmail(formData.email)) {
+      validationErrors.email = "Please enter a valid email address";
+    }
+    if (!validateFullName(formData.fullName)) {
+      validationErrors.fullName =
+        "Full name must contain only letters and spaces";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setIsLoading(true); 
     RegisNewCus();
   };
+
   const RegisNewCus = async () => {
     const payload = {
       email: formData.email,
@@ -59,18 +87,18 @@ const RegrisCus = () => {
     };
     console.log("Payload sent to API regis:", JSON.stringify(payload, null, 2));
     try {
-      // Perform the mutation
-      await saveBranchMutate.mutateAsync(payload); // Using mutateAsync for async/await
-      setIsLoading(false); // Stop loading on success
+      
+      await saveBranchMutate.mutateAsync(payload); 
+      setIsLoading(false); 
     } catch (error) {
-      setIsLoading(false); // Stop loading on error
+      setIsLoading(false); 
     }
   };
 
   return (
     <div className="background-quickregris-container">
       <div className="blur-overlay">
-        <h1 className="text-white text-center mb-4">Registration </h1>
+        <h1 className="text-white text-center mb-4">Registration</h1>
         <Form onSubmit={handleSubmit} noValidate>
           <Form.Group controlId="email" className="mb-3">
             <Form.Label className="text-white p-1">Email</Form.Label>
@@ -82,14 +110,13 @@ const RegrisCus = () => {
               onChange={handleChange}
               isInvalid={!!errors.email}
             />
-
             <Form.Control.Feedback type="invalid">
               {errors.email}
             </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group controlId="fullName" className="mb-3">
-            <Form.Label className="text-white p-1">FullName</Form.Label>
+            <Form.Label className="text-white p-1">Full Name</Form.Label>
             <Form.Control
               className="quickregris-input"
               type="text"
@@ -98,7 +125,6 @@ const RegrisCus = () => {
               onChange={handleChange}
               isInvalid={!!errors.fullName}
             />
-
             <Form.Control.Feedback type="invalid">
               {errors.fullName}
             </Form.Control.Feedback>
