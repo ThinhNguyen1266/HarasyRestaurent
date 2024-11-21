@@ -1,12 +1,5 @@
 /* ChefMenu.css */
 
-.chef-menu-main {
-  display: flex;
-  height: 100vh; /* Full viewport height */
-  background-color: #1a1a1a;
-  color: white;
-}
-
 .chef-menu-content {
   margin-left: 250px;
   padding: 20px;

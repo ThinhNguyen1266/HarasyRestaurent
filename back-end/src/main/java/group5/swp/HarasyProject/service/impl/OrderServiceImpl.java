@@ -92,4 +92,24 @@ public class OrderServiceImpl implements OrderService {
     public List<Object[]> getTotalRevenueForAllYears() {
         return orderRepository.calculateTotalRevenueForAllYears();
     }
+
+    @Override
+    public Long getRevenueAll() {
+        return orderRepository.calculateRevenueAll();
+    }
+
+    @Override
+    public Integer getTotalOrders() {
+        return orderRepository.getTotalOrders();
+    }
+
+    @Override
+    public List<Object[]> getBranchesTotalRevenue() {
+        return orderRepository.getBranchesTotalRevenue();
+    }
+
+    @Override
+    public List<Object[]> getBranchesTotalRevenueInMonth() {
+        return orderRepository.getBranchesTotalRevenueInMonth();
+    }
 }

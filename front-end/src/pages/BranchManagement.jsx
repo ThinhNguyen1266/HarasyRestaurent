@@ -7,8 +7,7 @@ import useBranchApi from "../hooks/api/useBranchApi";
 
 const BranchManagement = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { getBranchesStaff, deleteBranch } = useBranchApi();
+  const { getBranchesStaff } = useBranchApi();
 
   const { data: branches = [], isLoading } = useQuery({
     queryKey: ["branches"],
@@ -19,21 +18,6 @@ const BranchManagement = () => {
     },
   });
   console.log(branches);
-  const deleteBranchMutate = useMutation({
-    mutationFn: deleteBranch,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["branches"]);
-    },
-    onError: (error) => {
-      toast.error(`Failed to delete branch: ${error.message}`);
-    },
-  });
-
-  const handleDelete = (branchId) => {
-    if (window.confirm("Are you sure you want to delete this branch?")) {
-      deleteBranchMutate.mutate(branchId);
-    }
-  };
 
   const handleAddBranch = () => {
     navigate("/branch/create");
@@ -59,7 +43,10 @@ const BranchManagement = () => {
         <div className="row g-4">
           {branches?.map((branch) => (
             <div key={branch.id} className="col-md-4">
-              <div className="card h-100">
+              <div
+                className="card h-100"
+                onClick={() => navigate(`/branch/${branch.branchInfo.id}`)}
+              >
                 <img
                   src={branch.branchInfo.image}
                   className="card-img-top"
@@ -73,29 +60,19 @@ const BranchManagement = () => {
                     <br />
                     <strong>Phone:</strong> {branch.branchInfo.phone}
                     <br />
-                    <strong>Manager:</strong> {branch.branchInfo.manager}
+                    <strong>Manager:</strong> {branch.branchInfo.managerName}
                   </p>
                   <span
                     className={`badge ${
-                      branch.status === "active" ? "bg-success" : "bg-danger"
+                      branch.branchInfo.status === "ACTIVE"
+                        ? "bg-success"
+                        : "bg-danger"
                     }`}
                   >
-                    {branch.branchInfo.status}
+                    {branch.branchInfo.status === "ACTIVE"
+                      ? "Active"
+                      : "Inactive"}
                   </span>
-                </div>
-                <div className="card-footer d-flex justify-content-end">
-                  <button
-                    onClick={() => navigate(`/branch/${branch.branchInfo.id}`)}
-                    className="btn btn-warning btn-sm"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(branch.branchInfo.id)}
-                    className="btn btn-danger btn-sm"
-                  >
-                    <FaTrash />
-                  </button>
                 </div>
               </div>
             </div>

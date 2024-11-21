@@ -31,7 +31,7 @@ public class SecurityConfig {
             ,"/users", "/regis/user", "/uploadImage", "/profile/{id}"
             , "/reservations", "/search", "/reservation/{id}"
             ,"/customer/branches","/foods","/staff","/reserve/availableTime",
-            "/account/forgotPassword/validateOtp","/account/{id}/forgotPassword"
+            "/account/forgotPassword/validateOtp","/account/{id}/forgotPassword","/resend/otp"
     };
     String[] GET_PUBLIC_ENDPOINT ={
                 "/branch/{id}","/branch/{id}/tables","/branch/{id}/menus",
@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,"/table/{id}").hasAnyRole("BRANCH_MANAGER","RECEPTIONIST","WAITER")
                         .requestMatchers(HttpMethod.POST, "/quickregis/user").hasRole("WAITER")
                         .requestMatchers(HttpMethod.POST,"/branch/{id}/menus","/food").hasRole("BRANCH_MANAGER")
-                        .requestMatchers(HttpMethod.PUT,"/menu/{id}","/food/{id}").hasRole("BRANCH_MANAGER")
+                        .requestMatchers(HttpMethod.PUT,"/menu/{id}","/food/{id}").hasAnyRole("BRANCH_MANAGER", "CHEF")
                         .requestMatchers(HttpMethod.DELETE,"/menu/{id}","/table/{id}","/food/{id}").hasRole("BRANCH_MANAGER")
                         .anyRequest().authenticated()
         );

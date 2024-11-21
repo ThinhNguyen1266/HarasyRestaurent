@@ -105,13 +105,13 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
 
     @Override
     public ApiResponse<OrderResponse> createOrder(OrderRequest orderRequest) {
-        OrderEntity order = buildOrderWithType(orderRequest, ReservationType.GENERAL);
+        OrderEntity order = buildOrderWithType(orderRequest, ReservationType.GENERAL,null);
         return ApiResponse.<OrderResponse>builder()
                 .data(toOrderResponse(order.getId()))
                 .build();
     }
 
-    private OrderEntity buildGeneralOrder(OrderRequest orderRequest) {
+    private OrderEntity buildGeneralOrder(OrderRequest orderRequest, CustomerAccountEntity customerAccount) {
         BranchEntity branch = branchService.getBranchEntity(orderRequest.getBranchId());
         List<Integer> tableIds = orderRequest.getTableIds()
                 .stream().filter(branch::isTableInBranch)
@@ -121,7 +121,9 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .stream().map(TableEntity::order)
                 .toList();
         StaffAccountEntity staff = accountService.getStaffAccount(orderRequest.getStaffId());
-        CustomerAccountEntity customer = getCustomerAccount(orderRequest.getCustomer());
+        CustomerAccountEntity customer = customerAccount!=null
+                ? customerAccount
+                : getCustomerAccount(orderRequest.getCustomer());
         OrderEntity order = OrderEntity.builder()
                 .staff(staff)
                 .tables(tables)
@@ -300,7 +302,7 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
             throw new AppException(ErrorCode.NOT_ENOUGH_TABLE_FOR_RESERVE);
         ReservationTypeEntity type = reservationTypeService
                 .getReservationTypeById(request.getTypeId());
-        OrderEntity order = buildOrderWithType(request.getOrder(), type.getName());
+        OrderEntity order = buildOrderWithType(request.getOrder(), type.getName(),customer);
         ReservationEntity reservation = ReservationEntity.builder()
                 .amountGuest(request.getAmountGuest())
                 .branch(branch)
@@ -358,9 +360,9 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
                 .build();
     }
 
-    private OrderEntity buildOrderWithType(OrderRequest orderRequest, ReservationType type) {
+    private OrderEntity buildOrderWithType(OrderRequest orderRequest, ReservationType type,CustomerAccountEntity customer) {
         return switch (type) {
-            case GENERAL -> buildGeneralOrder(orderRequest);
+            case GENERAL -> buildGeneralOrder(orderRequest,customer);
             case WEDDING -> buildWeddingOrder(orderRequest);
             default -> null;
         };
@@ -462,5 +464,25 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     @Override
     public List<Object[]> getTotalRevenueForAllYears() {
         return orderService.getTotalRevenueForAllYears();
+    }
+
+    @Override
+    public Long getRevenueAll() {
+        return orderService.getRevenueAll();
+    }
+
+    @Override
+    public Integer getTotalOrders() {
+        return orderService.getTotalOrders();
+    }
+
+    @Override
+    public List<Object[]> getBranchesTotalRevenue() {
+        return orderService.getBranchesTotalRevenue();
+    }
+
+    @Override
+    public List<Object[]> getBranchesTotalRevenueInMonth() {
+        return orderService.getBranchesTotalRevenueInMonth();
     }
 }

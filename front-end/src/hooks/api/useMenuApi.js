@@ -9,7 +9,7 @@ const useMenuApi = () => {
   const getMenuByID = async (menuId) => {
     try {
       const response = await axios.get(`/menu/${menuId}`);
-
+      console.log("response", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching menu:", error);
@@ -21,7 +21,7 @@ const useMenuApi = () => {
     const response = await axiosPrivate.post(`/menu/${menuId}/foods`, {
       foodIds: foodIds,
     });
-    return response.data;
+    return response;
   };
 
   const addReservation = async (reservationData) => {
@@ -117,12 +117,32 @@ const useMenuApi = () => {
       const branchId = user?.branchId;
       if (!branchId) throw new Error("Branch ID not found");
       const response = await axiosPrivate.get(`/branch/${branchId}/menus`);
+      console.log("ADd api", response);
       return response;
     } catch (error) {
       console.error(`Failed to fetch menus for branch with ID :`, error);
       throw error;
     }
   };
+
+  const deleteFoodFromMenu = async (menuId, foodIds) => {
+    try {
+      const response = await axiosPrivate.delete(`/menu/${menuId}/foods`, {
+        data: {
+          foodIds: foodIds,
+        },
+      });
+      console.log("Data", foodIds);
+      return response;
+    } catch (error) {
+      throw new Error(
+        `Failed to delete food from menu: ${
+          error.response?.data?.message || error.message
+        }`
+      );
+    }
+  };
+
   const createOrder = async (orderData) => {
     try {
       const payload = {
@@ -189,24 +209,21 @@ const useMenuApi = () => {
 
   const updateOrder = async (id, updatedOrder) => {
     try {
-      // Ensure proper payload format based on API requirements
       const payload = {
         orderItems: {
           creates: (updatedOrder?.orderItems?.creates || []).filter(
             (item) => item.foodId && item.quantity > 0
-          ), // Ensure valid foodId and quantity for new items
+          ),
           updates: (updatedOrder?.orderItems?.updates || []).filter(
-            (item) => item.foodId && item.quantity > 0 // Ensure valid foodId and quantity for updates
+            (item) => item.foodId && item.quantity > 0 && item.status
           ),
         },
-        note: updatedOrder?.note || "", // If no new note, preserve existing note
+        note: updatedOrder?.note || "",
       };
 
-      console.log("Payload for updateOrder:", payload);
+      console.log("Payload for updateOrder:", JSON.stringify(payload, null, 2));
 
-      // Call the API with the updated payload
       const response = await axiosPrivate.put(`/order/${id}`, payload);
-
       console.log("Order updated successfully:", response);
       return response;
     } catch (error) {
@@ -230,6 +247,7 @@ const useMenuApi = () => {
     getReservationType,
     getAvailableTablelist,
     addReservation,
+    deleteFoodFromMenu,
   };
 };
 

@@ -131,4 +131,40 @@ public class OrderController {
                 .data(response)
                 .build();
     }
+
+    @GetMapping("/revenue/all")
+    public ApiResponse<?> getTotalRevenueForAll() {
+        Long revenue = businessManagementService.getRevenueAll();
+        return ApiResponse.builder()
+                .data(Map.of( "revenue", revenue != null ? revenue : 0))
+                .build();
+    }
+
+    @GetMapping("/totalOrder")
+    public ApiResponse<?> getTotalOrders() {
+        Integer orders = businessManagementService.getTotalOrders();
+        return ApiResponse.builder()
+                .data(Map.of( "orders", orders != null ? orders : 0))
+                .build();
+    }
+
+    @GetMapping("/revenue/branches")
+    public ApiResponse<?> getBranchesTotalRevenue() {
+        List<Object[]> branchesRevenue = businessManagementService.getBranchesTotalRevenue();
+        List<Map<String, Object>> response = new ArrayList<>();
+        branchesRevenue.forEach(record -> response.add(Map.of("branchName", record[0], "revenue", record[1])));
+        return ApiResponse.builder()
+                .data(response)
+                .build();
+    }
+
+    @GetMapping("/revenue/branches/monthly")
+    public ApiResponse<?> getBranchesTotalRevenueInMonth() {
+        List<Object[]> branchesRevenue = businessManagementService.getBranchesTotalRevenue();
+        List<Map<String, Object>> response = new ArrayList<>();
+        branchesRevenue.forEach(record -> response.add(Map.of("branchName", record[0], "revenue", record[1])));
+        return ApiResponse.builder()
+                .data(response)
+                .build();
+    }
 }

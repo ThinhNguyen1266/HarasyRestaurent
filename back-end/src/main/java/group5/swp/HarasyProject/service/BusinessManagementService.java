@@ -50,17 +50,22 @@ public interface BusinessManagementService {
 
     ApiResponse<List<TableResponse>> getAvailableTable(CheckReserveTimeRequest request);
 
-    ApiResponse<List<ReservationTypeResonse>> getAllReservationTypes();
+    Long getRevenueByDay(LocalDate specificDate);
 
-    public Long getRevenueByDay(LocalDate specificDate);
+    List<Object[]> getDailyRevenueInMonth(int month, int year);
 
-    public List<Object[]> getDailyRevenueInMonth(int month, int year);
+    Long getRevenueByMonth(int month, int year);
 
-    public Long getRevenueByMonth(int month, int year);
+    List<Object[]> getMonthlyRevenueInYear(int year);
 
-    public List<Object[]> getMonthlyRevenueInYear(int year);
+    Long getRevenueByYear(int year);
 
-    public Long getRevenueByYear(int year);
+    List<Object[]> getTotalRevenueForAllYears();
 
-    public List<Object[]> getTotalRevenueForAllYears();
+    Long getRevenueAll();
+
+    Integer getTotalOrders();
+
+    List<Object[]> getBranchesTotalRevenue();
+    List<Object[]> getBranchesTotalRevenueInMonth();
 }
