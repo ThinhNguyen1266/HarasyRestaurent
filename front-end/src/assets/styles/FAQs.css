@@ -1,0 +1,125 @@
+/* Updated FAQs Styling with Reduced Widths */
+.faqs-container {
+    padding: 60px 20px;
+    background-color: #000;
+    background-image: url("../img/black.jpg");
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-align the content */
+    gap: 40px;
+}
+
+.faqs-header {
+    margin-top: 80px; /* Add space to move the header down */
+    text-align: center; /* Ensure the content remains centered */
+}
+
+.faqs-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px; /* Space below the title */
+}
+
+.faqs-intro {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-bottom: 20px; /* Space below the intro text */
+}
+
+
+.faqs-content {
+    width: 90%; /* Slightly reduce the overall width */
+    max-width: 1000px; /* Limit the maximum width */
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.faqs-category {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100%; /* Ensure it fits within the content width */
+}
+
+.faqs-category-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.faqs-accordion .accordion-item {
+    background: none;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.faqs-accordion .accordion-button {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.faqs-accordion .accordion-button:not(.collapsed) {
+    background-color: rgba(255, 215, 0, 0.2); /* Highlight active section */
+    color: #FB8500;
+    border: 1px solid #FB8500;
+}
+
+.faqs-accordion .accordion-body {
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: #ccc;
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.faqs-accordion .accordion-button:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #FB8500;
+    border: 1px solid #FB8500;
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+}
+
+.faqs-accordion .accordion-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .faqs-content {
+        width: 95%; /* Slightly narrower on smaller screens */
+    }
+
+    .faqs-title {
+        font-size: 2rem;
+    }
+
+    .faqs-intro {
+        font-size: 1rem;
+    }
+
+    .faqs-category-title {
+        font-size: 1.5rem;
+    }
+}
