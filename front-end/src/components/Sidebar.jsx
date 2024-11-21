@@ -65,51 +65,39 @@ const Sidebar = () => {
               {showDashboards && (
                 <ul>
                   <li>
-                    <Link to="/overview">Overview</Link>
+                    <Link
+                      to="/overview"
+                      className={isActive("/overview") ? "active" : ""}
+                    >
+                      Overview
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/order">View Orders</Link>
+                    <Link
+                      to="/order"
+                      className={isActive("/order") ? "active" : ""}
+                    >
+                      View Orders
+                    </Link>
                     {/* <li>
                     <a href="/table">View table</a>
                   </li> */}
                   </li>
                   <li>
-                    <Link to="/branch">View Branch</Link>
-                  </li>
-                  <li>
-                    <Link to="/reservation">View Reservation</Link>
-                  </li>
-                </ul>
-              )}
-            </div>
-
-            <div className="sidebar-section">
-              <div
-                className="sidebar-item"
-                onClick={() => setShowAccounts(!showAccounts)}
-              >
-                <BsPerson /> <span>Accounts</span>
-                {showAccounts ? <FaChevronUp /> : <FaChevronDown />}
-              </div>
-              {showAccounts && (
-                <ul>
-                  <li>
-                    <a href="/" className={isActive("/") ? "active" : ""}>
-                      Add Manager
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/" className={isActive("/") ? "active" : ""}>
-                      Account Manager
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/profile"
-                      className={isActive("/profile") ? "active" : ""}
+                    <Link
+                      to="/branch"
+                      className={isActive("/branch") ? "active" : ""}
                     >
-                      My profile
-                    </a>
+                      View Branch
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/reservation"
+                      className={isActive("/reservation") ? "active" : ""}
+                    >
+                      View Reservation
+                    </Link>
                   </li>
                 </ul>
               )}
@@ -142,12 +130,10 @@ const Sidebar = () => {
           <div className="sidebar-section">
             <ul>
               <li>
-                <a href="/table" className={isActive("/table") ? "active" : ""}>
-                  View Order
-                </a>
-              </li>
-              <li>
-                <a href="/" className={isActive("/") ? "active" : ""}>
+                <a
+                  href="/chefmenu"
+                  className={isActive("/chefmneu") ? "active" : ""}
+                >
                   View Menu
                 </a>
               </li>
@@ -189,9 +175,6 @@ const Sidebar = () => {
           </div>
         ) : user?.role === "RECEPTIONIST" ? (
           <div className="sidebar-section">
-            <div className="sidebar-item">
-              <BsGrid /> <span>Orders</span>
-            </div>
             <ul>
               <li>
                 <a
