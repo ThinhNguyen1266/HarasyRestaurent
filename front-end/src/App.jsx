@@ -37,6 +37,7 @@ import EditOrder from "./pages/EditOrder";
 import ReservationsPage from "./pages/ReservationPage";
 import AddFoodInMenu from "./pages/AddFoodInMenu";
 import AllOrder from "./pages/AllOrder";
+import CustomerOrder from "./pages/CustomerOrder";
 function App() {
   return (
     <>
@@ -62,7 +63,7 @@ function App() {
         <Route path="/table" element={<TableList />} />
         <Route path="/chefmenu" element={<ChefMenu />} />
         <Route path="/reservation" element={<ReservationsPage />} />
-
+        <Route path="/customer/order" element={<CustomerOrder />} />
         <Route path="/profile/:id" element={<Profile />} />
 
         <Route element={<StaffLayout />}>
@@ -85,6 +86,7 @@ function App() {
             <Route path="/branch" element={<BranchManagement />} />
             <Route path="/branch/create" element={<CreateBranch />} />
             <Route path="/overview" element={<Overview />} />
+
             <Route path="/branch/:branchId" element={<EditBranch />} />
             <Route path="/branch/menu/:menuId" element={<AddFoodInMenu />} />
           </Route>
