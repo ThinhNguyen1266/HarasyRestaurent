@@ -17,7 +17,7 @@ function HNVenues() {
   const { getBranchHome } = useBranchApi();
 
   const { data: branchData, isLoading: isBranchLoading } = useQuery({
-    queryKey: ["branch", branchId],
+    queryKey: ["branchHome", branchId],
     queryFn: () => getBranchHome(branchId),
     onError: (error) => toast.error(`Failed to fetch branch: ${error.message}`),
   });
@@ -41,12 +41,7 @@ function HNVenues() {
       >
         <h1>{branchData.name || "Branch Name"}</h1>
         <div className="hnvenues-buttons">
-          <Link
-            to={`/findtable?branch=${branchData.name
-              ?.toLowerCase()
-              .replace(/ /g, "-")}&branchId=${branchId}`}
-            className="btn"
-          >
+          <Link to={`/findtable/${branchId}`} className="btn">
             BOOK A TABLE
           </Link>
           <Link

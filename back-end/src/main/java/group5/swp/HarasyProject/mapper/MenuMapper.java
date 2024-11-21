@@ -3,13 +3,14 @@ package group5.swp.HarasyProject.mapper;
 import group5.swp.HarasyProject.dto.request.menu.MenuRequest;
 import group5.swp.HarasyProject.dto.response.menu.MenuResponse;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring" ,uses = {MenuItemMapper.class})
+@Mapper(componentModel = "spring",
+        nullValueMapMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+        , uses = {MenuItemMapper.class})
 public interface MenuMapper {
 
     @Mapping(target = "branchId", source = "branch.id")

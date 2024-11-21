@@ -7,6 +7,7 @@ import group5.swp.HarasyProject.entity.food.FoodEntity;
 import group5.swp.HarasyProject.entity.menu.MenuEntity;
 import group5.swp.HarasyProject.entity.menu.MenuItemEntity;
 import group5.swp.HarasyProject.entity.menu.MenuItemId;
+import group5.swp.HarasyProject.enums.Status;
 import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.exception.AppException;
 import group5.swp.HarasyProject.mapper.MenuItemMapper;
@@ -63,7 +64,8 @@ public class MenuServiceImpl implements MenuService {
                 .orElseThrow(()->new AppException(ErrorCode.MENU_NOT_FOUND));
         List<FoodEntity> foods = foodRepository.findAllById(foodIds);
         List<MenuItemEntity> items = foods
-                .stream().map(foodEntity -> menuItemMapper.toEntity(menu,foodEntity))
+                .stream().filter(food->food.getStatus().equals(Status.ACTIVE))
+                .map(foodEntity -> menuItemMapper.toEntity(menu,foodEntity))
                 .toList();
         menuItemRepository.saveAll(items);
     }
