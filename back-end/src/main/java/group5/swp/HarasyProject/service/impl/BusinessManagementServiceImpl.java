@@ -478,4 +478,9 @@ public class BusinessManagementServiceImpl implements BusinessManagementService 
     public List<Object[]> getBranchesTotalRevenueInMonth() {
         return orderService.getBranchesTotalRevenueInMonth();
     }
+
+    @Override
+    public List<Object[]> getBestSeller() {
+        return orderService.getBestSellers();
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -160,11 +161,32 @@ public class OrderController {
 
     @GetMapping("/revenue/branches/monthly")
     public ApiResponse<?> getBranchesTotalRevenueInMonth() {
-        List<Object[]> branchesRevenue = businessManagementService.getBranchesTotalRevenue();
+        List<Object[]> branchesRevenue = businessManagementService.getBranchesTotalRevenueInMonth();
+        Map<Integer, List<Map<String, Object>>> groupedResponse = new HashMap<>();
+        for (Object[] row : branchesRevenue) {
+            String branchName = (String) row[0];
+            Integer month = (Integer) row[1];
+            Long revenue = (Long) row[2];
+            Map<String, Object> branchData = new HashMap<>();
+            branchData.put("branchName", branchName);
+            branchData.put("revenue", revenue);
+            groupedResponse.computeIfAbsent(month, k -> new ArrayList<>()).add(branchData);
+        }
+        return ApiResponse.builder()
+                .data(groupedResponse)
+                .build();
+    }
+
+    @GetMapping("/bestSeller")
+    public ApiResponse<?> getBestSeller() {
+        List<Object[]> bestSeller = businessManagementService.getBestSeller();
         List<Map<String, Object>> response = new ArrayList<>();
-        branchesRevenue.forEach(record -> response.add(Map.of("branchName", record[0], "revenue", record[1])));
+        bestSeller.forEach(record -> response.add(Map.of("foodName", record[0],
+                "revenue", record[1],
+                "quantity", record[2])));
         return ApiResponse.builder()
                 .data(response)
                 .build();
+
     }
 }

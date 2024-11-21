@@ -44,4 +44,8 @@ public interface OrderService {
     List<Object[]> getBranchesTotalRevenue();
 
     List<Object[]> getBranchesTotalRevenueInMonth();
+
+    List<Object[]> getBestSellers();
+
+
 }

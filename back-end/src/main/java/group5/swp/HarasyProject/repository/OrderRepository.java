@@ -65,4 +65,15 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Integer> {
             "WHERE o.paymentStatus = 'PAYED' " +
             "GROUP BY b.name, month ")
     List<Object[]> getBranchesTotalRevenueInMonth();
+
+
+    @Query("SELECT f.name as foodName, SUM(oi.total) as revenue, SUM(oi.quantity) as quantity " +
+            "FROM FoodEntity f JOIN OrderItemEntity oi " +
+            "ON oi.food.id = f.id " +
+            "JOIN OrderEntity o " +
+            "ON o.id = oi.order.id " +
+            "WHERE o.paymentStatus = 'PAYED' " +
+            "GROUP BY f.name " +
+            "ORDER BY revenue ASC ")
+    List<Object[]> getBestSellers(Pageable pageable);
 }
