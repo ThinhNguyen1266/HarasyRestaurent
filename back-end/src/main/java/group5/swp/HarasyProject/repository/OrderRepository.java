@@ -24,9 +24,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Integer> {
     Page<OrderEntity> findByBranchId(int branchId, Pageable pageable);
     Page<OrderEntity> findByCustomerId(int customerId, Pageable pageable);
 
-
-
-
     @Query("SELECT SUM(o.total) FROM OrderEntity o WHERE DATE(o.createdDate) = :specificDate AND o.paymentStatus = 'PAYED' ")
     Long calculateRevenueByDay(@Param("specificDate") LocalDate specificDate);
 
@@ -47,4 +44,25 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Integer> {
 
     @Query("SELECT YEAR(o.createdDate) AS year, SUM(o.total) AS revenue FROM OrderEntity o WHERE o.paymentStatus = 'PAYED'  GROUP BY YEAR(o.createdDate)")
     List<Object[]> calculateTotalRevenueForAllYears();
+
+    @Query("SELECT SUM(o.total) FROM OrderEntity o WHERE o.paymentStatus = 'PAYED' ")
+    Long calculateRevenueAll();
+
+    @Query("SELECT COUNT(o.id) FROM OrderEntity o where o.paymentStatus = 'PAYED'")
+    Integer getTotalOrders();
+
+    @Query("SELECT b.name AS branchName, SUM(o.total) as revenue " +
+            "FROM BranchEntity b JOIN OrderEntity o " +
+            "ON o.branch.id = b.id " +
+            "WHERE o.paymentStatus = 'PAYED' " +
+            "GROUP BY b.name")
+    List<Object[]> getBranchesTotalRevenue();
+
+
+    @Query("SELECT b.name AS branchName, MONTH(o.createdDate) as month , SUM(o.total) as revenue " +
+            "FROM BranchEntity b JOIN OrderEntity o " +
+            "ON o.branch.id = b.id " +
+            "WHERE o.paymentStatus = 'PAYED' " +
+            "GROUP BY b.name, month ")
+    List<Object[]> getBranchesTotalRevenueInMonth();
 }
