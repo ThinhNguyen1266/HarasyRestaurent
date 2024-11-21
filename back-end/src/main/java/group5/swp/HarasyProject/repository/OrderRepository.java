@@ -74,6 +74,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Integer> {
             "ON o.id = oi.order.id " +
             "WHERE o.paymentStatus = 'PAYED' " +
             "GROUP BY f.name " +
-            "ORDER BY revenue ASC ")
+            "ORDER BY revenue DESC ")
     List<Object[]> getBestSellers(Pageable pageable);
 }
