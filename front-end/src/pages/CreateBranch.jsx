@@ -43,8 +43,8 @@ const CreateBranch = () => {
     location: "",
     imageFile: null,
     phone: "",
-    manager: "",
-    status: "INACTIVE",
+    managerId: "",
+    status: "",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
     tables: [{ number: "", capacity: "", status: "AVAILABLE" }],
     menus: [{ type: "" }],
@@ -69,14 +69,19 @@ const CreateBranch = () => {
   };
 
   const handleCreateBranch = (imageUrl) => {
+    // Validate working hours before submission
+    const validWorkingHours = formData.workingHours.filter(
+      (hour) => hour.dayOfWeek && hour.openingTime && hour.closingTime
+    );
+
     const payload = {
       name: formData.name,
       location: formData.location,
       image: imageUrl,
       phone: formData.phone,
-      manager: formData.manager,
+      managerId: formData.managerId,
       status: formData.status,
-      workingHours: formData.workingHours.map((hour) => ({
+      workingHours: validWorkingHours.map((hour) => ({
         dayOfWeek: hour.dayOfWeek,
         openingTime:
           hour.openingTime.length === 5
@@ -201,22 +206,18 @@ const CreateBranch = () => {
             <div className="mb-3">
               <label className="form-label text-white">Manager</label>
               <select
-                name="manager"
-                value={formData.manager}
+                name="managerId"
+                value={formData.managerId}
                 onChange={handleInputChange}
-                className="form-select"
+                className="form-control"
                 required
               >
-                <option value="">Select a Manager</option>
-                {isLoadingManagers ? (
-                  <option>Loading managers...</option>
-                ) : (
-                  managers.map((manager) => (
-                    <option key={manager.phone} value={manager.fullName}>
-                      {manager.fullName}
-                    </option>
-                  ))
-                )}
+                <option value="">Select a manager</option>
+                {managers.map((manager) => (
+                  <option key={manager.id} value={manager.id}>
+                    {manager.fullName}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="mb-3">
@@ -275,13 +276,22 @@ const CreateBranch = () => {
                     className="form-select me-2"
                   >
                     <option value="">Select Day</option>
-                    <option value="MONDAY">MONDAY</option>
-                    <option value="TUESDAY">TUESDAY</option>
-                    <option value="WEDNESDAY">WEDNESDAY</option>
-                    <option value="THURSDAY">THURSDAY</option>
-                    <option value="FRIDAY">FRIDAY</option>
-                    <option value="SATURDAY">SATURDAY</option>
-                    <option value="SUNDAY">SUNDAY</option>
+                    {[
+                      "MONDAY",
+                      "TUESDAY",
+                      "WEDNESDAY",
+                      "THURSDAY",
+                      "FRIDAY",
+                      "SATURDAY",
+                      "SUNDAY",
+                    ].map((day) =>
+                      !formData.workingHours.some((h) => h.dayOfWeek === day) ||
+                      hour.dayOfWeek === day ? (
+                        <option key={day} value={day}>
+                          {day}
+                        </option>
+                      ) : null
+                    )}
                   </select>
                   <input
                     type="time"
@@ -402,10 +412,14 @@ const CreateBranch = () => {
                 className="form-select me-2"
               >
                 <option value="">Select Menu Type</option>
-                <option value="BREAKFAST">BREAKFAST</option>
-                <option value="LUNCH">LUNCH</option>
-                <option value="DINNER">DINNER</option>
-                <option value="DESSERT">DESSERT</option>
+                {["BREAKFAST", "LUNCH", "DINNER", "DESSERT"].map((type) =>
+                  !formData.menus.some((m) => m.type === type) ||
+                  menu.type === type ? (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ) : null
+                )}
               </select>
               <button
                 type="button"

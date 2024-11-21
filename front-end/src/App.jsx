@@ -34,6 +34,8 @@ import WorkforceList from "./pages/WorkforceList";
 
 import CreateOrder from "./pages/CreateOrder";
 import EditOrder from "./pages/EditOrder";
+import AddFoodInMenu from "./pages/AddFoodInMenu";
+import AllOrder from "./pages/AllOrder";
 function App() {
   return (
     <>
@@ -67,6 +69,7 @@ function App() {
               />
             }
           >
+            <Route path="/branch/:id/orders" element={<AllOrder />} />
             <Route path="/food" element={<ManageFood />} />
             <Route path="/food/create" element={<CreateFood />} />
             <Route path="/food/:foodId" element={<EditFood />} />
@@ -78,11 +81,14 @@ function App() {
             <Route path="/branch/create" element={<CreateBranch />} />
             <Route path="/overview" element={<Overview />} />
             <Route path="/branch/:branchId" element={<EditBranch />} />
+            <Route path="/branch/menu/:menuId" element={<AddFoodInMenu />} />
           </Route>
           <Route element={<AuthRoute allowedRoles={["WAITER"]} />}>
-            <Route path="/order" element={<OrderWaiter />} />
             <Route path="/regriscus" element={<RegrisCus />} />
             <Route path="/createorder" element={<CreateOrder />} />
+          </Route>
+          <Route element={<AuthRoute allowedRoles={["WAITER", "CHEF"]} />}>
+            <Route path="/order" element={<OrderWaiter />} />
             <Route path="/order/:id" element={<EditOrder />} />
           </Route>
         </Route>

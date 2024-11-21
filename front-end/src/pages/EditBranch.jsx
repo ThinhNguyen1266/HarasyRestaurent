@@ -8,32 +8,46 @@ import { toast, ToastContainer } from "react-toastify";
 
 import "../assets/styles/EditBranch.css";
 import MenuDetailModal from "../components/MenuDetailModal";
+import { FaTrash } from "react-icons/fa";
+import useAuth from "../hooks/useAuth";
 
 const EditBranch = () => {
-  const [selectedMenuId, setSelectedMenuId] = useState(null); // Trạng thái để lưu ID của menu đã chọn
-  const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái để điều khiển việc mở modal
-
-  const handleMenuClick = (menuId) => {
-    console.log("Selected Menu ID:", menuId);
-
-    setSelectedMenuId(menuId); // Lưu ID của menu được nhấn
-    setIsModalOpen(true);
+  const handleDelete = (branchId) => {
+    if (window.confirm("Are you sure you want to delete this branch?")) {
+      deleteBranchMutate.mutate(branchId, {
+        onSuccess: () => {
+          toast.success("Branch deleted successfully!");
+          navigate("/branch");
+        },
+      });
+    }
   };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false); // Đóng modal
-  };
-
+  const [isMenuTypeEnabled, setIsMenuTypeEnabled] = useState(false);
   const queryClient = useQueryClient();
   const { branchId } = useParams();
   const navigate = useNavigate();
-  const { getBranchbyID, updateBranch, getBranchManagers, getMenubyBranchID } =
-    useBranchApi();
-
+  const {
+    getBranchbyID,
+    updateBranch,
+    getBranchManagers,
+    getMenubyBranchID,
+    deleteBranch,
+  } = useBranchApi();
+  const { user } = useAuth();
   const { data: menus, isLoading: isMenusLoading } = useQuery({
     queryKey: ["menus", branchId],
     queryFn: () => getMenubyBranchID(branchId, true),
     onError: (error) => toast.error(`Failed to fetch menu: ${error.message}`),
+  });
+  console.log("menus", menus);
+  const deleteBranchMutate = useMutation({
+    mutationFn: deleteBranch,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["branches"]);
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete branch: ${error.message}`);
+    },
   });
 
   const [formData, setFormData] = useState({
@@ -42,7 +56,7 @@ const EditBranch = () => {
     image: "",
     imageFile: null,
     phone: "",
-    manager: "",
+    managerId: "",
     status: "",
     workingHours: [{ dayOfWeek: "", openingTime: "", closingTime: "" }],
     tables: [{ number: "", capacity: "" }],
@@ -65,10 +79,9 @@ const EditBranch = () => {
 
   useEffect(() => {
     if (branchData) {
-      console.log("Branch data after reload:", branchData);
       setFormData({
         ...branchData.branchInfo,
-        manager: branchData.manager || "",
+        managerId: branchData.branchInfo.managerId || "",
         imageFile: null,
         workingHours: Array.isArray(branchData.branchInfo.workingHours)
           ? branchData.branchInfo.workingHours
@@ -104,31 +117,32 @@ const EditBranch = () => {
         image: imageUrl || formData.image,
         phone: formData.phone,
         status: formData.status,
-        manager: formData.manager,
+        managerId: formData.managerId,
       },
       workingHours: {
         creates: formData.workingHours
           .filter(
             (hour) =>
               hour.dayOfWeek && hour.openingTime && hour.closingTime && !hour.id
-          ) // Chỉ tạo mới nếu không có id
+          )
           .map((hour) => ({
             dayOfWeek: hour.dayOfWeek,
-            openingTime: `${hour.openingTime}:00`,
-            closingTime: `${hour.closingTime}:00`,
+            openingTime: hour.openingTime.slice(0, 5) + ":00", // Chỉ giờ và phút
+            closingTime: hour.closingTime.slice(0, 5) + ":00", // Chỉ giờ và phút
           })),
         updates: formData.workingHours
           .filter(
             (hour) =>
               hour.id && hour.dayOfWeek && hour.openingTime && hour.closingTime
-          ) // Chỉ cập nhật nếu có id
+          )
           .map((hour) => ({
-            id: hour.id, // Thêm id để xác định đối tượng cần cập nhật
+            id: hour.id,
             dayOfWeek: hour.dayOfWeek,
-            openingTime: `${hour.openingTime}:00`,
-            closingTime: `${hour.closingTime}:00`,
+            openingTime: hour.openingTime.slice(0, 5) + ":00", // Chỉ giờ và phút
+            closingTime: hour.closingTime.slice(0, 5) + ":00", // Chỉ giờ và phút
           })),
       },
+
       tables: {
         creates: formData.tables
           .filter((table) => table.number && table.capacity && !table.id) // Chỉ tạo mới nếu không có id
@@ -162,7 +176,7 @@ const EditBranch = () => {
     };
 
     // Kiểm tra payload
-    console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
+    console.log("Data Nhan duoc:", JSON.stringify(payload, null, 2));
 
     // Gửi payload đến API
     saveBranchMutate.mutate(payload);
@@ -234,6 +248,12 @@ const EditBranch = () => {
   return (
     <div className="container my-4">
       <h1 className="text-white">Edit Branch</h1>
+      <button
+        onClick={() => navigate(`/branch/${branchData.branchInfo.id}/orders`)}
+        className="btn btn-primary mt-4  "
+      >
+        View Order
+      </button>
       <form onSubmit={handleSubmit}>
         <div className="row">
           {/* Column 1 */}
@@ -274,22 +294,18 @@ const EditBranch = () => {
             <div className="mb-3">
               <label className="form-label text-white">Manager</label>
               <select
-                name="manager"
-                value={formData.manager}
+                name="managerId"
+                value={formData.managerId}
                 onChange={handleInputChange}
-                className="form-select"
+                className="form-control"
                 required
               >
-                <option value="">Select a Manager</option>
-                {isLoadingManagers ? (
-                  <option>Loading managers...</option>
-                ) : (
-                  managers.map((manager, index) => (
-                    <option key={index} value={manager.fullName}>
-                      {manager.fullName}
-                    </option>
-                  ))
-                )}
+                <option value="">Select a manager</option>
+                {managers.map((manager) => (
+                  <option key={manager.id} value={manager.id}>
+                    {manager.fullName}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="mb-3">
@@ -312,6 +328,20 @@ const EditBranch = () => {
                   }}
                 />
               )}
+
+              <hr className="cr-info-divider" />
+              <h5 className="orange-text">WARNING!!!</h5>
+              <strong className="text-white ">
+                <input
+                  type="checkbox"
+                  checked={isMenuTypeEnabled}
+                  onChange={() => setIsMenuTypeEnabled((prev) => !prev)}
+                  className="form-check-input mx-1"
+                />
+                Editing the menu will be on another page, so when you click on
+                the menu, all the data you have changed before will be lost. Are
+                you sure you want to edit the menu?
+              </strong>
             </div>
           </div>
 
@@ -333,61 +363,75 @@ const EditBranch = () => {
             {/* Working Hours */}
             <div className="mb-3">
               <label className="form-label text-white">Working Hours</label>
-              {formData.workingHours.map((hour, index) => (
-                <div key={index} className="d-flex align-items-center mb-2">
-                  <select
-                    value={hour.dayOfWeek}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        workingHours: prev.workingHours.map((h, i) =>
-                          i === index ? { ...h, dayOfWeek: e.target.value } : h
-                        ),
-                      }))
-                    }
-                    className="form-select me-2"
-                  >
-                    <option value="">Select Day</option>
-                    <option value="MONDAY">Monday</option>
-                    <option value="TUESDAY">Tuesday</option>
-                    <option value="WEDNESDAY">Wednesday</option>
-                    <option value="THURSDAY">Thursday</option>
-                    <option value="FRIDAY">Friday</option>
-                    <option value="SATURDAY">Saturday</option>
-                    <option value="SUNDAY">Sunday</option>
-                  </select>
-                  <input
-                    type="time"
-                    value={hour.openingTime}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        workingHours: prev.workingHours.map((h, i) =>
-                          i === index
-                            ? { ...h, openingTime: e.target.value }
-                            : h
-                        ),
-                      }))
-                    }
-                    className="form-control me-2"
-                  />
-                  <input
-                    type="time"
-                    value={hour.closingTime}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        workingHours: prev.workingHours.map((h, i) =>
-                          i === index
-                            ? { ...h, closingTime: e.target.value }
-                            : h
-                        ),
-                      }))
-                    }
-                    className="form-control me-2"
-                  />
-                </div>
-              ))}
+              <div className="table-container">
+                {formData.workingHours.map((hour, index) => (
+                  <div key={index} className="d-flex align-items-center mb-2">
+                    <select
+                      value={hour.dayOfWeek}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          workingHours: prev.workingHours.map((h, i) =>
+                            i === index
+                              ? { ...h, dayOfWeek: e.target.value }
+                              : h
+                          ),
+                        }))
+                      }
+                      className="form-select me-2"
+                    >
+                      <option value="">Select Day</option>
+                      {[
+                        "MONDAY",
+                        "TUESDAY",
+                        "WEDNESDAY",
+                        "THURSDAY",
+                        "FRIDAY",
+                        "SATURDAY",
+                        "SUNDAY",
+                      ].map((day) =>
+                        !formData.workingHours.some(
+                          (h) => h.dayOfWeek === day
+                        ) || hour.dayOfWeek === day ? (
+                          <option key={day} value={day}>
+                            {day}
+                          </option>
+                        ) : null
+                      )}
+                    </select>
+                    <input
+                      type="time"
+                      value={hour.openingTime}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          workingHours: prev.workingHours.map((h, i) =>
+                            i === index
+                              ? { ...h, openingTime: e.target.value }
+                              : h
+                          ),
+                        }))
+                      }
+                      className="form-control me-2"
+                    />
+                    <input
+                      type="time"
+                      value={hour.closingTime}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          workingHours: prev.workingHours.map((h, i) =>
+                            i === index
+                              ? { ...h, closingTime: e.target.value }
+                              : h
+                          ),
+                        }))
+                      }
+                      className="form-control me-2"
+                    />
+                  </div>
+                ))}
+              </div>
               <button
                 type="button"
                 onClick={addWorkingHour}
@@ -400,38 +444,44 @@ const EditBranch = () => {
             {/* Tables */}
             <div className="mb-3">
               <label className="form-label text-white">Tables</label>
-              {formData.tables.map((table, index) => (
-                <div key={index} className="d-flex align-items-center mb-2">
-                  <input
-                    type="number"
-                    placeholder="Table Number"
-                    value={table.number}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        tables: prev.tables.map((t, i) =>
-                          i === index ? { ...t, number: e.target.value } : t
-                        ),
-                      }))
-                    }
-                    className="form-control me-2"
-                  />
-                  <input
-                    type="number"
-                    placeholder="Capacity"
-                    value={table.capacity}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        tables: prev.tables.map((t, i) =>
-                          i === index ? { ...t, capacity: e.target.value } : t
-                        ),
-                      }))
-                    }
-                    className="form-control me-2"
-                  />
-                </div>
-              ))}
+              {/* Container with scrollable area */}
+              <div className="table-container">
+                {formData.tables.map((table, index) => (
+                  <div key={index} className="d-flex align-items-center mb-2">
+                    {/* Table Number Input */}
+                    <input
+                      type="number"
+                      placeholder="Table Number"
+                      value={table.number}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          tables: prev.tables.map((t, i) =>
+                            i === index ? { ...t, number: e.target.value } : t
+                          ),
+                        }))
+                      }
+                      className="form-control me-2"
+                    />
+                    {/* Table Capacity Input */}
+                    <input
+                      type="number"
+                      placeholder="Capacity"
+                      value={table.capacity}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          tables: prev.tables.map((t, i) =>
+                            i === index ? { ...t, capacity: e.target.value } : t
+                          ),
+                        }))
+                      }
+                      className="form-control me-2"
+                    />
+                  </div>
+                ))}
+              </div>
+              {/* Add Table Button */}
               <button
                 type="button"
                 onClick={addTable}
@@ -444,32 +494,43 @@ const EditBranch = () => {
             <div className="mb-3">
               <label className="form-label text-white">Menus</label>
               <div className="d-flex flex-wrap">
-                {menus?.map((menu, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    className="btn btn-primary me-2"
-                    onClick={() => handleMenuClick(menu.id)} // Khi nhấn, mở modal với menu ID
-                  >
-                    {menu.type}
-                  </button>
-                ))}
+                {Array.isArray(menus) &&
+                  menus.map((menu, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      className="btn btn-primary me-2"
+                      onClick={() => navigate(`/branch/menu/${menu.id}`)}
+                      disabled={!isMenuTypeEnabled}
+                    >
+                      {menu.type}
+                    </button>
+                  ))}
               </div>
+              {!menus?.length && (
+                <p className="text-white mt-2">No menus available.</p>
+              )}
             </div>
-
-            {/* Hiển thị modal khi selectedMenuId có giá trị và isModalOpen là true */}
-            {isModalOpen && (
-              <MenuDetailModal
-                isOpen={isModalOpen}
-                menuId={selectedMenuId}
-                onClose={() => setIsModalOpen(false)}
-              />
-            )}
           </div>
         </div>
         <button type="submit" className="btn btn-primary mt-4">
           Save Changes
         </button>
+        <button
+          onClick={() => handleDelete(branchId)}
+          className="btn btn-danger mt-4 mx-3"
+        >
+          <FaTrash />
+          Delete
+        </button>
+        {user?.role === "ADMIN" && (
+          <button
+            onClick={() => navigate("/branch")}
+            className="btn btn-secondary mt-4  "
+          >
+            Back
+          </button>
+        )}
       </form>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>

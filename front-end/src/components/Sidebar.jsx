@@ -34,7 +34,7 @@ const Sidebar = () => {
 
   // Helper function to check if a link is active
   const isActive = (path) => location.pathname === path;
-
+  const branchId = user ? user.branchId : null;
   return (
     <>
       <div className="hamburger-menu" onClick={toggleSidebar}>
@@ -140,9 +140,6 @@ const Sidebar = () => {
           </div>
         ) : user?.role === "CHEF" ? (
           <div className="sidebar-section">
-            <div className="sidebar-item">
-              <BsGrid /> <span>Orders</span>
-            </div>
             <ul>
               <li>
                 <a href="/table" className={isActive("/table") ? "active" : ""}>
@@ -154,13 +151,15 @@ const Sidebar = () => {
                   View Menu
                 </a>
               </li>
+              <li>
+                <a href="/order" className={isActive("/order") ? "active" : ""}>
+                  View Order
+                </a>
+              </li>
             </ul>
           </div>
         ) : user?.role === "BRANCH_MANAGER" ? (
           <div className="sidebar-section">
-            <div className="sidebar-item">
-              <BsGrid /> <span>Orders</span>
-            </div>
             <ul>
               <li>
                 <a
@@ -169,6 +168,14 @@ const Sidebar = () => {
                 >
                   View Workforce
                 </a>
+              </li>
+              <li>
+                <Link
+                  to={`/branch/${branchId}`}
+                  className={isActive(`/branch/${branchId}`) ? "active" : ""}
+                >
+                  View Branch
+                </Link>
               </li>
               <li>
                 <a
