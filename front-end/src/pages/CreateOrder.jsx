@@ -171,20 +171,6 @@ function CreateMenu() {
         <Col>
           <h1 className="text-white">Menu of {user.branchName}</h1>
         </Col>
-        <Col md={5}>
-          <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search for a dish..."
-              value={searchTerm}
-              onChange={handleSearch}
-              className="me-2"
-            />
-            <Button variant="primary">
-              <FaSearch />
-            </Button>
-          </Form>
-        </Col>
       </Row>
 
       <Row>

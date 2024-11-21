@@ -105,8 +105,9 @@ const AddFoodInMenu = () => {
   return (
     <Container className="bg-dark p-5">
       <div className="max-w-4xl mx-auto bg-dark rounded-lg shadow-lg p-6">
-        <h1 className="text-center text-white mb-4">Available Food</h1>
-
+        {user?.role === "ADMIN" && (
+          <h1 className="text-center text-white mb-4">Available Food</h1>
+        )}
         {/* Display error if foodData fetch fails */}
         {foodError && (
           <Alert variant="danger">

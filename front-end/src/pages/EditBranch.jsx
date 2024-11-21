@@ -65,8 +65,6 @@ const EditBranch = () => {
     onError: (error) => toast.error(`Failed to fetch menu: ${error.message}`),
   });
 
-  console.log("menus", menus);
-
   const deleteBranchMutate = useMutation({
     mutationFn: deleteBranch,
     onSuccess: () => {
@@ -123,7 +121,7 @@ const EditBranch = () => {
     queryFn: () => getBranchbyID(branchId),
     onError: (error) => toast.error(`Failed to fetch branch: ${error.message}`),
   });
-
+  console.log("branchData", branchData);
   const hourId = branchData?.branchInfo?.workingHours[0]?.id;
   const tableId = branchData?.tables?.map((table) => table.id);
   console.log("tableID", tableId);
@@ -250,7 +248,10 @@ const EditBranch = () => {
     onSuccess: () => {
       toast.success("Branch updated successfully!");
       queryClient.invalidateQueries(["branches"]);
-      navigate("/branch");
+
+      if (user?.role === "ADMIN") {
+        navigate("/branch");
+      }
     },
     onError: (error) =>
       toast.error(`Failed to update branch: ${error.message}`),
@@ -302,6 +303,15 @@ const EditBranch = () => {
       >
         View Order
       </button>
+      {user?.role === "ADMIN" && (
+        <button
+          onClick={() => navigate(`/workforce/${branchId}`)}
+          className="btn btn-primary mt-4  mx-3"
+        >
+          View Workforce
+        </button>
+      )}
+
       <form onSubmit={handleSubmit}>
         <div className="row">
           {/* Column 1 */}
@@ -346,6 +356,7 @@ const EditBranch = () => {
                 value={formData.managerId}
                 onChange={handleInputChange}
                 className="form-control"
+                disabled={user?.role === "BRANCH_MANAGER"}
                 required
               >
                 <option value="">Select a manager</option>

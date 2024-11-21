@@ -61,7 +61,7 @@ function App() {
         <Route path="/findtable/:branchId" element={<FindTable />} />
         <Route path="/reservationdetails" element={<ConfirmReservation />} />
         <Route path="/table" element={<TableList />} />
-        <Route path="/chefmenu" element={<ChefMenu />} />
+
         <Route path="/reservation" element={<ReservationsPage />} />
         <Route path="/customer/order" element={<CustomerOrder />} />
         <Route path="/profile/:id" element={<Profile />} />
@@ -97,6 +97,7 @@ function App() {
           <Route element={<AuthRoute allowedRoles={["WAITER", "CHEF"]} />}>
             <Route path="/order" element={<OrderWaiter />} />
             <Route path="/order/:id" element={<EditOrder />} />
+            <Route path="/chefmenu" element={<ChefMenu />} />
           </Route>
         </Route>
       </Routes>

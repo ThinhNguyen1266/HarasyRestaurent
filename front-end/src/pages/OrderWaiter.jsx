@@ -21,7 +21,8 @@ function OrderWaiter() {
       toast.error(`Failed to fetch orderInTime: ${error.message}`),
   });
   console.log(orderIntimeData);
-  if (isOrderIntimeLoading) return <p>Loading orders...</p>;
+  if (isOrderIntimeLoading)
+    return <p className="text-white">Loading orders...</p>;
   if (!orderIntimeData?.length) return <p>No orders found.</p>;
 
   const handleCardClick = (id) => {
