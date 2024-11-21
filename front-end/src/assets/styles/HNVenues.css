@@ -135,3 +135,102 @@
   width: 100%;
   text-align: left;
 }
+
+@media (max-width: 768px) {
+  .hnvenues-header {
+    padding: 150px 0 20px;
+    height: 50vh;
+    background-position: center;
+  }
+
+  .hnvenues-header h1 {
+    padding-top: 50px;
+    font-size: 3rem;
+  }
+
+  .hnvenues-buttons {
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hnvenues-buttons .btn {
+    font-size: 16px;
+    padding: 8px 12px;
+    width: 35%;
+  }
+
+  .hnvenues-cities {
+    flex-direction: column;
+    gap: 30px;
+    padding: 100px 10%;
+  }
+
+  .city-info,
+  .opening-hours {
+    width: 100%;
+    text-align: center;
+  }
+
+  .city-info h2,
+  .opening-hours h2 {
+    font-size: 2.5rem;
+  }
+
+  .city-info p,
+  .opening-hours .hours-row {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hnvenues-header {
+    padding: 100px 0 15px;
+    height: 40vh;
+    background-position: center;
+  }
+
+  .hnvenues-header h1 {
+    font-size: 2rem;
+  }
+
+  .hnvenues-buttons {
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hnvenues-buttons .btn {
+    font-size: 14px;
+    padding: 6px 10px;
+    width: 35%;
+  }
+
+  .hnvenues-cities {
+    flex-direction: column;
+    gap: 20px;
+    padding: 50px 5%;
+  }
+
+  .city-info,
+  .opening-hours {
+    width: 100%;
+  }
+
+  .city-info h2,
+  .opening-hours h2 {
+    font-size: 2rem;
+  }
+
+  .city-info p,
+  .opening-hours .hours-row {
+    font-size: 1rem;
+  }
+
+  .opening-hours .day,
+  .opening-hours .time {
+    text-align: center;
+  }
+}

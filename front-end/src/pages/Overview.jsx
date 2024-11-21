@@ -16,9 +16,8 @@ import {
   FiArrowDown,
   FiArrowUp,
   FiCalendar,
+  FiDollarSign,
   FiShoppingBag,
-  FiUser,
-  FiUserPlus,
 } from "react-icons/fi";
 import useOrderApi from "../hooks/api/useOrderApi";
 
@@ -87,6 +86,21 @@ const Overview = () => {
       const lastMonthYear = thisMonth === 1 ? thisYear - 1 : thisYear;
 
       try {
+        // ** Fetch Today and Yesterday Revenue for KPI Cards **
+        const todayResponse = await getDailyRevenue(todayString);
+        const yesterdayResponse = await getDailyRevenue(yesterdayString);
+        setTodayRevenue(todayResponse.revenue || 0);
+        setYesterdayRevenue(yesterdayResponse.revenue || 0);
+
+        // ** Fetch This Month and Last Month Revenue for KPI Cards **
+        const thisMonthResponse = await getMonthRevenue(thisMonth, thisYear);
+        const lastMonthResponse = await getMonthRevenue(
+          lastMonth,
+          lastMonthYear
+        );
+        setThisMonthRevenue(thisMonthResponse.revenue || 0);
+        setLastMonthRevenue(lastMonthResponse.revenue || 0);
+
         // Fetch Daily Revenue
         if (revenueView === "daily") {
           const todayResponse = await getDailyRevenue(todayString);
@@ -101,6 +115,7 @@ const Overview = () => {
           const sortedData = (monthDailyResponse || []).sort(
             (a, b) => new Date(a.day) - new Date(b.day)
           );
+
           setDailyRevenueData(sortedData);
         }
 
@@ -454,7 +469,7 @@ const Overview = () => {
             style={{
               backgroundColor: "#141414",
               borderRadius: "5px",
-              height: "100%", // Đảm bảo chiều cao cố định
+              height: "100%",
             }}
           >
             <div className="d-flex justify-content-between align-items-center">
@@ -478,7 +493,7 @@ const Overview = () => {
                 <p className="text-light">Today Revenue</p>
                 <h3 className="fw-bold">${todayRevenue.toLocaleString()}</h3>
               </div>
-              <FiUser className="fs-2" style={{ color: "purple" }} />
+              <FiDollarSign className="fs-2" style={{ color: "purple" }} />
             </div>
             <div
               className={`d-flex align-items-center mt-2 ${
@@ -506,7 +521,7 @@ const Overview = () => {
                   ${thisMonthRevenue.toLocaleString()}
                 </h3>
               </div>
-              <FiUserPlus className="text-warning fs-2" />
+              <FiDollarSign className="text-warning fs-2" />
             </div>
             <div
               className={`d-flex align-items-center mt-2 ${

@@ -102,3 +102,75 @@
 .city:hover .city-image {
   transform: scale(1.05);
 }
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .city {
+    width: 400px;
+    height: 300px;
+  }
+
+  .city-name {
+    font-size: 2.5rem;
+  }
+
+  .venues-cities {
+    gap: 40px;
+    padding: 150px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .venues-header {
+    padding: 100px 0 15px;
+    height: 40vh;
+  }
+
+  .venues-header h1 {
+    padding-top: 80px;
+    font-size: 2.5rem;
+  }
+
+  .venues-cities {
+    flex-direction: column;
+    gap: 20px;
+    padding: 100px 0;
+  }
+
+  .city {
+    width: 300px;
+    height: 220px;
+    margin: 0 auto;
+  }
+
+  .city-name {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .venues-header {
+    padding: 80px 0 10px;
+    height: 30vh;
+  }
+
+  .venues-header h1 {
+    font-size: 2rem;
+  }
+
+  .venues-cities {
+    gap: 10px;
+    padding: 50px 0;
+  }
+
+  .city {
+    width: 100%;
+    max-width: 280px;
+    height: 180px;
+    margin: 0 auto;
+  }
+
+  .city-name {
+    font-size: 1.8rem;
+  }
+}
