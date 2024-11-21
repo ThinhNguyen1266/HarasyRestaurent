@@ -2,6 +2,8 @@ package group5.swp.HarasyProject.service.impl;
 
 import group5.swp.HarasyProject.dto.request.branch.BranchWorkingHourRequest;
 import group5.swp.HarasyProject.entity.branch.BranchWorkingHourEntity;
+import group5.swp.HarasyProject.exception.AppException;
+import group5.swp.HarasyProject.exception.ErrorCode;
 import group5.swp.HarasyProject.mapper.BranchWorkingHourMapper;
 import group5.swp.HarasyProject.repository.BranchWorkingHourRepository;
 import group5.swp.HarasyProject.service.BranchWorkingHourService;
@@ -39,5 +41,12 @@ public class BranchWorkingHourServiceImpl implements BranchWorkingHourService {
     @Override
     public List<BranchWorkingHourEntity> mapWorkingHours(List<BranchWorkingHourRequest> workingHours) {
         return workingHours.stream().map(this::mapWorkingHour).toList();
+    }
+
+    @Override
+    public void deleteWorkingHour(int hourId) {
+        if(!branchWorkingHourRepository.existsById(hourId))
+            throw new AppException(ErrorCode.WORKING_HOUR_NOT_FOUND);
+        branchWorkingHourRepository.deleteById(hourId);
     }
 }

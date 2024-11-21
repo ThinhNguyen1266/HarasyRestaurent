@@ -68,7 +68,7 @@ function HNMenu() {
                 <h4 className="menu-subcategory-title">
                   {menu.type.toUpperCase()}
                 </h4>
-                {menu.foods.map((item, index) => (
+                {menu.menuItems.map((item, index) => (
                   <div
                     key={index}
                     className="menu-item"
