@@ -6,7 +6,6 @@ import Sidebar from "../components/Sidebar";
 import "../assets/styles/ChefMenu.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import useBranchApi from "../hooks/api/useBranchApi";
 import useAuth from "../hooks/useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useFoodAPi from "../hooks/api/useFoodAPi";
@@ -16,12 +15,13 @@ const ChefMenu = () => {
   const { updateFoodStatus, getMenubyBranchID } = useFoodAPi();
   const branchId = user ? user.branchId : null;
   const queryClient = useQueryClient();
+
+  // Fetch menu items
   const { data: menus, isLoading: isMenusLoading } = useQuery({
     queryKey: ["menus", branchId],
     queryFn: () => getMenubyBranchID(branchId, true),
     onError: (error) => toast.error(`Failed to fetch menu: ${error.message}`),
   });
-  console.log(menus);
 
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,14 +29,14 @@ const ChefMenu = () => {
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setExpandedCategories([]);
-    } else {
-      const matchingCategories = menus.categories
-        .filter((category) =>
-          category.items.some((item) =>
+    } else if (menus?.length > 0) {
+      const matchingCategories = menus
+        .filter((menu) =>
+          menu.menuItems.some((item) =>
             item.name.toLowerCase().includes(searchTerm.toLowerCase())
           )
         )
-        .map((category) => category.id);
+        .map((menu) => menu.id);
       setExpandedCategories(matchingCategories);
     }
   }, [searchTerm, menus]);
@@ -53,21 +53,24 @@ const ChefMenu = () => {
   const mutation = useMutation({
     mutationFn: updateFoodStatus,
     onSuccess: () => {
-      console.log("Food status updated successfully");
-      queryClient.invalidateQueries("menus");
+      toast.success("Food status updated successfully");
+      queryClient.invalidateQueries(["menus", branchId]);
     },
     onError: (error) => {
-      console.error(`Failed to update food status: ${error.message}`);
+      toast.error(`Failed to update food status: ${error.message}`);
     },
   });
 
   const handleFoodSwitch = (id, currentStatus) => {
     const newStatus = currentStatus === "AVAILABLE" ? "INACTIVE" : "ACTIVE";
     mutation.mutate({ foodId: id, status: newStatus });
-    console.log("foodID: ", id);
-    console.log("status", currentStatus);
-    console.log(" new status", newStatus);
   };
+
+  const filteredMenus = menus?.filter((menu) =>
+    menu.menuItems.some((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
   return (
     <div className="chef-menu-main">
@@ -90,8 +93,8 @@ const ChefMenu = () => {
         </div>
 
         <div className="chef-menu-accordion" id="menuAccordion">
-          {menus && menus.length > 0 ? (
-            menus.map((menu) => (
+          {!isMenusLoading && filteredMenus?.length > 0 ? (
+            filteredMenus.map((menu) => (
               <div key={menu.id} className="chef-menu-accordion-item">
                 <h2 className="chef-menu-accordion-header">
                   <button
@@ -99,49 +102,53 @@ const ChefMenu = () => {
                     type="button"
                     onClick={() => toggleCategory(menu.id)}
                   >
-                    {menu.type} {/* Assuming `type` is available from API */}
+                    {menu.type}
                   </button>
                 </h2>
 
                 {expandedCategories.includes(menu.id) && (
                   <div className="chef-menu-accordion-body">
-                    {menu.menuItems.map((item) => (
-                      <div key={item.id} className="chef-menu-item">
-                        <img
-                          src={item.image} // Ensure image URL is correct
-                          alt={item.name}
-                          className="chef-menu-item-image"
-                        />
-                        <div className="chef-menu-item-details">
-                          <h5>{item.name}</h5>
-                          <p className="chef-menu-item-desc">
-                            {item.description}
-                          </p>
-                          <p className="chef-menu-item-price">{item.price}</p>
+                    {menu.menuItems
+                      .filter((item) =>
+                        item.name
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                      )
+                      .map((item) => (
+                        <div key={item.id} className="chef-menu-item">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="chef-menu-item-image"
+                          />
+                          <div className="chef-menu-item-details">
+                            <h5>{item.name}</h5>
+                            <p className="chef-menu-item-desc">
+                              {item.description}
+                            </p>
+                            <p className="chef-menu-item-price">{item.price}</p>
+                          </div>
+                          <button
+                            onClick={() =>
+                              handleFoodSwitch(item.foodId, item.status)
+                            }
+                            className={`chef-menu-status-btn ${
+                              item.status === "AVAILABLE"
+                                ? "btn-success"
+                                : "btn-danger"
+                            }`}
+                          >
+                            {item.status === "AVAILABLE" ? (
+                              <FaCheckCircle />
+                            ) : (
+                              <FaTimesCircle />
+                            )}
+                            {item.status === "AVAILABLE"
+                              ? "AVAILABLE"
+                              : "UNAVAILABLE"}
+                          </button>
                         </div>
-
-                        {/* Button to toggle food status */}
-                        <button
-                          onClick={() =>
-                            handleFoodSwitch(item.foodId, item.status)
-                          }
-                          className={`chef-menu-status-btn ${
-                            item.status === "AVAILABLE"
-                              ? "btn-success"
-                              : "btn-danger"
-                          }`}
-                        >
-                          {item.status === "AVAILABLE" ? (
-                            <FaCheckCircle />
-                          ) : (
-                            <FaTimesCircle />
-                          )}
-                          {item.status === "AVAILABLE"
-                            ? "AVAILABLE"
-                            : "UNAVAILABLE"}
-                        </button>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </div>

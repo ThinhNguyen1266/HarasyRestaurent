@@ -154,6 +154,11 @@ function EditOrder() {
       },
     }));
   };
+  const selectedItems = order?.orderItems.map((item) => ({
+    ...item,
+    totalPrice: item.price * (cartItems[item.foodId] || item.quantity),
+    quantity: cartItems[item.foodId] || item.quantity,
+  }));
 
   const groupedMenuItems = menuData
     ?.filter((menu) => menu.status === "AVAILABLE")
@@ -208,24 +213,29 @@ function EditOrder() {
                         </small>
                       </div>
                       <div className="menu-item-actions d-flex align-items-center">
-                        <Button
-                          variant="outline-success"
-                          size="sm"
-                          onClick={() => addToCart(item)}
-                          className="mx-2"
-                        >
-                          Add
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => removeFromCart(item.foodId)}
-                          disabled={getCurrentQuantity(item.foodId) === 0}
-                          className="me-2"
-                        >
-                          Remove
-                        </Button>
-                        <Badge bg="secondary" className="mx-2">
+                        {!selectedItems.some(
+                          (selectedItem) => selectedItem.foodId === item.foodId
+                        ) && (
+                          <>
+                            <Button
+                              variant="outline-success"
+                              size="sm"
+                              onClick={() => addToCart(item)}
+                              className="mx-2"
+                            >
+                              Add
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => removeFromCart(item)}
+                              className="mx-2"
+                            >
+                              Remove
+                            </Button>
+                          </>
+                        )}
+                        <Badge bg="primary" className="mx-2">
                           x{getCurrentQuantity(item.foodId)}
                         </Badge>
                       </div>
@@ -253,22 +263,51 @@ function EditOrder() {
             <strong>Customer:</strong> {order.customer.name}
           </p>
 
-          <h3>Order Items</h3>
-          <ul>
-            {order.orderItems.map((item) => (
-              <li key={item.foodId}>
-                <strong>{item.name}</strong> - {item.quantity} x ${item.price} =
-                ${item.total}
-                <Button
-                  variant="success"
-                  className="mt-4 w-100"
-                  onClick={handleUpdateOrder}
-                >
-                  Update Order
-                </Button>
-              </li>
+          <h3>Selected Items</h3>
+          <ListGroup>
+            {selectedItems.map((item) => (
+              <ListGroup.Item
+                key={item.foodId}
+                className="d-flex justify-content-between align-items-center"
+              >
+                <div>
+                  <strong>{item.name}</strong>
+                  <br />
+                  <div className="d-flex align-items-center">
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => removeFromCart(item.foodId)}
+                      disabled={item.quantity === 1} // Ngăn giảm về dưới 1
+                      className="me-2"
+                    >
+                      -
+                    </Button>
+                    <Form.Control
+                      type="number"
+                      value={item.quantity}
+                      min={1}
+                      onChange={(e) => {
+                        const newQuantity = parseInt(e.target.value, 10) || 1;
+                        addToCart(item, newQuantity - item.quantity); // Cập nhật chênh lệch
+                      }}
+                      style={{ width: "60px", textAlign: "center" }}
+                    />
+                    <Button
+                      variant="outline-success"
+                      size="sm"
+                      onClick={() => addToCart(item)}
+                      className="ms-2"
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+                <div>${item.totalPrice.toFixed(2)}</div>
+              </ListGroup.Item>
             ))}
-          </ul>
+          </ListGroup>
+
           <Form.Group className="mt-4">
             <Form.Label>Order Note</Form.Label>
             <Form.Control
