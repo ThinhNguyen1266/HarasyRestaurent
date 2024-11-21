@@ -7,6 +7,7 @@ import useReservationApi from "../hooks/api/userReservationApi";
 import { ToastContainer, toast } from "react-toastify";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import EditReservationModal from "../components/EditReservationModal";
+import useMenuApi from "../hooks/api/useMenuApi";
 
 const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
   const getStatusColor = (status) => {
@@ -30,10 +31,16 @@ const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
       ></div>
       <div className="reservation-details">
         <p>
-          <strong>{reservation.table}</strong> <br />
-          Book date - time: {reservation.date} <br />
-          Customer name: {reservation.customer} <br />
-          Phone number: {reservation.phone}
+          <strong>Tables:</strong>
+          <ul>
+            {reservation.table.map((table) => (
+              <li key={table}>Table {table}</li>
+            ))}
+          </ul>
+          <br />
+          <strong>Book date - time:</strong> {reservation.date} <br />
+          <strong>Customer name:</strong> {reservation.customer} <br />
+          <strong>Phone number:</strong> {reservation.phone}
         </p>
       </div>
       <button
@@ -44,7 +51,7 @@ const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
       </button>
       <button
         className="detail-button"
-        onClick={() => onEditClick(reservation)}  // Open the edit modal
+        onClick={() => onEditClick(reservation)} // Open the edit modal
       >
         Edit
       </button>
@@ -52,20 +59,60 @@ const ReservationItem = ({ reservation, onDetailClick, onEditClick }) => {
   );
 };
 
-
 const ReservationsPage = () => {
-  const { getRerservationCus, updateReservationStatus } = useReservationApi();
-  const [page, setPage] = useState(0); // Track the current page
-  const { data: reservationData = { content: [], totalPages: 1 }, isLoading } =
-    useQuery({
-      queryKey: ["reservation", page], // Include `page` in the query key
-      queryFn: () => getRerservationCus(page),
-      onError: (error) => {
-        toast.error(`Failed to fetch reservations: ${error.message}`);
-      },
-    });
-  console.log("res", reservationData);
-  
+  const { getMenubyBranchID, getRerservationCus, getReservationType } =
+    useMenuApi();
+  const [page, setPage] = useState(0);
+  const [searchPhone, setSearchPhone] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editReservation, setEditReservation] = useState(null);
+
+  const queryClient = useQueryClient();
+
+  // Fetch reservations
+  const {
+    data: reservationData = { content: [], totalPages: 1 },
+    isLoading: isLoadingReservations,
+  } = useQuery({
+    queryKey: ["reservation", page],
+    queryFn: () => getRerservationCus(page),
+    onError: (error) => {
+      toast.error(`Failed to fetch reservations: ${error.message}`);
+    },
+  });
+
+  // Fetch food data
+  const { data: menuData = [], isLoading: isLoadingFood } = useQuery({
+    queryKey: ["menu"],
+    queryFn: getMenubyBranchID,
+    onError: (error) => {
+      toast.error(`Failed to fetch menu: ${error.message}`);
+    },
+  });
+
+  // Map food data into a flattened structure
+  const foodData = menuData
+    .flatMap((menu) => menu.menuItems)
+    .filter((item) => item.status === "AVAILABLE") // Filter available items
+    .map(({ foodId, name }) => ({
+      id: foodId,
+      name,
+    }));
+
+  // Fetch reservation types
+  const { data: type = [], isLoading: isLoadingTypes } = useQuery({
+    queryKey: ["resType"],
+    queryFn: getReservationType,
+    onError: (error) => {
+      toast.error(`Failed to fetch reservation types: ${error.message}`);
+    },
+  });
+  console.log(reservationData);
+  console.log(foodData);
+  console.log(type);
   const allReservations = reservationData.content.map((res) => ({
     id: res.id,
     status: res.status,
@@ -83,59 +130,19 @@ const ReservationsPage = () => {
     orders: res.order.orderItems.map((item) => item.name),
     price: res.order.total.toLocaleString(),
     guests: res.amountGuest,
+    type: res.type,
   }));
-
-  const [searchPhone, setSearchPhone] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editReservation, setEditReservation] = useState(null);
-  
-  const handleDetailClick = (reservation) => {
-    setSelectedReservation(reservation);
-  };
-  
-  const handleEditClick = (reservation) => {
-    setEditReservation(reservation);
-    setIsEditModalOpen(true);  // Open the edit modal
-  };
-  
-  const queryClient = useQueryClient();
-
-  const handleCloseModal = () => {
-    queryClient.invalidateQueries("reservation");
-    setSelectedReservation(null);
-  };
-
-  const handleCreateNewClick = () => {
-    setIsCreateModalOpen(true);
-  };
-
-  const handleCloseCreateModal = () => {
-    setIsCreateModalOpen(false);
-  };
-
-  const handleSaveReservation = (newReservation) => {
-    console.log("New reservation:", newReservation);
-    // TODO: Implement saving logic here
-  };
 
   const filteredReservations = useMemo(() => {
     let result = allReservations;
-
-    // Apply phone search filter
     if (searchPhone.trim()) {
-      result = result.filter((res) => res.phone.includes(searchPhone.trim()));
-    }
-
-    // Apply date filter
-    if (selectedDate) {
-      result = result.filter(
-        (res) => res.date.split(" - ")[0] === selectedDate
+      result = result.filter((res) =>
+        res.phone.toLowerCase().includes(searchPhone.trim().toLowerCase())
       );
     }
-
+    if (selectedDate) {
+      result = result.filter((res) => res.date.startsWith(selectedDate));
+    }
     return result;
   }, [searchPhone, selectedDate, allReservations]);
 
@@ -144,7 +151,6 @@ const ReservationsPage = () => {
     [allReservations]
   );
 
-  // Pagination Controls
   const handlePrevPage = () => {
     if (page > 0) setPage(page - 1);
   };
@@ -153,13 +159,29 @@ const ReservationsPage = () => {
     if (page < reservationData.totalPages - 1) setPage(page + 1);
   };
 
+  const handleDetailClick = (reservation) => {
+    setSelectedReservation(reservation);
+  };
+
+  const handleEditClick = (reservation) => {
+    setEditReservation(reservation);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    queryClient.invalidateQueries("reservation");
+    setSelectedReservation(null);
+  };
+
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
+  };
+
   return (
     <div className="reservations-page">
       <div className="main-content">
         <Sidebar />
-        <h1 className="revervations-title">View All Reservations</h1>
-
-        {/* Search and Dropdown Filter */}
+        <h1 className="reservations-title">View All Reservations</h1>
         <div className="search-row row justify-content-end mb-3">
           <div className="col-md-3">
             <input
@@ -185,7 +207,10 @@ const ReservationsPage = () => {
             </select>
           </div>
           <div className="col-md-2">
-            <button className="btn btn-warning" onClick={handleCreateNewClick}>
+            <button
+              className="btn btn-warning"
+              onClick={() => setIsCreateModalOpen(true)}
+            >
               Create
             </button>
           </div>
@@ -202,7 +227,6 @@ const ReservationsPage = () => {
           ))}
         </div>
 
-        {/* Pagination Controls */}
         <div className="pagination-controls">
           <button
             className="btn btn-secondary"
@@ -223,25 +247,25 @@ const ReservationsPage = () => {
           </button>
         </div>
 
-        {/* Show Modal if a reservation is selected */}
         {selectedReservation && (
           <ReservationModal
             reservation={selectedReservation}
             onClose={handleCloseModal}
           />
         )}
-
-        {/* Show Create Reservation Modal */}
         <CreateReservationModal
+          foodData={foodData}
           isOpen={isCreateModalOpen}
           onClose={handleCloseCreateModal}
-          onSave={handleSaveReservation}
+          reservationType={type}
+          type={type}
         />
         {isEditModalOpen && (
           <EditReservationModal
             isOpen={isEditModalOpen}
             onClose={() => setIsEditModalOpen(false)}
             reservation={editReservation}
+            foodData={foodData}
           />
         )}
       </div>

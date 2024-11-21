@@ -1,16 +1,28 @@
 import axios from "../../services/axios";
 import useAxiosPrivate from "../useAxiosPrivate";
-import { ToastContainer, toast } from "react-toastify";
 import useAuth from "../useAuth"; 
 const useReservationApi = () => {
   const axiosPrivate = useAxiosPrivate();
   const { user } = useAuth();
   const getRerservationCus = async (page) => {
     try {
+        console.log(`/branch/${user.branchId}/reserve`);
+        
       const cusReservation = await axiosPrivate.get(`/branch/${user.branchId}/reserve`, {
         params: { page },
       });
-      return cusReservation;
+      console.log(cusReservation);
+      
+      return await cusReservation;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getReservationType = async () => {
+    try {
+      const reservationType = await axiosPrivate.get(`/reserve/type`);
+      return await reservationType;
     } catch (error) {
       throw error;
     }
@@ -31,7 +43,8 @@ const useReservationApi = () => {
 
   return {
     getRerservationCus,
-    updateReservationStatus
+    updateReservationStatus,
+    getReservationType
   };
 };
 

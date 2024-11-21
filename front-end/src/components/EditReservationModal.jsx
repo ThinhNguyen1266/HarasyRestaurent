@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "../assets/styles/CreateReservationModal.css";
-import useTableApi from "../hooks/api/useTableApi";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-const EditReservationModal = ({ isOpen, onClose, reservation }) => {
+import useReservationApi from "../hooks/api/userReservationApi";
+import { useMutation } from "@tanstack/react-query";
+const EditReservationModal = ({ isOpen, onClose, reservation, foodData }) => {
   console.log("r1", reservation);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,13 +52,26 @@ const EditReservationModal = ({ isOpen, onClose, reservation }) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleSelectFood = (food) => {};
+  const handleSelectFood = (foodName) => {
+    
+  };
+  const { updateReservationStatus } = useReservationApi();
 
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: updateReservationStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries("reservation");
+    },
+    onError: (error) => {
+      console.error(`Failed to update reservation status: ${error.message}`);
+    },
+  });
   const handleRemoveFood = (food) => {};
 
-  // const filteredFoods = availableFoods.filter((food) =>
-  //   food.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const filteredFoods = foodData.filter((food) =>
+    food.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="create-reservation-modal-overlay">
@@ -69,32 +83,36 @@ const EditReservationModal = ({ isOpen, onClose, reservation }) => {
             <h3 className="create-reservation-modal-section-title">
               Reservation Info
             </h3>
-
-            <div className="create-reservation-modal-orders-list">
-              {reservation.table.length > 0 && (
-                <ul>
-                  {reservation.table.map((table, index) => (
-                    <li key={index}>
-                      {table}
-                      <button
-                        className="remove-food-button"
-                        onClick={() => handleRemoveFood(table)}
-                      >
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
+            <label className="create-reservation-modal-label">
+              Table
+              <div className="create-reservation-modal-orders-list mt-1">
+                {reservation.table.length > 0 && (
+                  <ul className="d-flex">
+                    {Array.isArray(reservation.table) ? (
+                      reservation.table.map((table, index) => (
+                        <li key={index}>{table}</li>
+                      ))
+                    ) : (
+                      <li>{reservation.table}</li>
+                    )}
+                  </ul>
+                )}
+              </div>
+            </label>
             <label className="create-reservation-modal-label">
               Date-Time
               <input
-                type="datetime-local"
-                name="dateTime"
+                type="text"
                 value={reservation.date}
                 onChange={handleChange}
+                className="create-reservation-modal-input"
+              />
+            </label>
+            <label className="create-reservation-modal-label">
+              Type
+              <input
+                name=""
+                value={reservation.type}
                 className="create-reservation-modal-input"
               />
             </label>
@@ -112,51 +130,55 @@ const EditReservationModal = ({ isOpen, onClose, reservation }) => {
             </label>
 
             {/* Order Section with Search and Dropdown */}
-            <label className="create-reservation-modal-label">
-              Order
-              <div className="create-reservation-modal-order-search">
-                <input
-                  type="text"
-                  placeholder="Search for foods..."
-                  value={searchTerm}
-                  onChange={handleOrderSearch}
-                  onClick={() => setShowDropdown(!showDropdown)}
-                  className="create-reservation-modal-input"
-                />
-                {showDropdown && (
-                  <div className="create-reservation-modal-dropdown">
-                    {/* {filteredFoods.map((food) => (
-                      <div
-                        key={food}
-                        className="create-reservation-modal-dropdown-item"
-                        onClick={() => handleSelectFood(food)}
-                      >
-                        {food}
+            {["BIRTHDAY", "FUNERAL"].includes(reservation.type) && (
+              <>
+                <label className="create-reservation-modal-label">
+                  Order
+                  <div className="create-reservation-modal-order-search">
+                    <input
+                      type="text"
+                      placeholder="Search for foods..."
+                      value={searchTerm}
+                      onChange={handleOrderSearch}
+                      onClick={() => setShowDropdown(!showDropdown)}
+                      className="create-reservation-modal-input"
+                    />
+                    {showDropdown && (
+                      <div className="create-reservation-modal-dropdown">
+                        {filteredFoods.map((food) => (
+                          <div
+                            key={food.id}
+                            className="create-reservation-modal-dropdown-item"
+                            onClick={() => handleSelectFood(food.name)} // Use food.name here
+                          >
+                            {food.name}
+                          </div>
+                        ))}
                       </div>
-                    ))} */}
+                    )}
                   </div>
-                )}
-              </div>
-            </label>
-            <div className="create-reservation-modal-orders-list">
-              {Object.keys(reservation.orders).length > 0 && (
-                <ul>
-                  {Object.entries(reservation.orders).map(
-                    ([food, quantity], index) => (
-                      <li key={index}>
-                        x{quantity} {food}
-                        <button
-                          className="remove-food-button"
-                          onClick={() => handleRemoveFood(food)}
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    )
+                </label>
+                <div className="create-reservation-modal-orders-list">
+                  {Object.keys(reservation.orders).length > 0 && (
+                    <ul>
+                      {Object.entries(reservation.orders).map(
+                        ([food, quantity], index) => (
+                          <li key={index}>
+                            {quantity} {food}
+                            <button
+                              className="remove-food-button"
+                              onClick={() => handleRemoveFood(food)}
+                            >
+                              Remove
+                            </button>
+                          </li>
+                        )
+                      )}
+                    </ul>
                   )}
-                </ul>
-              )}
-            </div>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="create-customer-info">
@@ -197,17 +219,18 @@ const EditReservationModal = ({ isOpen, onClose, reservation }) => {
         </div>
 
         <div className="create-reservation-modal-actions">
+        {["BIRTHDAY", "FUNERAL"].includes(reservation.type) && (
           <button
             className="create-reservation-modal-button create-reservation-modal-save"
             onClick={handleSave}
           >
             Save
-          </button>
+          </button>)}
           <button
             className="create-reservation-modal-button create-reservation-modal-cancel"
             onClick={onClose}
           >
-            Cancel
+            Close
           </button>
         </div>
       </div>

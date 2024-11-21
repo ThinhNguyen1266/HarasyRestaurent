@@ -24,13 +24,53 @@ const useMenuApi = () => {
     return response.data;
   };
 
+  const getReservationType = async () => {
+    try {
+      const reservationType = await axiosPrivate.get(`/reserve/type`);
+      return await reservationType;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getRerservationCus = async (page) => {
+    try {
+        console.log(`/branch/${user.branchId}/reserve`);
+        
+      const cusReservation = await axiosPrivate.get(`/branch/${user.branchId}/reserve`, {
+        params: { page },
+      });
+      console.log(cusReservation);
+      
+      return await cusReservation;
+    } catch (error) {
+      throw error;
+    }
+  };
+  const getAvailableTablelist = async () => {
+    try {      
+      const tableData = (await axiosPrivate.post(`/reserve/availableTable`,{
+        "branchId": 1,
+        "date": "2024-12-30",
+        "time": "08:00",
+        "amountGuest": 4
+    })).data;
+      console.log("table data:", tableData); 
+      return tableData;
+    } catch (error) {
+      console.error("Error fetching table data:", error);
+      throw error;
+    }
+  };
+
   const getMenubyBranchID = async () => {
     try {
       const branchId = user?.branchId;
       if (!branchId) throw new Error("Branch ID not found");
       // Thêm tham số includeAll vào URL
+      console.log(`/branch/${branchId}/menus`)
       const response = await axiosPrivate.get(`/branch/${branchId}/menus`);
-
+      console.log(`/branch ${response}`)
       return response;
     } catch (error) {
       console.error(`Failed to fetch menus for branch with ID :`, error);
@@ -140,6 +180,9 @@ const useMenuApi = () => {
     getCustomerProfileByPhone,
     getOrderByID,
     updateOrder,
+    getRerservationCus,
+    getReservationType,
+    getAvailableTablelist
   };
 };
 

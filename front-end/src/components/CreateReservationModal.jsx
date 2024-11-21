@@ -3,37 +3,59 @@ import "../assets/styles/CreateReservationModal.css";
 
 const CreateReservationModal = ({ isOpen, onClose }) => {
   const [reservationInfo, setReservationInfo] = useState({
-    table: "",
-    dateTime: "",
-    guests: "",
-    orders: {},
-    customerName: "",
-    phoneNumber: "",
-    email: "",
+    branchId: 1, // Hardcoded for now or could be dynamically passed
+    tableIds: [],
+    customer: { customerId: 2 }, // Assuming customerId is provided
+    date: "",
+    time: "",
+    amountGuest: "",
+    type: "GENERAL", // Default type is "GENERAL"
+    order: {
+      branchId: 1, // Hardcoded or passed as prop
+      tableIds: [],
+      staffId: 3, // Hardcoded for now or could be dynamically passed
+      customer: { customerId: 2 },
+      orderItems: {
+        creates: [],
+        updates: [],
+      },
+      note: "", // Can be added to the form if necessary
+    },
   });
 
   const [searchTerm, setSearchTerm] = useState("");
   const [availableFoods] = useState([
-    "Vegetable Mixups",
-    "Chinese Takeout Dish",
-    "Pasta",
-    "Garlic Bread",
-    "Pizza",
-    "Caesar Salad",
-    "Sushi",
-    "Miso Soup",
-    "Burger",
-    "Fries",
-    "Tacos",
-    "Nachos",
+    { id: 1, name: "Vegetable Mixups" },
+    { id: 2, name: "Chinese Takeout Dish" },
+    { id: 3, name: "Pasta" },
+    { id: 4, name: "Garlic Bread" },
+    { id: 5, name: "Pizza" },
+    { id: 6, name: "Caesar Salad" },
+    { id: 7, name: "Sushi" },
+    { id: 8, name: "Miso Soup" },
+    { id: 9, name: "Burger" },
+    { id: 10, name: "Fries" },
+    { id: 11, name: "Tacos" },
+    { id: 12, name: "Nachos" },
   ]);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // List of tables (10 tables)
-  const tables = ["Table 1", "Table 2", "Table 3", "Table 4", "Table 5", "Table 6", "Table 7", "Table 8", "Table 9", "Table 10"];
+  const tables = [
+    "Table 1", "Table 2", "Table 3", "Table 4", "Table 5",
+    "Table 6", "Table 7", "Table 8", "Table 9", "Table 10"
+  ];
+
+  const reservationTypes = [
+    { id: 1, name: "GENERAL" },
+    { id: 2, name: "BIRTHDAY" },
+    { id: 3, name: "FUNERAL" }
+  ];
 
   const handleChange = (e) => {
-    setReservationInfo({ ...reservationInfo, [e.target.name]: e.target.value });
+    setReservationInfo({
+      ...reservationInfo,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSave = () => {
@@ -43,11 +65,11 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
 
   const handleGuestChange = (operation) => {
     setReservationInfo((prevState) => {
-      const currentGuests = parseInt(prevState.guests || "0", 10);
+      const currentGuests = parseInt(prevState.amountGuest || "0", 10);
       const updatedGuests = operation === "increment" ? currentGuests + 1 : currentGuests - 1;
       return {
         ...prevState,
-        guests: updatedGuests >= 0 ? updatedGuests.toString() : "0",
+        amountGuest: updatedGuests >= 0 ? updatedGuests.toString() : "0",
       };
     });
   };
@@ -58,38 +80,41 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
 
   const handleSelectFood = (food) => {
     setReservationInfo((prevState) => {
-      const updatedOrders = { ...prevState.orders };
-      if (updatedOrders[food]) {
-        updatedOrders[food] += 1;
+      const updatedOrderItems = { ...prevState.order.orderItems };
+      const foodIndex = updatedOrderItems.creates.findIndex(item => item.foodId === food.id);
+      if (foodIndex !== -1) {
+        updatedOrderItems.creates[foodIndex].quantity += 1;
       } else {
-        updatedOrders[food] = 1;
+        updatedOrderItems.creates.push({ foodId: food.id, quantity: 1 });
       }
       return {
         ...prevState,
-        orders: updatedOrders,
+        order: { ...prevState.order, orderItems: updatedOrderItems },
       };
     });
     setSearchTerm(""); // Clear search after selecting food
     setShowDropdown(false); // Hide the dropdown
   };
 
-  const handleRemoveFood = (food) => {
+  const handleRemoveFood = (foodId) => {
     setReservationInfo((prevState) => {
-      const updatedOrders = { ...prevState.orders };
-      if (updatedOrders[food] > 1) {
-        updatedOrders[food] -= 1;
-      } else {
-        delete updatedOrders[food];
+      const updatedOrderItems = { ...prevState.order.orderItems };
+      const foodIndex = updatedOrderItems.creates.findIndex(item => item.foodId === foodId);
+      if (foodIndex !== -1) {
+        updatedOrderItems.creates[foodIndex].quantity -= 1;
+        if (updatedOrderItems.creates[foodIndex].quantity <= 0) {
+          updatedOrderItems.creates.splice(foodIndex, 1);
+        }
       }
       return {
         ...prevState,
-        orders: updatedOrders,
+        order: { ...prevState.order, orderItems: updatedOrderItems },
       };
     });
   };
 
   const filteredFoods = availableFoods.filter((food) =>
-    food.toLowerCase().includes(searchTerm.toLowerCase())
+    food.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (!isOpen) return null;
@@ -103,18 +128,17 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
           <div className="create-reservation-info">
             <h3 className="create-reservation-modal-section-title">Reservation Info</h3>
             
-            {/* Table Dropdown */}
+            {/* Reservation Type Select */}
             <label className="create-reservation-modal-label">
-              Table
+              Reservation Type
               <select
-                name="table"
-                value={reservationInfo.table}
+                name="type"
+                value={reservationInfo.type}
                 onChange={handleChange}
                 className="create-reservation-modal-input"
               >
-                <option value="" disabled>Select a table</option>
-                {tables.map((table, index) => (
-                  <option key={index} value={table}>{table}</option>
+                {reservationTypes.map((type) => (
+                  <option key={type.id} value={type.name}>{type.name}</option>
                 ))}
               </select>
             </label>
@@ -129,22 +153,39 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
                 className="create-reservation-modal-input"
               />
             </label>
+
+            {/* Table Dropdown */}
+            <label className="create-reservation-modal-label">
+              Table
+              <select
+                name="tableIds"
+                value={reservationInfo.tableIds}
+                onChange={handleChange}
+                className="create-reservation-modal-input"
+                multiple
+              >
+                {tables.map((table, index) => (
+                  <option key={index} value={table}>{table}</option>
+                ))}
+              </select>
+            </label>
+
             <label className="create-reservation-modal-label">
               Amount of Guests
               <div className="create-reservation-modal-input-wrapper">
                 <input
                   type="number"
-                  name="guests"
-                  value={reservationInfo.guests}
+                  name="amountGuest"
+                  value={reservationInfo.amountGuest}
                   onChange={handleChange}
                   className="create-reservation-modal-input"
                 />
               </div>
             </label>
-
-            {/* Order Section with Search and Dropdown */}
-            <label className="create-reservation-modal-label">
-              Order
+            {/* Show Order Section Only If Type Is Not General */}
+          {reservationInfo.type !== "GENERAL" && (
+            <div className="create-reservation-modal-label">
+              <h3 className="create-reservation-modal-section-title">Order</h3>
               <div className="create-reservation-modal-order-search">
                 <input
                   type="text"
@@ -158,36 +199,39 @@ const CreateReservationModal = ({ isOpen, onClose }) => {
                   <div className="create-reservation-modal-dropdown">
                     {filteredFoods.map((food) => (
                       <div
-                        key={food}
+                        key={food.id}
                         className="create-reservation-modal-dropdown-item"
                         onClick={() => handleSelectFood(food)}
                       >
-                        {food}
+                        {food.name}
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-            </label>
-            <div className="create-reservation-modal-orders-list">
-              {Object.keys(reservationInfo.orders).length > 0 && (
-                <ul>
-                  {Object.entries(reservationInfo.orders).map(([food, quantity], index) => (
-                    <li key={index}>
-                      x{quantity} {food}
-                      <button
-                        className="remove-food-button"
-                        onClick={() => handleRemoveFood(food)}
-                      >
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <div className="create-reservation-modal-orders-list">
+                {reservationInfo.order.orderItems.creates.length > 0 && (
+                  <ul>
+                    {reservationInfo.order.orderItems.creates.map((item, index) => (
+                      <li key={index}>
+                        x{item.quantity} {availableFoods.find(food => food.id === item.foodId).name}
+                        <button
+                          className="remove-food-button"
+                          onClick={() => handleRemoveFood(item.foodId)}
+                        >
+                          Remove
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
+          )}
           </div>
 
+          
+          
           <div className="create-customer-info">
             <h3 className="create-reservation-modal-section-title">Customer Info</h3>
             <label className="create-reservation-modal-label">
