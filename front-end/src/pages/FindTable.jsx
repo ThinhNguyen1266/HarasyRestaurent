@@ -225,7 +225,7 @@ const FindTable = () => {
                         <Col md={3}>
                           <Button
                             as={Link}
-                            to={`/reservationdetails?branch=${branchData?.name}&time=${option}&guests=${request.amnountGuest}&location=${branchData?.location}&date=${request.date}`}
+                            to={`/reservationdetails?branchid=${branchData?.id}&branch=${branchData?.name}&time=${option}&guests=${request.amnountGuest}&location=${branchData?.location}&date=${request.date}`}
                             key={index}
                             className={`time-btn d-flex align-items-center justify-content-center mx-1`}
                           >

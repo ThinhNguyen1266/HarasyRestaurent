@@ -31,7 +31,7 @@ import TableList from "./pages/TableList";
 import Profile from "./pages/UserProfile";
 import Venues from "./pages/Venues";
 import WorkforceList from "./pages/WorkforceList";
-
+import FAQs from "./pages/FAQs";
 import CreateOrder from "./pages/CreateOrder";
 import EditOrder from "./pages/EditOrder";
 import ReservationsPage from "./pages/ReservationPage";
@@ -53,6 +53,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/userprofile" element={<Profile />} />
+          <Route path="/faqs" element={<FAQs />} />
         </Route>
         <Route path="/otp" element={<OTP />} />
         <Route path="/login" element={<Login />} />
