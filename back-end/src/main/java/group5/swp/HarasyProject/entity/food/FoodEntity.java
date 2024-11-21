@@ -45,7 +45,7 @@ public class FoodEntity extends Auditable {
     @Enumerated(EnumType.STRING)
     Status status = Status.INACTIVE;
 
-    @OneToMany(mappedBy = "food")
+    @OneToMany(mappedBy = "food" , cascade = CascadeType.ALL)
     List<MenuItemEntity> menuItems;
 
     @ManyToOne

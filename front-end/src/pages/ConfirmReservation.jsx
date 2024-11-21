@@ -1,38 +1,65 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-
 import {
   FaLocationDot,
   FaRegCalendar,
   FaRegClock,
   FaRegUser,
 } from "react-icons/fa6";
-
 import { Link, useLocation } from "react-router-dom";
 import "../assets/styles/ConfirmReservation.css";
-
+import useAuth from "../hooks/useAuth";
+import { useState } from "react";
 const ConfirmReservation = () => {
   const location = useLocation();
-
+  const { user } = useAuth();
   const params = new URLSearchParams(location.search);
   const branch = params.get("branch");
   const time = params.get("time");
+  const guest = params.get("guest");
+  const branchLocation = params.get("location");
+  const date = params.get("date");
+  const [formData, setFormData] = useState({
+    email: user?.email || "", // Điền trước nếu user đã đăng nhập
+    fullname: user?.fullName || "", // Điền trước nếu user đã đăng nhập
+  });
 
-  const branchTitle =
-    branch === "ho-chi-minh"
-      ? "Reservation at Harasy Ho Chi Minh | Restaurant"
-      : "Reservation at Harasy Ha Noi | Restaurant";
+  const [errors, setErrors] = useState({
+    email: "",
+    fullname: "",
+    termsAccepted: "",
+  });
 
-  const branchRestaurantInfo =
-    branch === "ho-chi-minh"
-      ? {
-          name: "Harasy Ho Chi Minh | Restaurant",
-          address: "456, District 1, Ho Chi Minh City",
-        }
-      : {
-          name: "Harasy Ha Noi | Restaurant",
-          address: "123, Hoan Kiem, Ha Noi",
-        };
+  const handleInputChange = (e) => {
+    const { id, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [id]: type === "checkbox" ? checked : value,
+    });
+    setErrors({ ...errors, [id]: "" });
+  };
 
+  const handleConfirmReservation = () => {
+    const newErrors = {};
+    if (!formData.email) newErrors.email = "Email is required.";
+    if (!formData.fullname) newErrors.fullname = "Full name is required.";
+    if (!formData.termsAccepted)
+      newErrors.termsAccepted = "You must accept the terms and conditions.";
+
+    setErrors(newErrors);
+
+    // Nếu không có lỗi, tiến hành xác nhận đặt bàn
+    if (Object.keys(newErrors).length === 0) {
+      console.log("Reservation Confirmed", {
+        email: formData.email,
+        fullname: formData.fullname,
+        branch,
+        date,
+        time,
+        guest,
+      });
+      alert("Reservation confirmed successfully!");
+    }
+  };
   return (
     <div className="cr-page">
       <Container
@@ -52,7 +79,7 @@ const ConfirmReservation = () => {
             </div>
             <div className="cr-box">
               <div className="cr-header">
-                <h2 className="cr-title">{branchTitle}</h2>
+                <h2 className="cr-title">{branch}</h2>
                 <div className="cr-steps">
                   <h3 className="cr-steps-title">
                     <span>1. FIND A TABLE</span>
@@ -66,67 +93,66 @@ const ConfirmReservation = () => {
               <Row>
                 <Col md={6} className="form-section">
                   <Form>
-                    <Form.Group controlId="firstName">
-                      <Form.Control type="text" placeholder="First name" />
-                    </Form.Group>
-                    <Form.Group controlId="lastName">
-                      <Form.Control type="text" placeholder="Last name" />
-                    </Form.Group>
-                    <Form.Group controlId="phoneNumber">
-                      <Form.Control type="tel" placeholder="Phone number" />
-                    </Form.Group>
                     <Form.Group controlId="email">
-                      <Form.Control type="email" placeholder="Email" />
+                      <Form.Control
+                        type="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        disabled={!!user}
+                      />
+                      {errors.email && (
+                        <div className="error-text">{errors.email}</div>
+                      )}
+                    </Form.Group>
+                    <Form.Group controlId="fullname">
+                      <Form.Control
+                        type="text"
+                        placeholder="Fullname"
+                        value={formData.fullname}
+                        onChange={handleInputChange}
+                        disabled={!!user} // Khóa trường nếu user đã đăng nhập
+                      />
+                      {errors.fullname && (
+                        <div className="error-text">{errors.fullname}</div>
+                      )}
                     </Form.Group>
                     <Form.Group controlId="occasion">
                       <Form.Control as="select">
-                        <option>Birthday</option>
-                        <option>Anniversary</option>
-                        <option>Business Meeting</option>
-                        <option>Other</option>
+                        <option>GENERAL</option>
+                        <option>BIRTHDAY</option>
+                        <option>WEDDING</option>
                       </Form.Control>
                     </Form.Group>
-                    <Form.Group controlId="specialRequest">
-                      <Form.Control
-                        as="textarea"
-                        rows={3}
-                        placeholder="Add a special request"
-                      />
-                    </Form.Group>
-                    <Form.Group controlId="updates" className="checkbox-group">
-                      <Form.Check
-                        type="checkbox"
-                        label="Yes, I want to get text updates and reminders about my reservations."
-                      />
-                    </Form.Group>
-
                     <div className="required-label">Required:</div>
-
                     <Form.Group controlId="terms" className="checkbox-group">
                       <Form.Check
                         type="checkbox"
                         label="I agree to the restaurant's terms and conditions."
                       />
+                      {errors.termsAccepted && (
+                        <div className="error-text">{errors.termsAccepted}</div>
+                      )}
                     </Form.Group>
                   </Form>
                 </Col>
                 <Col md={6} className="info-section">
                   <div className="restaurant-info">
-                    <h4>{branchRestaurantInfo.name}</h4>
+                    <h4>{branch}</h4>
                     <p>
                       <FaRegCalendar className="icon-spacing" />
-                      Monday, October 2
+                      {date}
                     </p>
                     <p>
                       <FaRegClock className="icon-spacing" />
                       {time}
                     </p>
                     <p>
-                      <FaRegUser className="icon-spacing" /> 2 people
+                      <FaRegUser className="icon-spacing" /> {guest} people
                     </p>
                     <p>
                       <FaLocationDot className="icon-spacing" />
-                      {branchRestaurantInfo.address}
+                      {branchLocation}
                     </p>
 
                     <hr className="cr-info-divider" />
@@ -151,7 +177,12 @@ const ConfirmReservation = () => {
                 </Col>
               </Row>
               <div className="confirm-btn-container">
-                <Button className="confirm-btn">Confirm reservation</Button>
+                <Button
+                  className="confirm-btn"
+                  onClick={handleConfirmReservation}
+                >
+                  Confirm reservation
+                </Button>
               </div>
             </div>
           </Col>
