@@ -5,6 +5,7 @@ import "../assets/styles/Register.css";
 import useAccountApi from "../hooks/api/useAccountApi";
 import { toast, ToastContainer } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
+import "react-toastify/dist/ReactToastify.css";
 
 function Register() {
   const { Register } = useAccountApi();
@@ -21,12 +22,26 @@ function Register() {
     email: "",
   });
 
-  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePhone = (phone) => /^\d{10}$/.test(phone); 
+  const validateFullName = (name) => /^[a-zA-Z\s]+$/.test(name);
+  const validateUsername = (username) => !/\s/.test(username);
+  const validatePassword = (password) => password.length >= 6;
+  const validateDOB = (dobYear, dobMonth, dobDay) => {
+    const currentDate = new Date();
+    const dob = new Date(`${dobYear}-${dobMonth}-${dobDay}`);
+    const age = currentDate.getFullYear() - dob.getFullYear();
+    const isPastDate = dob < currentDate;
+    const isAgeValid =
+      isPastDate &&
+      (dob.getMonth() < currentDate.getMonth() ||
+        (dob.getMonth() === currentDate.getMonth() &&
+          dob.getDate() <= currentDate.getDate()))
+        ? age >= 12
+        : age - 1 >= 12;
+    return isPastDate && isAgeValid;
   };
 
   const handleChange = (e) => {
@@ -35,19 +50,12 @@ function Register() {
       ...prev,
       [name]: value,
     }));
-
-    if (name === "email" && value) {
-      setErrors((prev) => ({
-        ...prev,
-        email: validateEmail(value) ? "" : "Please enter a valid email address",
-      }));
-    }
   };
 
   const saveRegisMutate = useMutation({
     mutationFn: Register,
     onSuccess: () => {
-      toast.success(" Registed successfully!");
+      toast.success("Registered successfully!");
       navigate("/otp", { state: { email: formData.email } });
     },
     onError: (error) => {
@@ -60,10 +68,48 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    setIsLoading(true);
-    handleRegis();
+  
+    let isValid = true;
+  
+    if (!validateEmail(formData.email)) {
+      toast.error("Please enter a valid email address");
+      isValid = false;
+    }
+    if (!validatePhone(formData.phone)) {
+      toast.error("Phone number must contain only number and exactly 10 digits");
+      isValid = false;
+    }
+    if (!validateFullName(formData.fullName)) {
+      toast.error("Full name must contain only letters and spaces");
+      isValid = false;
+    }
+    if (!validateUsername(formData.username)) {
+      toast.error("Username cannot contain spaces");
+      isValid = false;
+    }
+    if (!validatePassword(formData.password)) {
+      toast.error("Password must be at least 6 characters long");
+      isValid = false;
+    }
+    if (
+      !validateDOB(
+        formData.dobYear,
+        formData.dobMonth,
+        formData.dobDay
+      )
+    ) {
+      toast.error(
+        "Date of birth must be in the past and age must be at least 12 years"
+      );
+      isValid = false;
+    }
+  
+    if (isValid) {
+      setIsLoading(true);
+      handleRegis();
+    }
   };
+
   const handleRegis = async () => {
     const { dobMonth, dobDay, dobYear } = formData;
     const formattedDob =
@@ -79,13 +125,12 @@ function Register() {
       email: formData.email,
       fullName: formData.fullName,
     };
-    console.log("Payload sent to API regis:", JSON.stringify(payload, null, 2));
+
     try {
-      // Perform the mutation
-      await saveRegisMutate.mutateAsync(payload); // Using mutateAsync for async/await
-      setIsLoading(false); // Stop loading on success
+      await saveRegisMutate.mutateAsync(payload);
+      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false); // Stop loading on error
+      setIsLoading(false);
     }
   };
 
@@ -114,7 +159,6 @@ function Register() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    isInvalid={!!errors.email}
                   />
                 </Form.Group>
 
@@ -161,7 +205,6 @@ function Register() {
                 <Form.Group controlId="formDOB">
                   <Form.Label>DATE OF BIRTH</Form.Label>
                   <Row className="custom-dob">
-                    {" "}
                     <Col>
                       <Form.Select
                         name="dobDay"
@@ -242,7 +285,7 @@ function Register() {
             </div>
           </Col>
         </Row>
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer position="top-right" autoClose={2000} />
       </Container>
     </div>
   );
