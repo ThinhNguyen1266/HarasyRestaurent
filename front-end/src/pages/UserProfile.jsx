@@ -3,7 +3,7 @@ import "../assets/styles/UserProfile.css";
 import ProfileForm from "../components/UserProfileFrom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAccountApi from "../hooks/api/useAccountApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,6 +11,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 const Profile = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { getProfile } = useAccountApi();
 
@@ -75,7 +76,15 @@ const Profile = () => {
                 </p>
               </div>
             )}
+            <button
+            type="submit"
+            className="update-btn"
+            onClick={()=>navigate("/changepassword")}
+          >
+            Change Password
+          </button>
           </div>
+          
           {/* Profile Form */}
           <ProfileForm profile={userprofile} refetch={handleRefetch} />
         </div>

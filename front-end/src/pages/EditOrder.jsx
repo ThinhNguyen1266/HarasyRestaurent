@@ -333,10 +333,10 @@ function EditOrder() {
               </strong>
             </p>
             <p>
-              <strong>Staff:</strong> {order.staff.name}
+              <strong>Staff:</strong> {order?.staff?.name}
             </p>
             <p>
-              <strong>Customer:</strong> {order.customer.name}
+              <strong>Customer:</strong> {order?.custome?.name}
             </p>
 
             <h3>Selected Items</h3>

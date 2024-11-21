@@ -41,7 +41,7 @@ const CustomerOrder = () => {
       <h1 className="section-title">Order History</h1>
 
       {/* Order List */}
-      <div className="order-list">
+      <div className="cusorder-list">
         {isLoading ? (
           <p className="loading-text">Loading orders...</p>
         ) : orders.length === 0 ? (
@@ -98,7 +98,7 @@ const CustomerOrder = () => {
       {/* Modal for Order Items */}
       {selectedOrder && (
         <div className="modal-overlay">
-          <div className="modal-dialog">
+          <div className="cusmodal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">

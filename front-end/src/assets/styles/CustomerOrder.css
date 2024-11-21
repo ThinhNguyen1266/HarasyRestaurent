@@ -12,7 +12,7 @@
 }
 
 /* Order List */
-.order-list {
+.cusorder-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -110,7 +110,7 @@
   align-items: center;
 }
 
-.modal-dialog {
+.cusmodal-dialog {
   background-color: #34495e;
   border-radius: 8px;
   width: 80%;
