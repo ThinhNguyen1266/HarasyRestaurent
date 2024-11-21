@@ -57,4 +57,22 @@ public class RedisServiceImpl implements RedisService {
         String key = "otp:"+email;
         redisTemplate.delete(key);
     }
+
+    @Override
+    public void addForgotPasswordSession(String email) {
+        String key = "forgotPasswordSession:"+email;
+        redisTemplate.opsForValue().set(key,"", 5, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public boolean checkForgotPasswordSession(String email) {
+        String key = "forgotPasswordSession:"+email;
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
+
+    @Override
+    public void deleteForgotPasswordSession(String email) {
+        String key = "forgotPasswordSession:"+email;
+        redisTemplate.delete(key);
+    }
 }
