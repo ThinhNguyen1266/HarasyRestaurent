@@ -10,7 +10,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import {
   FiArrowDown,
@@ -20,6 +20,7 @@ import {
   FiUser,
   FiUserPlus,
 } from "react-icons/fi";
+import useOrderApi from "../hooks/api/useOrderApi";
 
 ChartJS.register(
   CategoryScale,
@@ -35,6 +36,165 @@ ChartJS.register(
 
 const Overview = () => {
   const [revenueView, setRevenueView] = useState("monthly");
+
+  const [todayRevenue, setTodayRevenue] = useState(0);
+  const [yesterdayRevenue, setYesterdayRevenue] = useState(0);
+
+  const [thisMonthRevenue, setThisMonthRevenue] = useState(0);
+  const [lastMonthRevenue, setLastMonthRevenue] = useState(0);
+
+  const [totalOrders, setTotalOrders] = useState(0);
+
+  const [totalRevenue, setTotalRevenue] = useState(0);
+
+  const [branchRevenueData, setBranchRevenueData] = useState([]);
+
+  const [branchesMonthlyRevenue, setBranchesMonthlyRevenue] = useState([]);
+
+  const [topDish, setTopDishes] = useState([]);
+
+  const [dailyRevenueData, setDailyRevenueData] = useState([]);
+  const [monthlyRevenueData, setMonthlyRevenueData] = useState([]);
+  const [yearlyRevenueData, setYearlyRevenueData] = useState([]);
+
+  const {
+    getDailyRevenue,
+    getMonthRevenue,
+    getMonthDailyRevenue,
+    getYearMonthlyRevenue,
+    getAllYearRevenue,
+    getTotalOrder,
+    getTotalRevenue,
+    getBranchesRevenue,
+    getBranchesMonthlyRevenue,
+    getBestseller,
+  } = useOrderApi();
+
+  useEffect(() => {
+    const fetchRevenues = async () => {
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+
+      // Daily Revenue Date Strings
+      const todayString = today.toISOString().split("T")[0];
+      const yesterdayString = yesterday.toISOString().split("T")[0];
+
+      // Monthly Revenue Information
+      const thisMonth = today.getMonth() + 1;
+      const thisYear = today.getFullYear();
+      const lastMonth = thisMonth === 1 ? 12 : thisMonth - 1;
+      const lastMonthYear = thisMonth === 1 ? thisYear - 1 : thisYear;
+
+      try {
+        // Fetch Daily Revenue
+        if (revenueView === "daily") {
+          const todayResponse = await getDailyRevenue(todayString);
+          const yesterdayResponse = await getDailyRevenue(yesterdayString);
+          setTodayRevenue(todayResponse.revenue || 0);
+          setYesterdayRevenue(yesterdayResponse.revenue || 0);
+
+          const monthDailyResponse = await getMonthDailyRevenue(
+            thisMonth,
+            thisYear
+          );
+          const sortedData = (monthDailyResponse || []).sort(
+            (a, b) => new Date(a.day) - new Date(b.day)
+          );
+          setDailyRevenueData(sortedData);
+        }
+
+        // Fetch Monthly Revenue
+        if (revenueView === "monthly") {
+          const thisMonthResponse = await getMonthRevenue(thisMonth, thisYear);
+          const lastMonthResponse = await getMonthRevenue(
+            lastMonth,
+            lastMonthYear
+          );
+          setThisMonthRevenue(thisMonthResponse.revenue || 0);
+          setLastMonthRevenue(lastMonthResponse.revenue || 0);
+
+          const yearMonthlyResponse = await getYearMonthlyRevenue(thisYear);
+          const transformedData = [...yearMonthlyResponse]
+            .map((data) => ({
+              month: months[data.month - 1],
+              revenue: data.revenue,
+            }))
+            .sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month));
+
+          setMonthlyRevenueData(transformedData);
+        }
+
+        // Fetch Yearly Revenue
+        if (revenueView === "yearly") {
+          const allYearRevenueResponse = await getAllYearRevenue();
+          const transformedYearlyData = allYearRevenueResponse
+            .map((data) => ({
+              year: data.year,
+              revenue: data.revenue,
+            }))
+            .sort((a, b) => a.year - b.year);
+
+          setYearlyRevenueData(transformedYearlyData);
+        }
+
+        // Fetch Total Orders (Independent of revenueView)
+        const totalOrdersResponse = await getTotalOrder();
+        setTotalOrders(totalOrdersResponse.orders || 0);
+
+        // Fetch Total Revenue (Independent of revenueView)
+        const totalRevenueResponse = await getTotalRevenue();
+        setTotalRevenue(totalRevenueResponse.revenue || 0);
+
+        // Fetch Branches Revenue for Pie Chart (Independent of revenueView)
+        const branchesRevenueResponse = await getBranchesRevenue();
+        const pieChartTransformedData = branchesRevenueResponse.map(
+          (branch) => ({
+            branchName: branch.branchName.trim(),
+            revenue: branch.revenue,
+          })
+        );
+        setBranchRevenueData(pieChartTransformedData);
+
+        // Fetch Branches Monthly Revenue for Bar Chart
+        const branchesMonthlyResponse = await getBranchesMonthlyRevenue();
+        const transformedBranchesData = Object.entries(
+          branchesMonthlyResponse
+        ).map(([month, branches]) => ({
+          month: months[parseInt(month, 10) - 1],
+          branches: branches.map((branch) => ({
+            branchName: branch.branchName.trim(),
+            revenue: branch.revenue,
+          })),
+        }));
+        setBranchesMonthlyRevenue(transformedBranchesData);
+
+        // Fetch Best Sellers
+        const bestSellersResponse = await getBestseller();
+        setTopDishes(
+          bestSellersResponse.map((dish) => ({
+            name: dish.foodName,
+            revenue: dish.revenue,
+            quantity: dish.quantity,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching revenues:", error);
+      }
+    };
+
+    fetchRevenues();
+  }, [revenueView]);
+
+  const revenueChange =
+    yesterdayRevenue > 0
+      ? ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100
+      : 0;
+
+  const monthlyRevenueChange =
+    lastMonthRevenue > 0
+      ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
+      : 0;
 
   const months = [
     "January",
@@ -62,26 +222,25 @@ const Overview = () => {
     120000, 195000,
   ]);
 
-  const data = {
-    labels: months,
-    datasets: [
-      {
-        label: "Harasy Ha Noi",
-        data: branch1Data,
-        backgroundColor: "rgba(143,217,251, 0.4)",
-        borderColor: "rgb(143,217,251)",
+  const barChartData = {
+    labels: branchesMonthlyRevenue.map((data) => data.month || "Unknown Month"),
+    datasets:
+      branchesMonthlyRevenue[0]?.branches?.map((branch, index) => ({
+        label: branch.branchName || "Unknown Branch",
+        data: branchesMonthlyRevenue.map((monthData) => {
+          const branchData = monthData.branches.find(
+            (b) => b.branchName === branch.branchName
+          );
+          return branchData ? branchData.revenue : 0;
+        }),
+
+        backgroundColor:
+          index % 2 === 0 ? "rgba(143,217,251, 0.4)" : "rgba(255,75,51, 0.4)",
+        borderColor: index % 2 === 0 ? "rgb(143,217,251)" : "rgb(255,75,51)",
         borderWidth: 2,
-        hoverBackgroundColor: "rgba(143,217,251, 0.8)",
-      },
-      {
-        label: "Harasy Ho Chi Minh",
-        data: branch2Data,
-        backgroundColor: "rgba(255,75,51, 0.4)",
-        borderColor: "rgb(255,75,51)",
-        borderWidth: 2,
-        hoverBackgroundColor: "rgba(255,75,51, 0.8)",
-      },
-    ],
+        hoverBackgroundColor:
+          index % 2 === 0 ? "rgba(143,217,251, 0.8)" : "rgba(255,75,51, 0.8)",
+      })) || [],
   };
 
   const options = {
@@ -164,13 +323,13 @@ const Overview = () => {
     switch (revenueView) {
       case "daily":
         return {
-          labels: days,
+          labels: dailyRevenueData.map(
+            (data) => `Day ${new Date(data.day).getDate()}`
+          ),
           datasets: [
             {
               label: "Revenue Trend",
-              data: Array(31)
-                .fill()
-                .map(() => Math.floor(Math.random() * 50000) + 10000),
+              data: dailyRevenueData.map((data) => data.revenue),
               borderColor: "rgb(143,217,251, 0.8)",
               backgroundColor: "rgb(143,217,251, 0.4)",
               tension: 0.4,
@@ -180,11 +339,11 @@ const Overview = () => {
         };
       case "yearly":
         return {
-          labels: years,
+          labels: yearlyRevenueData.map((data) => data.year),
           datasets: [
             {
               label: "Revenue Trend",
-              data: [300000, 400000, 600000, 800000, 1000000],
+              data: yearlyRevenueData.map((data) => data.revenue),
               borderColor: "rgb(143,217,251, 0.8)",
               backgroundColor: "rgb(143,217,251, 0.4)",
               tension: 0.4,
@@ -194,14 +353,11 @@ const Overview = () => {
         };
       default:
         return {
-          labels: months,
+          labels: monthlyRevenueData.map((data) => data.month),
           datasets: [
             {
               label: "Revenue Trend",
-              data: [
-                120000, 150000, 180000, 220000, 250000, 280000, 310000, 350000,
-                380000, 410000, 450000, 500000,
-              ],
+              data: monthlyRevenueData.map((data) => data.revenue),
               borderColor: "rgb(143,217,251, 0.8)",
               backgroundColor: "rgb(143,217,251, 0.4)",
               tension: 0.4,
@@ -213,11 +369,11 @@ const Overview = () => {
   };
 
   const pieChartData = {
-    labels: ["Harasy Ha Noi", "Harasy Ho Chi Minh"],
+    labels: branchRevenueData.map((branch) => branch.branchName),
     datasets: [
       {
-        data: [40, 60],
-        backgroundColor: ["rgba(143,217,251, 0.8)", "rgba(255,75,51, 0.8)"],
+        data: branchRevenueData.map((branch) => branch.revenue),
+        backgroundColor: ["rgba(255,75,51, 0.8)", "rgba(143,217,251, 0.8)"],
         borderColor: ["rgb(20, 20, 20)"],
         hoverOffset: 10,
       },
@@ -275,65 +431,43 @@ const Overview = () => {
         <div className="col-lg-3 col-md-6">
           <div
             className="p-3"
-            style={{ backgroundColor: "#141414", borderRadius: "5px" }}
+            style={{
+              backgroundColor: "#141414",
+              borderRadius: "5px",
+              height: "100%",
+            }}
           >
             <div className="d-flex justify-content-between align-items-center">
               <div>
                 <p className="text-light">Total Revenue</p>
-                <h3 className="fw-bold">{kpiData.totalRevenue.value}</h3>
+                <h3 className="fw-bold">${totalRevenue.toLocaleString()}</h3>
               </div>
               <FiCalendar className="text-info fs-2" />
             </div>
-            <div
-              className={`d-flex align-items-center mt-2 ${
-                kpiData.totalRevenue.change > 0 ? "text-success" : "text-danger"
-              }`}
-            >
-              {kpiData.totalRevenue.change > 0 ? (
-                <FiArrowUp />
-              ) : (
-                <FiArrowDown />
-              )}
-              <span className="ms-1">
-                {Math.abs(kpiData.totalRevenue.change)}%
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* Successful Orders KPI Card */}
+        {/* Total Orders KPI Card */}
         <div className="col-lg-3 col-md-6">
           <div
             className="p-3"
-            style={{ backgroundColor: "#141414", borderRadius: "5px" }}
+            style={{
+              backgroundColor: "#141414",
+              borderRadius: "5px",
+              height: "100%", // Đảm bảo chiều cao cố định
+            }}
           >
             <div className="d-flex justify-content-between align-items-center">
               <div>
-                <p className="text-light">Successful Orders</p>
-                <h3 className="fw-bold">{kpiData.successfulOrders.value}</h3>
+                <p className="text-light">Total Orders</p>
+                <h3 className="fw-bold">{totalOrders.toLocaleString()}</h3>
               </div>
               <FiShoppingBag className="text-success fs-2" />
             </div>
-            <div
-              className={`d-flex align-items-center mt-2 ${
-                kpiData.successfulOrders.change > 0
-                  ? "text-success"
-                  : "text-danger"
-              }`}
-            >
-              {kpiData.successfulOrders.change > 0 ? (
-                <FiArrowUp />
-              ) : (
-                <FiArrowDown />
-              )}
-              <span className="ms-1">
-                {Math.abs(kpiData.successfulOrders.change)}%
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* Total Customers KPI Card */}
+        {/* Today Revenue KPI Card */}
         <div className="col-lg-3 col-md-6">
           <div
             className="p-3"
@@ -341,31 +475,25 @@ const Overview = () => {
           >
             <div className="d-flex justify-content-between align-items-center">
               <div>
-                <p className="text-light">Total Customers</p>
-                <h3 className="fw-bold">{kpiData.totalCustomers.value}</h3>
+                <p className="text-light">Today Revenue</p>
+                <h3 className="fw-bold">${todayRevenue.toLocaleString()}</h3>
               </div>
               <FiUser className="fs-2" style={{ color: "purple" }} />
             </div>
             <div
               className={`d-flex align-items-center mt-2 ${
-                kpiData.totalCustomers.change > 0
-                  ? "text-success"
-                  : "text-danger"
+                revenueChange > 0 ? "text-success" : "text-danger"
               }`}
             >
-              {kpiData.totalCustomers.change > 0 ? (
-                <FiArrowUp />
-              ) : (
-                <FiArrowDown />
-              )}
+              {revenueChange > 0 ? <FiArrowUp /> : <FiArrowDown />}
               <span className="ms-1">
-                {Math.abs(kpiData.totalCustomers.change)}%
+                {Math.abs(revenueChange).toFixed(2)}% compared to yesterday
               </span>
             </div>
           </div>
         </div>
 
-        {/* New Customers KPI Card */}
+        {/* This Month Revenue KPI Card */}
         <div className="col-lg-3 col-md-6">
           <div
             className="p-3"
@@ -373,23 +501,22 @@ const Overview = () => {
           >
             <div className="d-flex justify-content-between align-items-center">
               <div>
-                <p className="text-light">New Customers</p>
-                <h3 className="fw-bold">{kpiData.newCustomers.value}</h3>
+                <p className="text-light">This Month Revenue</p>
+                <h3 className="fw-bold">
+                  ${thisMonthRevenue.toLocaleString()}
+                </h3>
               </div>
               <FiUserPlus className="text-warning fs-2" />
             </div>
             <div
               className={`d-flex align-items-center mt-2 ${
-                kpiData.newCustomers.change > 0 ? "text-success" : "text-danger"
+                monthlyRevenueChange > 0 ? "text-success" : "text-danger"
               }`}
             >
-              {kpiData.newCustomers.change > 0 ? (
-                <FiArrowUp />
-              ) : (
-                <FiArrowDown />
-              )}
+              {monthlyRevenueChange > 0 ? <FiArrowUp /> : <FiArrowDown />}
               <span className="ms-1">
-                {Math.abs(kpiData.newCustomers.change)}%
+                {Math.abs(monthlyRevenueChange).toFixed(2)}% compared to last
+                month
               </span>
             </div>
           </div>
@@ -438,6 +565,7 @@ const Overview = () => {
           </div>
         </div>
 
+        {/* Pie Chart */}
         <div className="col-lg-4">
           <div
             className="p-3 h-100"
@@ -460,7 +588,7 @@ const Overview = () => {
         style={{ backgroundColor: "#141414", borderRadius: "5px" }}
       >
         <div style={{ height: "400px" }}>
-          <Bar data={data} options={options} />
+          <Bar data={barChartData} options={options} />
         </div>
       </div>
 
@@ -480,10 +608,10 @@ const Overview = () => {
               </tr>
             </thead>
             <tbody>
-              {topDishes.map((dish, index) => (
+              {topDish.map((dish, index) => (
                 <tr key={index}>
                   <td>{dish.name}</td>
-                  <td className="text-end">{dish.revenue}</td>
+                  <td className="text-end">{dish.revenue} $</td>
                   <td className="text-end">{dish.quantity}</td>
                 </tr>
               ))}

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import {
   FaLocationDot,
@@ -8,7 +9,6 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import "../assets/styles/ConfirmReservation.css";
 import useAuth from "../hooks/useAuth";
-import { useState } from "react";
 const ConfirmReservation = () => {
   const location = useLocation();
   const { user } = useAuth();
@@ -19,8 +19,8 @@ const ConfirmReservation = () => {
   const branchLocation = params.get("location");
   const date = params.get("date");
   const [formData, setFormData] = useState({
-    email: user?.email || "", // Điền trước nếu user đã đăng nhập
-    fullname: user?.fullName || "", // Điền trước nếu user đã đăng nhập
+    email: user?.email || "",
+    fullname: user?.fullName || "",
   });
 
   const [errors, setErrors] = useState({
@@ -47,7 +47,6 @@ const ConfirmReservation = () => {
 
     setErrors(newErrors);
 
-    // Nếu không có lỗi, tiến hành xác nhận đặt bàn
     if (Object.keys(newErrors).length === 0) {
       console.log("Reservation Confirmed", {
         email: formData.email,
@@ -79,7 +78,9 @@ const ConfirmReservation = () => {
             </div>
             <div className="cr-box">
               <div className="cr-header">
-                <h2 className="cr-title">{branch}</h2>
+                <h2 className="cr-title">
+                  Reservation at Harasy {branch} | Restaurant
+                </h2>
                 <div className="cr-steps">
                   <h3 className="cr-steps-title">
                     <span>1. FIND A TABLE</span>
@@ -138,7 +139,7 @@ const ConfirmReservation = () => {
                 </Col>
                 <Col md={6} className="info-section">
                   <div className="restaurant-info">
-                    <h4>{branch}</h4>
+                    <h4>Harasy {branch} | Restaurant</h4>
                     <p>
                       <FaRegCalendar className="icon-spacing" />
                       {date}

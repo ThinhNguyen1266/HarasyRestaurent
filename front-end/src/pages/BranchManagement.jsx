@@ -88,7 +88,7 @@ const BranchManagement = () => {
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => handleDelete(branch.branchInfo.id)}
+                    // onClick={() => handleDelete(branch.branchInfo.id)}
                     className="btn btn-danger btn-sm"
                   >
                     <FaTrash />
